@@ -28,9 +28,9 @@ spec:
     fullnameOverride: nginx-external
     controller:
       replicaCount: 2
-      service:
-        annotations:
-          external-dns.alpha.kubernetes.io/hostname: gustend.net
+      # service:
+      #   annotations:
+      #     external-dns.alpha.kubernetes.io/hostname: gustend.net
       ingressClassResource:
         name: external
         default: false
@@ -87,5 +87,5 @@ spec:
           cpu: 100m
         limits:
           memory: 500Mi
-    defaultBackend:
-      enabled: false
+    # defaultBackend:
+    #   enabled: false
