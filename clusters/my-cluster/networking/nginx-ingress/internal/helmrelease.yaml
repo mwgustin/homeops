@@ -42,8 +42,8 @@ spec:
             - key: ingress-class
               operator: In
               values: ["external"]
-      allowSnippetAnnotations: true
-      config:
+      # allowSnippetAnnotations: true
+      # config:
         # block-user-agents: "GPTBot,~*GPTBot*,ChatGPT-User,~*ChatGPT-User*,Google-Extended,~*Google-Extended*,CCBot,~*CCBot*,Omgilibot,~*Omgilibot*,FacebookBot,~*FacebookBot*" # taken from https://github.com/superseriousbusiness/gotosocial/blob/main/internal/web/robots.go
         # client-body-buffer-size: 100M
         # client-body-timeout: 120
@@ -65,7 +65,7 @@ spec:
         # proxy-body-size: 0
         # proxy-buffer-size: 16k
         # ssl-protocols: TLSv1.3 TLSv1.2
-        use-forwarded-headers: "true"
+        # use-forwarded-headers: "true"
       # metrics:
       #   enabled: true
       #   serviceMonitor:
@@ -83,10 +83,10 @@ spec:
       #         app.kubernetes.io/name: ingress-nginx
       #         app.kubernetes.io/instance: nginx-internal
       #         app.kubernetes.io/component: controller
-      resources:
-        requests:
-          cpu: 100m
-        limits:
-          memory: 500Mi
+      # resources:
+      #   requests:
+      #     cpu: 100m
+      #   limits:
+      #     memory: 500Mi
     # defaultBackend:
     #   enabled: false
