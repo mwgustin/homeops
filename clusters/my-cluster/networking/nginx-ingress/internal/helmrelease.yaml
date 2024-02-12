@@ -70,8 +70,8 @@ spec:
       #     enabled: true
       #     namespaceSelector:
       #       any: true
-      extraArgs:
-        default-ssl-certificate: network/devbu-io-tls
+      # extraArgs:
+      #   default-ssl-certificate: network/devbu-io-tls
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
