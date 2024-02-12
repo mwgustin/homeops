@@ -23,6 +23,7 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
+  disableWait: true 
   values:
     fullnameOverride: nginx-external
     controller:
