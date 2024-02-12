@@ -17,13 +17,13 @@ spec:
   install:
     remediation:
       retries: 3
+    disableWait: true
   upgrade:
     cleanupOnFail: true
     remediation:
       retries: 3
   uninstall:
     keepHistory: false
-  disableWait: true 
   values:
     fullnameOverride: nginx-external
     controller:
