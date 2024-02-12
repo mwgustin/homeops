@@ -13,3 +13,30 @@ spec:
         kind: HelmRepository
         name: ingress-nginx
         namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    fullnameOverride: nginx-external
+    controller:
+      replicaCount: 2
+      service:
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: gustend.net
+      ingressClassResource:
+        name: external
+        default: false
+        controllerValue: k8s.io/external
+      admissionWebhooks:
+        objectSelector:
+          matchExpressions:
+            - key: ingress-class
+              operator: In
+              values: ["external"]
+      allowSnippetAnnotations: true
