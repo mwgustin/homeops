@@ -5,6 +5,7 @@ kind: Certificate
 metadata:
   name: gustend-net
   namespace: ingress-nginx
+  fullnameOverride: gustend-net-tls
 spec:
   secretName: gustend-net-tls
   issuerRef:
