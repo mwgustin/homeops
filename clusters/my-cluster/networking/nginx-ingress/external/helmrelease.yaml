@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: ingress-nginx-internal
+  name: ingress-nginx-external
   namespace: ingress-nginx
 spec:
   interval: 30m
@@ -32,12 +32,12 @@ spec:
       # service:
       #   annotations:
       #     external-dns.alpha.kubernetes.io/hostname: gustend.net
-      electionID: internal-ingress-controller-leader
+      electionID: external-ingress-controller-leader
       ingressClassResource:
-        name: internal
+        name: external
         default: false
         enabled: true
-        controllerValue: k8s.io/internal
+        controllerValue: k8s.io/external
       # admissionWebhooks:
       #   objectSelector:
       #     matchExpressions:
