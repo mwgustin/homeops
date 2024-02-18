@@ -22,4 +22,4 @@ spec:
               key: api-key
         selector:
           dnsZones:
-            - gustin.net
+            - gustend.net
