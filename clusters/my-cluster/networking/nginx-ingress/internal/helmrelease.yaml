@@ -74,8 +74,8 @@ spec:
       #     enabled: true
       #     namespaceSelector:
       #       any: true
-      extraArgs:
-        default-ssl-certificate: gustend-net-tls
+      # extraArgs:
+      #   default-ssl-certificate: gustend-net-tls
       # topologySpreadConstraints:
       #   - maxSkew: 1
       #     topologyKey: kubernetes.io/hostname
