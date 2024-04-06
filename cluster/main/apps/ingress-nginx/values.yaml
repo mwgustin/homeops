@@ -47,8 +47,8 @@ ingress-nginx:
     #     enabled: true
     #     namespaceSelector:
     #       any: true
-    extraArgs:
-      default-ssl-certificate: ingress-nginx/gustend-net-tls
+    # extraArgs:
+    #   default-ssl-certificate: ingress-nginx/gustend-net-tls
     # topologySpreadConstraints:
     #   - maxSkew: 1
     #     topologyKey: kubernetes.io/hostname
