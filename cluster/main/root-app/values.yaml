@@ -12,9 +12,14 @@ apps:
     namespace: rook-ceph
     path: cluster/main/apps/rook-ceph-cluster
     syncWave: 1
+
   - name: ingress-nginx
     namespace: ingress-nginx
     path: cluster/main/apps/ingress-nginx
+  
+  - name: prometheus
+    namespace: prometheus
+    path: cluster/main/apps/prometheus
 
   - name: cloudflared
     namespace: default
