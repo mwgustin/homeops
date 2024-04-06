@@ -16,6 +16,9 @@ apps:
     namespace: default
     path: cluster/main/apps/test-app
 
+  - name: discord-activity-bot
+    namespace: default
+    path: cluster/main/apps/discord-activity-bot
 
 
     # CDRs App
