@@ -1,20 +1,20 @@
-# gitops:
-#   repo: https://github.com/mwgustin/homeops
-#   revision: main
+gitops:
+  repo: https://github.com/mwgustin/homeops
+  revision: main
 
-# # List of application corresponding to different sync waves
-# apps:
-#   - name: ingress-nginx
-#     namespace: ingress-nginx
-#     path: cluster/main/apps/ingress-nginx
+# List of application corresponding to different sync waves
+apps:
+  - name: ingress-nginx
+    namespace: ingress-nginx
+    path: cluster/main/apps/ingress-nginx
 
-#   - name: cloudflared
-#     namespace: default
-#     path: cluster/main/apps/cloudflared
+  - name: cloudflared
+    namespace: default
+    path: cluster/main/apps/cloudflared
   
-#   - name: test-app
-#     namespace: default
-#     path: cluster/main/apps/test-app
+  - name: test-app
+    namespace: default
+    path: cluster/main/apps/test-app
 
 
 
