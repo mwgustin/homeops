@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.32.0 (HEAD)
+  labels:
+    io.kompose.service: ghost
+  name: ghost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: ghost
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.32.0 (HEAD)
+      labels:
+        io.kompose.network/ghost-default: "true"
+        io.kompose.service: ghost
+    spec:
+      containers:
+        - env:
+            - name: database__client
+              value: mysql
+            - name: database__connection__database
+              value: ghost
+            - name: database__connection__host
+              value: db
+            - name: database__connection__password
+              value: example
+            - name: database__connection__user
+              value: root
+            - name: url
+              value: https://blog.gustend.net
+          image: ghost:5-alpine
+          name: ghost
+          ports:
+            - containerPort: 2368
+              hostPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/ghost/content
+              name: ghost
+      restartPolicy: Always
+      volumes:
+        - name: ghost
+          persistentVolumeClaim:
+            claimName: ghost
