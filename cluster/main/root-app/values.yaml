@@ -17,9 +17,9 @@ apps:
     namespace: ingress-nginx
     path: cluster/main/apps/ingress-nginx
   
-  - name: prometheus
-    namespace: prometheus
-    path: cluster/main/apps/prometheus
+  # - name: prometheus
+  #   namespace: prometheus
+  #   path: cluster/main/apps/prometheus
 
   - name: cloudflared
     namespace: default
