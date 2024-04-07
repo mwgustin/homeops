@@ -3,5 +3,5 @@ name: ghost-blog
 version: 1.0.0
 dependencies:
   - name: ghost
-    version: 19.9.0
+    version: 20.0.1
     repository: oci://registry-1.docker.io/bitnamicharts
