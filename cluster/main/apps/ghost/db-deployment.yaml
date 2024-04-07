@@ -29,6 +29,8 @@ spec:
               value: example
           image: mysql:8.0
           name: db
+          args:
+            - "--ignore-db-dir=lost+found"
           volumeMounts:
             - mountPath: /var/lib/mysql
               name: db
