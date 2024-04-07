@@ -5,3 +5,8 @@ ingress:
   enabled: true
   hostname: "blog.gustend.net"
   ingressClassName: "external"
+
+livenessProbe:
+  initialDelaySeconds: 360
+readinessProbe:
+  initialDelaySeconds: 360
