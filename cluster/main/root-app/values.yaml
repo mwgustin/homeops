@@ -4,14 +4,14 @@ gitops:
 
 # List of application corresponding to different sync waves
 apps:
-  - name: rook-ceph
-    namespace: rook-ceph
-    path: cluster/main/apps/rook-ceph
-    syncWave: 0
-  - name: rook-ceph-cluster
-    namespace: rook-ceph
-    path: cluster/main/apps/rook-ceph-cluster
-    syncWave: 1
+  # - name: rook-ceph
+  #   namespace: rook-ceph
+  #   path: cluster/main/apps/rook-ceph
+  #   syncWave: 0
+  # - name: rook-ceph-cluster
+  #   namespace: rook-ceph
+  #   path: cluster/main/apps/rook-ceph-cluster
+  #   syncWave: 1
 
   - name: ingress-nginx
     namespace: ingress-nginx
