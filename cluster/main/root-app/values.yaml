@@ -17,17 +17,17 @@ apps:
     namespace: ingress-nginx
     path: cluster/main/apps/ingress-nginx
   
-  # - name: prometheus
-  #   namespace: prometheus
-  #   path: cluster/main/apps/prometheus
+  - name: prometheus
+    namespace: prometheus
+    path: cluster/main/apps/prometheus
 
-  # - name: cloudflared
-  #   namespace: default
-  #   path: cluster/main/apps/cloudflared
+  - name: cloudflared
+    namespace: default
+    path: cluster/main/apps/cloudflared
   
-  # - name: test-app
-  #   namespace: default
-  #   path: cluster/main/apps/test-app
+  - name: test-app
+    namespace: default
+    path: cluster/main/apps/test-app
 
   - name: discord-activity-bot
     namespace: default
