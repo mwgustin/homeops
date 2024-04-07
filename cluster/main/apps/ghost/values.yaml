@@ -3,7 +3,7 @@ ghostBlogTitle: Gustend
 ghostHost: blog.gustend.net
 ingress:
   enabled: true
-  hostname: "blog.gustend.net"
+  hostname: blog.gustend.net
   ingressClassName: "external"
 
 
