@@ -41,7 +41,6 @@ spec:
           name: ghost
           ports:
             - containerPort: 2368
-              hostPort: 80
               protocol: TCP
           volumeMounts:
             - mountPath: /var/lib/ghost/content
