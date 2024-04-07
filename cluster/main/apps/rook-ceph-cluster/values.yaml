@@ -1,1 +1,6 @@
 operatorNamespace: rook-ceph
+
+cephClusterSpec:
+  dashboard:
+    enabled: true
+    ssl: false
