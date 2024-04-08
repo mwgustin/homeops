@@ -14,7 +14,7 @@ spec:
   storageClassName: ceph-block # Change this to your storageClassName
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteMany # Change this to your accessModes if needed
+  - ReadWriteOnce # Change this to your accessModes if needed
   resources:
     requests:
       storage: 2Gi
@@ -36,7 +36,7 @@ spec:
   storageClassName: ceph-block # Change this to your storageClassName
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteMany # Change this to ReadWriteOnce if you are not using a distributed storage system
+  - ReadWriteOnce # Change this to ReadWriteOnce if you are not using a distributed storage system
   resources:
     requests:
       storage: 2Gi
