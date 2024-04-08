@@ -21,8 +21,8 @@ spec:
       labels:
         app: mysql-ghost-k8s
         app.kubernetes.io/name: mysql-ghost-k8s
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/mysql-ghost-k8s: runtime/default
+      # annotations:
+        # container.apparmor.security.beta.kubernetes.io/mysql-ghost-k8s: runtime/default
     spec:
       initContainers:
       - name: mysql-ghost-k8s-init
