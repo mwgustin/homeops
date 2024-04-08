@@ -33,9 +33,9 @@ apps:
     namespace: default
     path: cluster/main/apps/discord-activity-bot
 
-  # - name: ghost-blog
-  #   namespace: default
-  #   path: cluster/main/apps/ghost
+  - name: ghost-blog
+    namespace: ghost-k8s
+    path: cluster/main/apps/ghost
 
     # CDRs App
   # - name: crds
