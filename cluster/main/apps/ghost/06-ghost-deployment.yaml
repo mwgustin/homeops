@@ -86,6 +86,9 @@ spec:
         - name: ghost-k8s-static-ghost
           mountPath: /var/lib/ghost/content
           readOnly: false
+        - name: ghost-k8s-static-ghost-backup
+          mountPath: /var/lib/ghost/content/data
+          readOnly: false
 
       containers:
       - name: ghost-k8s
