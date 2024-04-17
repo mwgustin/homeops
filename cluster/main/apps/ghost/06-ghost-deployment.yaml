@@ -79,7 +79,7 @@ spec:
               rm -f $GHOST_CONTENT/themes/source/.gitconfig $GHOST_CONTENT/themes/source/.git-credentials || true
             fi
             if [ ! -d "$GHOST_CONTENT/data" ]; then
-              mkidr "$GHOST_CONTENT/data"
+              mkdir "$GHOST_CONTENT/data"
             fi
             chown -Rf 1000:1000 $GHOST_CONTENT || true
             echo "Assured ownership of the ghost installation"
