@@ -78,16 +78,17 @@ spec:
               # Remove gitconfig file and gitcredentials file.
               rm -f $GHOST_CONTENT/themes/source/.gitconfig $GHOST_CONTENT/themes/source/.git-credentials || true
             fi
+            if [ ! -d "$GHOST_CONTENT/data" ]; then
+              mkidr "$GHOST_CONTENT/data"
+            fi
             chown -Rf 1000:1000 $GHOST_CONTENT || true
             echo "Assured ownership of the ghost installation"
+
             exit 0
 
         volumeMounts:
         - name: ghost-k8s-static-ghost
           mountPath: /var/lib/ghost/content
-          readOnly: false
-        - name: ghost-k8s-static-ghost-backup
-          mountPath: /var/lib/ghost/content/data
           readOnly: false
 
       containers:
@@ -130,8 +131,6 @@ spec:
         volumeMounts:
         - name: ghost-k8s-static-ghost
           mountPath: /var/lib/ghost/content
-        - name: ghost-k8s-static-ghost-backup
-          mountPath: /var/lib/ghost/content/data
         - name: ghost-config-prod
           readOnly: true
           mountPath: /var/lib/ghost/config.production.json
