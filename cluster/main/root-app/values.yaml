@@ -37,6 +37,12 @@ apps:
     namespace: ghost-k8s
     path: cluster/main/apps/ghost
 
+repo-apps:
+  - name: external-snapshotter
+    namespace: default
+    path: client/config/crd
+    repo: https://github.com/kubernetes-csi/external-snapshotter.git
+
     # CDRs App
   # - name: crds
   #   namespace: default
