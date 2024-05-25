@@ -37,7 +37,7 @@ apps:
     namespace: ghost-k8s
     path: cluster/main/apps/ghost
 
-repo-apps:
+repoapps:
   - name: external-snapshotter
     namespace: default
     path: client/config/crd
