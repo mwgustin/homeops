@@ -39,17 +39,17 @@ apps:
 
 repoapps:
   - name: external-snapshotter-crds
-    namespace: default
+    namespace: rook-ceph
     path: client/config/crd
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
   - name: external-snapshotter-controller
-    namespace: default
+    namespace: rook-ceph
     path: deploy/kubernetes/snapshot-controller
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
   - name: external-snapshotter-csi
-    namespace: default
+    namespace: rook-ceph
     path: deploy/kubernetes/csi-snapshotter
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
