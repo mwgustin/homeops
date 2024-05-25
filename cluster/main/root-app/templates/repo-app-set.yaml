@@ -15,7 +15,7 @@ spec:
   source:
     path: {{ $app.path }}
     repoURL: {{ $app.repo }}
-    targetRevision: {{ $.Values.gitops.revision }}
+    targetRevision: {{ $app.revision }}
 {{- if $app.helm }}
     helm:
 {{ toYaml $app.helm | indent 6  }}

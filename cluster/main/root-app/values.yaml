@@ -42,7 +42,8 @@ repoapps:
     namespace: default
     path: client/config/crd
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
-
+    revision: master
+    
     # CDRs App
   # - name: crds
   #   namespace: default
