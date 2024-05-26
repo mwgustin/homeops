@@ -1,7 +1,7 @@
 apiVersion: v2
 name: rook-ceph-cluster
-version: 1.0.0
+version: 1.0.1
 dependencies:
   - name: rook-ceph-cluster
-    version: 1.14.0
+    version: 1.14.4
     repository: https://charts.rook.io/release
