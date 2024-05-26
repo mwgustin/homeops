@@ -15,13 +15,16 @@ apps:
     helm:
       valueFiles: 
         - values.yaml
-  # - name: volsync
-  #   namespace: volsync-system
-  #   path: cluster/main/apps/volsync
-  #   syncWave: 2
+  
   - name: rook-ceph-snapshot-crds
     namespace: rook-ceph
     path: cluster/main/apps/rook-ceph-snapshot
+    syncWave: 1
+
+  - name: volsync
+    namespace: volsync-system
+    path: cluster/main/apps/volsync
+    syncWave: 2
 
   - name: ingress-nginx
     namespace: ingress-nginx
