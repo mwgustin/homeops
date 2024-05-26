@@ -3,5 +3,4 @@ name: volsync
 version: 1.0.0
 dependencies:
   - name: backube/volsync
-    version: 4.9.1
     repository: https://backube.github.io/helm-charts/
