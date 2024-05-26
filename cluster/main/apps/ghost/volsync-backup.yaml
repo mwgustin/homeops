@@ -33,7 +33,7 @@ spec:
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: gustend-ghost-mysql-static
+  name: gustend-ghost-static
   namespace: ghost-k8s
 spec:
   # The PVC to be backed up
