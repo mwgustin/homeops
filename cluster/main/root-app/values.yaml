@@ -12,6 +12,8 @@ apps:
     namespace: rook-ceph
     path: cluster/main/apps/rook-ceph-cluster
     syncWave: 1
+    helm:
+      valueFiles: values.yaml
   # - name: volsync
   #   namespace: volsync-system
   #   path: cluster/main/apps/volsync
