@@ -4,3 +4,10 @@ cephClusterSpec:
   dashboard:
     enabled: false
     ssl: false
+  resources:
+    mgr:
+      limits:
+        memory: "4Gi"
+
+
+# toolbox.resources
