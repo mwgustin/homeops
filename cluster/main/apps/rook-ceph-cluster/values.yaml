@@ -8,6 +8,10 @@ cephClusterSpec:
     mgr:
       limits:
         memory: "4Gi"
+cephFileSystemVolumeSnapshotClass:
+  enabled: true
+cephBlockPoolsVolumeSnapshotClass:
+  enabled: true
 
 
 # toolbox.resources
