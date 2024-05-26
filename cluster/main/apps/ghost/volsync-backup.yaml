@@ -27,6 +27,7 @@ spec:
     copyMethod: Clone
     # The StorageClass to use when creating the PiT copy (same as source PVC if omitted)
     storageClassName: ceph-filesystem
+    cacheStorageClassName: ceph-filesystem
     # The VSC to use if the copy method is Snapshot (default if omitted)
     #volumeSnapshotClassName: my-vsc-name
 ---
@@ -58,5 +59,6 @@ spec:
     copyMethod: Clone
     # The StorageClass to use when creating the PiT copy (same as source PVC if omitted)
     storageClassName: ceph-filesystem
+    cacheStorageClassName: ceph-filesystem
     # The VSC to use if the copy method is Snapshot (default if omitted)
     #volumeSnapshotClassName: my-vsc-name
