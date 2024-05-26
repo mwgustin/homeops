@@ -2,5 +2,5 @@ operatorNamespace: rook-ceph
 
 cephClusterSpec:
   dashboard:
-    enabled: true
+    enabled: false
     ssl: false
