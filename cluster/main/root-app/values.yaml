@@ -12,6 +12,10 @@ apps:
     namespace: rook-ceph
     path: cluster/main/apps/rook-ceph-cluster
     syncWave: 1
+  - name: volsync
+    namespace: volsync-system
+    path: cluster/main/apps/volsync
+    syncWave: 2
 
   - name: ingress-nginx
     namespace: ingress-nginx
@@ -43,16 +47,22 @@ repoapps:
     path: client/config/crd
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
+    syncWave: 1
+
   - name: external-snapshotter-controller
     namespace: rook-ceph
     path: deploy/kubernetes/snapshot-controller
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
+    syncWave: 1
+
   - name: external-snapshotter-csi
     namespace: rook-ceph
     path: deploy/kubernetes/csi-snapshotter
     repo: https://github.com/kubernetes-csi/external-snapshotter.git
     revision: master
+    syncWave: 1
+
     
     # CDRs App
   # - name: crds
