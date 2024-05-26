@@ -29,7 +29,8 @@ spec:
     # storageClassName: ceph-filesystem
     # cacheStorageClassName: ceph-filesystem
     # The VSC to use if the copy method is Snapshot (default if omitted)
-    #volumeSnapshotClassName: my-vsc-name
+    volumeSnapshotClassName: ceph-filesystem
+
 ---
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
@@ -62,4 +63,4 @@ spec:
     # storageClassName: ceph-filesystem
     # cacheStorageClassName: ceph-filesystem
     # The VSC to use if the copy method is Snapshot (default if omitted)
-    # volumeSnapshotClassName: ceph-filesystem
+    volumeSnapshotClassName: ceph-filesystem
