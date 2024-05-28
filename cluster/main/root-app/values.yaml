@@ -21,6 +21,17 @@ apps:
     path: cluster/main/apps/rook-ceph-snapshot
     syncWave: 1
 
+  
+  - name: external-snapshotter-controller
+    namespace: rook-ceph
+    path: cluster/main/apps/external-snapshotter/snapshot-controller
+    syncWave: 1
+
+  - name: external-snapshotter-csi
+    namespace: rook-ceph
+    path: cluster/main/apps/external-snapshotter/csi-snapshotter
+    syncWave: 1
+
   - name: volsync
     namespace: volsync-system
     path: cluster/main/apps/volsync
@@ -58,19 +69,19 @@ repoapps:
     revision: master
     syncWave: 1
 
-  - name: external-snapshotter-controller
-    namespace: rook-ceph
-    path: deploy/kubernetes/snapshot-controller
-    repo: https://github.com/kubernetes-csi/external-snapshotter.git
-    revision: master
-    syncWave: 1
+  # - name: external-snapshotter-controller
+  #   namespace: rook-ceph
+  #   path: deploy/kubernetes/snapshot-controller
+  #   repo: https://github.com/kubernetes-csi/external-snapshotter.git
+  #   revision: master
+  #   syncWave: 1
 
-  - name: external-snapshotter-csi
-    namespace: rook-ceph
-    path: deploy/kubernetes/csi-snapshotter
-    repo: https://github.com/kubernetes-csi/external-snapshotter.git
-    revision: master
-    syncWave: 1
+#   - name: external-snapshotter-csi
+#     namespace: rook-ceph
+#     path: deploy/kubernetes/csi-snapshotter
+#     repo: https://github.com/kubernetes-csi/external-snapshotter.git
+#     revision: master
+#     syncWave: 1
 
     
     # CDRs App
