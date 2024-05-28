@@ -35,10 +35,7 @@ spec:
         maxDuration: 16m
         factor: 2
     syncOptions:
-    {{- if eq false $app.createNamespace }}
-    {{- else }}
     - CreateNamespace=true
-    {{- end }}
     - ServerSideApply=true
     - ApplyOutOfSyncOnly=true
 {{- end }}
