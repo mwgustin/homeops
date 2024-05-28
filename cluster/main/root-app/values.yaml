@@ -21,6 +21,10 @@ apps:
     path: cluster/main/apps/rook-ceph-snapshot
     syncWave: 1
 
+  - name: external-snapshotter-crds
+    namespace: rook-ceph
+    path: cluster/main/apps/external-snapshotter/crd
+    syncWave: 1
   
   - name: external-snapshotter-controller
     namespace: rook-ceph
@@ -61,13 +65,13 @@ apps:
     namespace: ghost-k8s
     path: cluster/main/apps/ghost
 
-repoapps:
-  - name: external-snapshotter-crds
-    namespace: rook-ceph
-    path: client/config/crd
-    repo: https://github.com/kubernetes-csi/external-snapshotter.git
-    revision: master
-    syncWave: 1
+# repoapps:
+#   - name: external-snapshotter-crds
+#     namespace: rook-ceph
+#     path: client/config/crd
+#     repo: https://github.com/kubernetes-csi/external-snapshotter.git
+#     revision: master
+#     syncWave: 1
 
   # - name: external-snapshotter-controller
   #   namespace: rook-ceph
