@@ -24,6 +24,12 @@ rules:
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
   # Secret permission is optional.
   # Enable it if your driver needs secret.
   # For example, `csi.storage.k8s.io/snapshotter-secret-name` is set in VolumeSnapshotClass.
