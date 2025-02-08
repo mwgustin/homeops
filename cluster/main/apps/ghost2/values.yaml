@@ -1,5 +1,5 @@
+ghostHost: ghost2.gustend.net
 ingress:
   enabled: true
   hostname: ghost2.gustend.net
   ingressClassName: external
-  ghostHost: ghost2.gustend.net
