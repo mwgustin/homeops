@@ -20,6 +20,27 @@ spec:
         - containerPort: 80
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-app-pvc
+  namespace: default
+  labels:
+    app: test-app
+    app.kubernetes.io/name: test-app
+    app.kubernetes.io/instance: test-app
+    app.kubernetes.io/version: "5.8"
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: test-app
+spec:
+  storageClassName: ceph-filesystem # Change this to your storageClassName
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteMany # Change this to your accessModes if needed
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: web-service
