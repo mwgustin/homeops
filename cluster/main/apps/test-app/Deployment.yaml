@@ -4,6 +4,10 @@ kind: Deployment
 metadata:
   name: httpbin-deployment
 spec:
+  volumes:
+  - name: test-app-volume
+    persistentVolumeClaim:
+      claimName: test-app-pvc
   selector:
     matchLabels:
       app: httpbin
