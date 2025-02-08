@@ -65,9 +65,9 @@ apps:
     namespace: ghost-k8s
     path: cluster/main/apps/ghost
     
-  # - name: ghost2-blog
-  #   namespace: ghost2-k8s
-  #   path: cluster/main/apps/ghost2
+  - name: ghost2-blog
+    namespace: ghost2-k8s
+    path: cluster/main/apps/ghost2
 
 # repoapps:
 #   - name: external-snapshotter-crds
