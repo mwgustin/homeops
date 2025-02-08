@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ghost
+version: 0.0.0
+dependencies:
+  - name: ghost
+    version: 22.1.12
+    repository: oci://registry-1.docker.io/bitnamicharts/
