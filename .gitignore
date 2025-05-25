@@ -1,0 +1,9 @@
+*kubeconfig*
+*talosconfig*
+env/*
+cluster/main/apps/argo-cd/charts/argo-cd-5.46.8.tgz
+cluster/main/apps/ghost/config.production.json
+cluster/main/apps/ghost/04-config.production.yaml
+cluster/main/apps/ghost/01-secrets.yaml
+.DS_Store
+bootstrap/synology-csi-talos/config/client-info.yml
