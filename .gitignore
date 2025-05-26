@@ -7,3 +7,4 @@ cluster/main/apps/ghost/04-config.production.yaml
 cluster/main/apps/ghost/01-secrets.yaml
 .DS_Store
 bootstrap/synology-csi-talos/config/client-info.yml
+cluster/apps/cloudflared/credentials.json

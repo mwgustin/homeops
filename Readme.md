@@ -9,3 +9,11 @@ Steps:
   - update config/client-info.yaml credentials
   - run `./scripts/deploy.sh run`
 - Install ArgoCD [readme](./argocd/readme.md)
+
+
+
+TODO:
+- Can the snapshotter + synology csi be moved into Argo apps?
+- Terraform
+  - Proxmox
+  - Cloudflare

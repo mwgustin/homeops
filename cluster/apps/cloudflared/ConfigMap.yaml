@@ -1,0 +1,26 @@
+---
+# This ConfigMap is just a way to define the cloudflared config.yaml file in k8s.
+# It's useful to define it in k8s, rather than as a stand-alone .yaml file, because
+# this lets you use various k8s templating solutions (e.g. Helm charts) to
+# parameterize your config, instead of just using string literals.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared
+data:
+  config.yaml: |
+    # Name of the tunnel you want to run
+    tunnel: gustend-tunnel
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    metrics: 0.0.0.0:2000
+    no-autoupdate: true
+    ingress:
+      - hostname: test.gustend.net
+        service: hello_world
+      - hostname: gustend.net
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      - hostname: "*.gustend.net"
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
+      - service: http_status:404
+

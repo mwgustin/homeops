@@ -1,0 +1,246 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin-deployment
+spec:
+  selector:
+    matchLabels:
+      app: httpbin
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: httpbin
+    spec:
+      volumes:
+      - name: test-app-volume
+        persistentVolumeClaim:
+          claimName: test-app-pvc
+      containers:
+      - name: httpbin
+        image: kennethreitz/httpbin:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-app-pvc
+  namespace: default
+  labels:
+    app: test-app
+    app.kubernetes.io/name: test-app
+    app.kubernetes.io/instance: test-app
+    app.kubernetes.io/version: "5.8"
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: test-app
+spec:
+  storageClassName: ceph-filesystem # Change this to your storageClassName
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteMany # Change this to your accessModes if needed
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: httpbin
+  ports:
+    - protocol: TCP
+      port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-ingress
+  # namespace: my-app
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-production
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: external
+  # tls:
+  #   - hosts:
+  #     - home.gustend.net
+  #     secretName: home-gustend-net-cert
+  rules:
+    - host: home.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  # name: http
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-ingress-wild
+  # namespace: my-app
+  # annotations:
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: external
+  rules:
+    - host: bintest.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  # name: http
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: httpbin-ingress-wild
+  # namespace: my-app
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-production
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: external
+  # tls:
+  #   - hosts:
+  #     - home.gustend.net
+  #     secretName: home-gustend-net-cert
+  rules:
+    - host: protectedtest.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  # name: http
+                  number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: httbin-internal-test
+#   # namespace: my-app
+#   # annotations:
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+#     # nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   ingressClassName: internal
+#   rules:
+#     - host: test.internal.gustend.net
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: web-service
+#                 port:
+#                   # name: http
+#                   number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: httpbin-ingress-wild2
+#   # namespace: my-app
+#   # annotations:
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+#     # nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: bintest2.gustend.net
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: web-service
+#                 port:
+#                   # name: http
+#                   number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: httpbin-ingress-root
+#   # namespace: my-app
+#   # annotations:
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+#     # nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: gustend.net
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: web-service
+#                 port:
+#                   # name: http
+#                   number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: httpbin-ingress-base
+#   # namespace: my-app
+#   # annotations:
+#     # nginx.ingress.kubernetes.io/rewrite-target: /$2
+#     # nginx.ingress.kubernetes.io/use-regex: "true"
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#     - host: gustend.net
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: web-service
+#                 port:
+#                   # name: http
+#                   number: 80
+
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:  
+#   name: load-balancer-service
+#   labels:
+#     app: httpbin
+#     metallb.universe.tf/address-pool: default
+# spec:
+#   selector:
+#     app: httpbin
+#   type: LoadBalancer
+#   ports:  
+#   - name: http
+#     port: 80
+#     targetPort: 80
+#     protocol: TCP
