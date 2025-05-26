@@ -145,16 +145,16 @@ kind: Ingress
 metadata:
   name: internal-ingress-test
   # namespace: my-app
-  # annotations:
-  #   cert-manager.io/cluster-issuer: letsencrypt-production
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging-internal
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
     # nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: internal
-  # tls:
-  #   - hosts:
-  #     - home.gustend.net
-  #     secretName: home-gustend-net-cert
+  tls:
+    - hosts:
+      - test.internal.gustend.net
+      secretName: test-internal-gustend-net-cert
   rules:
     - host: test.internal.gustend.net
       http:
