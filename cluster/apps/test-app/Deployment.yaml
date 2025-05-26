@@ -36,7 +36,7 @@ metadata:
     app.kubernetes.io/component: frontend
     app.kubernetes.io/part-of: test-app
 spec:
-  storageClassName: ceph-filesystem # Change this to your storageClassName
+  storageClassName: synology-iscsi # Change this to your storageClassName
   volumeMode: Filesystem
   accessModes:
   - ReadWriteMany # Change this to your accessModes if needed
