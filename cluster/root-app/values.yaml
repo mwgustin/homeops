@@ -16,6 +16,10 @@ apps:
     namespace: metallb-system
     path: cluster/apps/metallb
 
+  - name: cert-manager
+    namespace: cert-manager
+    path: cluster/apps/cert-manager
+
   # - name: prometheus
   #   namespace: prometheus
   #   path: cluster/apps/prometheus
