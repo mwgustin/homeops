@@ -146,7 +146,7 @@ metadata:
   name: internal-ingress-test
   # namespace: my-app
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging-internal
+    cert-manager.io/issuer: letsencrypt-staging-internal
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
     # nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
