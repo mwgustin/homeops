@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/mwgustin/homeops.git
-    path: cluster/main/root-app/
+    path: cluster/root-app/
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
