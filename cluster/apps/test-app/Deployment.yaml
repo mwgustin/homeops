@@ -87,13 +87,18 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: httpbin-ingress-wild
+  name: httpbin-ingress
   # namespace: my-app
   # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-production
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
     # nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: external
+  # tls:
+  #   - hosts:
+  #     - home.gustend.net
+  #     secretName: home-gustend-net-cert
   rules:
     - host: bintest.gustend.net
       http:
