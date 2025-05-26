@@ -1,26 +1,27 @@
-# # Custom CA issuer configuration
-# # Enable private PKI using a custom CA
-# # It creates a ClusterIssuer resource `ca-issuer`
-# ca:
-#   enabled: true
+# Custom CA issuer configuration
+# Enable private PKI using a custom CA
+# It creates a ClusterIssuer resource `ca-issuer`
+ca:
+  enabled: true
 
-# # ACME (Letsencrypt) issuer configuration
-# # https://cert-manager.io/docs/configuration/acme/
-# acme:
-#   dns01:
-#     # Enable ionos dns01 solver
-#     # It creates ClusterIssuer resource `letsencrypt-issuer`
-#     ionos:
-#       enabled: true
-#   acme_issuer_email: admin@ricsanfre.com
+# ACME (Letsencrypt) issuer configuration
+# https://cert-manager.io/docs/configuration/acme/
+acme:
+  dns01:
+    # Enable ionos dns01 solver
+    # It creates ClusterIssuer resource `letsencrypt-issuer`
+    ionos:
+      enabled: true
+  acme_issuer_email: gustin.mike@gmail.com
 
-# ########################
-# # cert-manager  subchart
-# ########################
+########################
+# cert-manager  subchart
+########################
 
 # CDRs installed as part of CDR application
 cert-manager:
   installCRDs: true
+  
 
 # #####################################
 # # cert-manager-webhook-ionos subchart
