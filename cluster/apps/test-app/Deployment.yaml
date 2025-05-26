@@ -156,7 +156,7 @@ spec:
   #     - home.gustend.net
   #     secretName: home-gustend-net-cert
   rules:
-    - host: internal.gustend.net
+    - host: test.internal.gustend.net
       http:
         paths:
           - path: /
