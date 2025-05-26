@@ -139,6 +139,34 @@ spec:
                 port:
                   # name: http
                   number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: internal-ingress-test
+  # namespace: my-app
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-production
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: internal
+  # tls:
+  #   - hosts:
+  #     - home.gustend.net
+  #     secretName: home-gustend-net-cert
+  rules:
+    - host: internal.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  # name: http
+                  number: 80
 # ---
 # apiVersion: networking.k8s.io/v1
 # kind: Ingress

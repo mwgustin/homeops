@@ -4,6 +4,10 @@ gitops:
 
 # List of application corresponding to different sync waves
 apps:
+  - name: ingress-nginx-internal
+    namespace: ingress-nginx-internal
+    path: cluster/apps/ingress-nginx-internal
+    
   - name: ingress-nginx
     namespace: ingress-nginx
     path: cluster/apps/ingress-nginx
