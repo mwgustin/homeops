@@ -1,0 +1,9 @@
+# helm install metallb metallb/metallb --namespace metallb-system --set speaker.ignoreExcludeLB=true
+
+apiVersion: v2
+name: metallb
+version: 1.0.0
+dependencies:
+  - name: metallb/metallb
+    version: 4.9.1
+    repository: https://metallb.github.io/metallb

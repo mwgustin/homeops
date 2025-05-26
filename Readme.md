@@ -9,6 +9,8 @@ Steps:
   - update config/client-info.yaml credentials
   - run `./scripts/deploy.sh run`
 - Install ArgoCD [readme](./argocd/readme.md)
+- Cloudflared credentials.json and create secret
+
 
 
 
