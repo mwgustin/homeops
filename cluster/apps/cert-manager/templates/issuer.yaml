@@ -1,78 +1,78 @@
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: letsencrypt-staging-external
-spec:
-  acme:
-    # The ACME server URL
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
-    email: gustin.mike@gmail.com
-    # Name of a secret used to store the ACME account private key
-    privateKeySecretRef:
-      name: letsencrypt-staging-external
-    # Enable the HTTP-01 challenge provider
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: external
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: letsencrypt-staging-external
+# spec:
+#   acme:
+#     # The ACME server URL
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     # Email address used for ACME registration
+#     email: gustin.mike@gmail.com
+#     # Name of a secret used to store the ACME account private key
+#     privateKeySecretRef:
+#       name: letsencrypt-staging-external
+#     # Enable the HTTP-01 challenge provider
+#     solvers:
+#       - http01:
+#           ingress:
+#             ingressClassName: external
 
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: letsencrypt-prod-external
-spec:
-  acme:
-    # The ACME server URL
-    server: https://acme-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
-    email: gustin.mike@gmail.com
-    # Name of a secret used to store the ACME account private key
-    privateKeySecretRef:
-      name: letsencrypt-prod-external
-    # Enable the HTTP-01 challenge provider
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: external
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: letsencrypt-staging-internal
-spec:
-  acme:
-    # The ACME server URL
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
-    email: gustin.mike@gmail.com
-    # Name of a secret used to store the ACME account private key
-    privateKeySecretRef:
-      name: letsencrypt-staging-internal
-    # Enable the HTTP-01 challenge provider
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: internal
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: letsencrypt-prod-external
+# spec:
+#   acme:
+#     # The ACME server URL
+#     server: https://acme-v02.api.letsencrypt.org/directory
+#     # Email address used for ACME registration
+#     email: gustin.mike@gmail.com
+#     # Name of a secret used to store the ACME account private key
+#     privateKeySecretRef:
+#       name: letsencrypt-prod-external
+#     # Enable the HTTP-01 challenge provider
+#     solvers:
+#       - http01:
+#           ingress:
+#             ingressClassName: external
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: letsencrypt-staging-internal
+# spec:
+#   acme:
+#     # The ACME server URL
+#     server: https://acme-staging-v02.api.letsencrypt.org/directory
+#     # Email address used for ACME registration
+#     email: gustin.mike@gmail.com
+#     # Name of a secret used to store the ACME account private key
+#     privateKeySecretRef:
+#       name: letsencrypt-staging-internal
+#     # Enable the HTTP-01 challenge provider
+#     solvers:
+#       - http01:
+#           ingress:
+#             ingressClassName: internal
 
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: letsencrypt-prod-internal
-spec:
-  acme:
-    # The ACME server URL
-    server: https://acme-v02.api.letsencrypt.org/directory
-    # Email address used for ACME registration
-    email: gustin.mike@gmail.com
-    # Name of a secret used to store the ACME account private key
-    privateKeySecretRef:
-      name: letsencrypt-prod-internal
-    # Enable the HTTP-01 challenge provider
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: internal
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Issuer
+# metadata:
+#   name: letsencrypt-prod-internal
+# spec:
+#   acme:
+#     # The ACME server URL
+#     server: https://acme-v02.api.letsencrypt.org/directory
+#     # Email address used for ACME registration
+#     email: gustin.mike@gmail.com
+#     # Name of a secret used to store the ACME account private key
+#     privateKeySecretRef:
+#       name: letsencrypt-prod-internal
+#     # Enable the HTTP-01 challenge provider
+#     solvers:
+#       - http01:
+#           ingress:
+#             ingressClassName: internal
