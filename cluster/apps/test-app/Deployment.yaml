@@ -87,7 +87,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: httpbin-ingress
+  name: httpbin-ingress-2
   # namespace: my-app
   # annotations:
   #   cert-manager.io/cluster-issuer: letsencrypt-production
