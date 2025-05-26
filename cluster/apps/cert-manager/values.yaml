@@ -19,8 +19,8 @@
 # ########################
 
 # CDRs installed as part of CDR application
-# cert-manager:
-#   installCRDs: true
+cert-manager:
+  installCRDs: true
 
 # #####################################
 # # cert-manager-webhook-ionos subchart
@@ -28,10 +28,10 @@
 # cert-manager-webhook-ionos:
 #   groupName: acme.ricsanfre.com
 
-spec:
-  installCRDs: true
-  extraArgs:
-    - --dns01-recursive-nameservers-only
-    - --dns01-recursive-nameservers=10.1.10.1:53,1.1.1.1:53
+# spec:
+#   installCRDs: true
+#   extraArgs:
+#     - --dns01-recursive-nameservers-only
+#     - --dns01-recursive-nameservers=10.1.10.1:53,1.1.1.1:53
 
 namespace: cert-manager
