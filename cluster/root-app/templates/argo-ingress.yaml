@@ -12,6 +12,10 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: internal
+  tls:
+  - hosts:
+    - argocd.internal.gustend.net
+    secretName: argocd-server-tls # as expected by argocd-server
   rules:
   - host: argocd.internal.gustend.net
     http:
@@ -23,7 +27,3 @@ spec:
             name: argocd-server
             port:
               name: https
-  tls:
-  - hosts:
-    - argocd.internal.gustend.ne
-    secretName: argocd-server-tls # as expected by argocd-server
