@@ -10,7 +10,9 @@ Steps:
   - run `./scripts/deploy.sh run`
 - Install ArgoCD [readme](./argocd/readme.md)
 - Cloudflared credentials.json and create secret
-
+- Cloudflare API key for DNS challenge
+  - Add to Cloudflare Profile
+  - Add secret from cert-manager-cloudflare/secrets.yaml
 
 
 

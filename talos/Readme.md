@@ -7,7 +7,7 @@ export CONTROL_PLANE_IP=10.1.x.x
 generate configs and certs
 
 ```bash
-talosctl gen config gustend https://$CONTROL_PLANE_IP:6443 --output-dir _out --install-image factory.talos.dev/nocloud-installer/dc7b152cb3ea99b821fcb7340ce7168313ce393d663740b791c36f6e95fc8586:v1.10.2
+talosctl gen config gustend https://$CONTROL_PLANE_IP:6443 --output-dir _out --install-image factory.talos.dev/nocloud-installer/ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515:v1.10.7
 
 ```
 
