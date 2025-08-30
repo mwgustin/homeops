@@ -14,5 +14,6 @@
       "/\\.yml$/",
       "/\\.yaml$/"
     ]
-  }
+  },
+  "ignorePaths": ["**/talos/**"]
 }
