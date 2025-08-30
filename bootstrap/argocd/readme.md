@@ -10,6 +10,7 @@ kubectl apply -k ./
 ```
 
 
+
 (prior to ingress setup) Setup loadbalancer for port forwarding  
 ```bash
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
