@@ -4,9 +4,9 @@
     "config:recommended"
   ],
   "kubernetes": {
-    "fileMatch": ["\\.yml$/", "\\.yaml$/"]
+    "fileMatch": ["\\.yml$", "\\.yaml$"]
   },
   "argocd": {
-    "managerFilePatterns": ["\\.yml$/", "\\.yaml$/"]
+    "managerFilePatterns": ["/\\.yml$/", "/\\.yaml$/"]
   }
 }
