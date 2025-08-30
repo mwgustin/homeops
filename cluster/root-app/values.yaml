@@ -36,9 +36,9 @@ apps:
     namespace: default
     path: cluster/apps/bp-tools
 
-  # - name: n8n
-  #   namespace: n8n
-  #   path: cluster/apps/n8n
+  - name: n8n
+    namespace: n8n
+    path: cluster/apps/n8n
     
   # - name: discord-activity-bot
   #   namespace: default
