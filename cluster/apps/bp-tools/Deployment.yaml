@@ -57,4 +57,4 @@ spec:
                 name: bp-tools-service
                 port:
                   # name: http
-                  number: 80
+                  number: 5262

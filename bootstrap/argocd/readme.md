@@ -37,3 +37,9 @@ Update admin password
 ```bash
 argocd account update-password
 ```
+
+Create app
+```bash
+argocd app create --upsert apps --dest-namespace argocd --dest-server https://kubernetes.default.svc --repo https://github.com/mwgustin/homeops.git  --path cluster/root-app
+
+```
