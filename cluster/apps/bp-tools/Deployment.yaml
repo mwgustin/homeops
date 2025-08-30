@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: bp-tools
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -40,6 +40,11 @@ metadata:
   #   cert-manager.io/cluster-issuer: letsencrypt-production
     # nginx.ingress.kubernetes.io/rewrite-target: /$2
     # nginx.ingress.kubernetes.io/use-regex: "true"
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "http-cookie"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
 spec:
   ingressClassName: external
   # tls:
