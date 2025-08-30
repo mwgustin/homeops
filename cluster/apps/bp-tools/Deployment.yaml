@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: bp-tools
-        image: ghcr.io/mwgustin/bp-tools:main
+        image: ghcr.io/mwgustin/bp-tools:v1.0.0
         ports:
         - containerPort: 5262
 ---
