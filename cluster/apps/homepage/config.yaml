@@ -35,6 +35,22 @@ data:
             icon: sh-Sonarr
             href: http://localhost/
             description: Homepage is 😎
+    - Group A:
+      - Sonarr:
+          icon: sonarr.png
+          href: http://sonarr.host/
+          description: Series management
+    - Group B:
+        - Radarr:
+            icon: radarr.png
+            href: http://radarr.host/
+            description: Movie management
+
+    - Group C:
+        - Service:
+            icon: mdi-flask-outline
+            href: http://service.host/
+            description: My cool service
   widgets.yaml: |
     - kubernetes:
         cluster:
