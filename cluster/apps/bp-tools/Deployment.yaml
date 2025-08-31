@@ -35,11 +35,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: bp-tools-ingress
-  # namespace: my-app
-  # annotations:
-  #   cert-manager.io/cluster-issuer: letsencrypt-production
-    # nginx.ingress.kubernetes.io/rewrite-target: /$2
-    # nginx.ingress.kubernetes.io/use-regex: "true"
   annotations:
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/session-cookie-name: "http-cookie"
@@ -47,10 +42,6 @@ metadata:
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
 spec:
   ingressClassName: external
-  # tls:
-  #   - hosts:
-  #     - home.gustend.net
-  #     secretName: home-gustend-net-cert
   rules:
     - host: bptools.gustend.net
       http:
@@ -61,5 +52,4 @@ spec:
               service:
                 name: bp-tools-service
                 port:
-                  # name: http
                   number: 5262
