@@ -1,4 +1,4 @@
-# helm install metallb metallb/metallb --namespace metallb-system --set speaker.ignoreExcludeLB=true
+# helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 1.0.0
 
 apiVersion: v2
 name: n8n
@@ -6,4 +6,4 @@ version: 1.0.0
 dependencies:
   - name: n8n
     version: 1.0.13
-    repository: oci://8gears.container-registry.com/library
+    repository: oci://8gears.container-registry.com/library/
