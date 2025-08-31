@@ -39,6 +39,10 @@ apps:
   - name: n8n
     namespace: n8n
     path: cluster/apps/n8n
+
+  - name: n8n-ingress
+    namespace: n8n
+    path: cluster/apps/n8n-ingress
     
   # - name: discord-activity-bot
   #   namespace: default
