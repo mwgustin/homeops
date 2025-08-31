@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: n8n-ingress
+  namespace: n8n
+  # annotations:
+  #   cert-manager.io/cluster-issuer: letsencrypt-production
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - n8nest.internal.gustend.net
+      secretName: n8n-internal-gustend-net-cert
+  rules:
+    - host: n8n.internal.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: n8n
+                port:
+                  number: 80
