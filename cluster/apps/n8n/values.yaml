@@ -1,17 +1,3 @@
-ingress:
-  enabled: true
-  annotations: 
-    - cert-manager.io/cluster-issuer: letsencrypt-prod
-  # define a custom ingress class Name, like "traefik" or "nginx"
-  className: "internal"
-  hosts:
-    - host: n8n.internal.gustend.net
-      paths: []
-  tls:
-    - hosts:
-        - n8n.internal.gustend.net
-      secretName: n8n-internal-gustend-net-cert
-
 main:
   config:
     n8n:
@@ -27,3 +13,18 @@ main:
   service:
     type: ClusterIP
     port: 80
+
+ingress:
+  enabled: true
+  className: "internal"
+  annotations: 
+    - cert-manager.io/cluster-issuer: letsencrypt-prod
+  # define a custom ingress class Name, like "traefik" or "nginx"
+  hosts:
+    - host: n8n.internal.gustend.net
+      paths:
+        - /
+  tls:
+    - secretName: n8n-internal-gustend-net-cert
+      hosts:
+        - n8n.internal.gustend.net
