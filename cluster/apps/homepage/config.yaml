@@ -32,7 +32,7 @@ data:
 
     - My Third Group:
         - My Third Service:
-            icon: sonarr.png
+            icon: sh-Sonarr
             href: http://localhost/
             description: Homepage is 😎
   widgets.yaml: |
