@@ -9,11 +9,13 @@ spec:
   selector:
     matchLabels:
       app: bp-tools
+      app.kubernetes.io/name: bp-tools
   replicas: 2
   template:
     metadata:
       labels:
         app: bp-tools
+        app.kubernetes.io/name: bp-tools
     spec:
       containers:
       - name: bp-tools
