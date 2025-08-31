@@ -15,8 +15,8 @@ spec:
   ingressClassName: internal
   tls:
     - hosts:
-      - n8n.internal.gustend.net
-      secretName: n8n-internal-gustend-net-cert
+      - home.internal.gustend.net
+      secretName: home-internal-gustend-net-cert
   rules:
     - host: home.internal.gustend.net
       http:
