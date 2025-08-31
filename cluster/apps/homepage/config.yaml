@@ -30,27 +30,18 @@ data:
             href: http://localhost/
             description: Homepage is the best
 
-    - My Third Group:
-        - My Third Service:
-            icon: sh-Sonarr
-            href: http://localhost/
-            description: Homepage is 😎
     - Group A:
       - Sonarr:
           icon: sonarr.png
           href: http://sonarr.host/
           description: Series management
+
     - Group B:
         - Radarr:
             icon: radarr.png
             href: http://radarr.host/
             description: Movie management
-
-    - Group C:
-        - Service:
-            icon: mdi-flask-outline
-            href: http://service.host/
-            description: My cool service
+            
   widgets.yaml: |
     - kubernetes:
         cluster:
@@ -73,7 +64,6 @@ data:
     - search:
         provider: duckduckgo
         target: _blank
-    - argocd:
         
   docker.yaml: ""
 
