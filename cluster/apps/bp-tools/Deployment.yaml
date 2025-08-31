@@ -40,6 +40,11 @@ metadata:
     nginx.ingress.kubernetes.io/session-cookie-name: "http-cookie"
     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    gethomepage.dev/description: Blue Prince Tools
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: mdi-puzzle
+    gethomepage.dev/name: Blue Prince Tools
 spec:
   ingressClassName: external
   rules:
