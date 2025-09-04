@@ -48,6 +48,11 @@ apps:
     namespace: homepage
     path: cluster/apps/homepage
     
+  - name: nfs-csi-driver
+    namespace: default
+    path: cluster/apps/nfs-csi-driver
+
+
   - name: jellyfin
     namespace: media
     path: cluster/apps/jellyfin
