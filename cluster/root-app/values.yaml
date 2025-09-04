@@ -48,6 +48,10 @@ apps:
     namespace: homepage
     path: cluster/apps/homepage
     
+  - name: jellyfin
+    namespace: media
+    path: cluster/apps/jellyfin
+  
   # - name: discord-activity-bot
   #   namespace: default
   #   path: cluster/apps/discord-activity-bot

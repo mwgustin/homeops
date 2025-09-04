@@ -1,0 +1,19 @@
+# Jellyfin Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jellyfin
+  annotations:
+    kubernetes.io/ingress.class: "external"
+spec:
+  rules:
+    - host: jellyfin.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jellyfin
+                port:
+                  number: 8096
