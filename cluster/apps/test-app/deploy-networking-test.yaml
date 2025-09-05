@@ -1,18 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ubuntu-deployment
+    name: nginx-netshoot
+    labels:
+        app: nginx-netshoot
 spec:
-  replicas: 1
-  selector:
+replicas: 1
+selector:
     matchLabels:
-      app: ubuntu
-  template:
+        app: nginx-netshoot
+template:
     metadata:
-      labels:
-        app: ubuntu
+    labels:
+        app: nginx-netshoot
     spec:
-      containers:
-      - name: ubuntu
-        image: ubuntu:latest
-        command: ["sleep", "infinity"]
+        containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+              - containerPort: 80
+        - name: netshoot
+          image: nicolaka/netshoot
+          command: ["/bin/bash"]
+          args: ["-c", "while true; do ping localhost; sleep 60;done"]
