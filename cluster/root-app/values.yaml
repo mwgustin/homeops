@@ -49,7 +49,7 @@ apps:
     path: cluster/apps/homepage
     
   - name: nfs-csi-driver
-    namespace: default
+    namespace: nfs-csi-driver
     path: cluster/apps/nfs-csi-driver
 
 
