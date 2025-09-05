@@ -1,0 +1,9 @@
+apiVersion: v2
+name: csi-driver-smb
+description: Deploys the Kubernetes CSI smb driver via Helm
+type: application
+version: 1.0.0
+dependencies:
+  - name: csi-driver-smb
+    version: 1.18.0
+    repository: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-smb/master/charts

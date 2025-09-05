@@ -1,9 +1,0 @@
-apiVersion: v2
-name: nfs-csi-driver
-description: Deploys the Kubernetes CSI NFS driver via Helm
-type: application
-version: 1.0.0
-dependencies:
-  - name: csi-driver-nfs
-    version: 4.11.0
-    repository: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts

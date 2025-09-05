@@ -48,9 +48,9 @@ apps:
     namespace: homepage
     path: cluster/apps/homepage
     
-  - name: nfs-csi-driver
-    namespace: nfs-csi-driver
-    path: cluster/apps/nfs-csi-driver
+  - name: csi-driver-smb
+    namespace: kube-system 
+    path: cluster/apps/csi-driver-smb
 
 
   - name: jellyfin
