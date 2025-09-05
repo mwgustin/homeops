@@ -44,12 +44,15 @@
           - name: cache
             persistentVolumeClaim:
               claimName: jellyfin-cache
+          # - name: nfs-media
+          #   csi:
+          #     driver: nfs.csi.k8s.io
+          #     volumeAttributes:
+          #       server: Library.gustend.local
+          #       share: /Media
+          #     nodePublishSecretRef:
+          #       name: jellyfin-nfs-secret
           - name: nfs-media
-            csi:
-              driver: nfs.csi.k8s.io
-              volumeAttributes:
-                server: Library.gustend.local
-                share: /Media
-              nodePublishSecretRef:
-                name: jellyfin-nfs-secret
-
+            nfs: 
+              server: Library.gustend.local
+              path: /Media
