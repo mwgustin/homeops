@@ -5,6 +5,11 @@ metadata:
   name: jellyfin
   annotations:
     kubernetes.io/ingress.class: "external"
+    gethomepage.dev/description: Jellyfin
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-Jellyfin
+    gethomepage.dev/name: Jellyfin
 spec:
   ingressClassName: external
   rules:
