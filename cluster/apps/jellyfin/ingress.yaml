@@ -8,7 +8,7 @@ metadata:
     gethomepage.dev/description: Jellyfin
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: sh-Jellyfin
+    gethomepage.dev/icon: si-Jellyfin
     gethomepage.dev/name: Jellyfin
 spec:
   ingressClassName: external
