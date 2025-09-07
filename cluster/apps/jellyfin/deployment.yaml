@@ -8,6 +8,8 @@
       app.kubernetes.io/name: jellyfin
       app: jellyfin
   spec:
+    strategy:
+      type: Recreate
     replicas: 1
     selector:
       matchLabels:
