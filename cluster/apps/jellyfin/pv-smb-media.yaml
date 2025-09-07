@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-smb-media-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  csi:
+    driver: smb.csi.k8s.io
+    volumeHandle: jellyfin-smb-media
+    volumeAttributes:
+      source: //library.gustend.net/media
+      csi.storage.k8s.io/provisioner-secret-name: jellyfin-smb-secret
+      csi.storage.k8s.io/provisioner-secret-namespace: media
+      csi.storage.k8s.io/node-stage-secret-name: jellyfin-smb-secret
+      space: media
+      csi.storage.k8s.io/node-publish-secret-name: jellyfin-smb-secret
+      csi.storage.k8s.io/node-publish-secret-namespace: media
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - vers=3.0
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-smb-media-pvc
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: jellyfin-smb-media-pv
+  storageClassName: ""

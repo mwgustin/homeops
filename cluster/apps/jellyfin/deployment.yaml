@@ -35,7 +35,7 @@
                 mountPath: /config
               - name: cache
                 mountPath: /cache
-              - name: nfs-media
+              - name: smb-media
                 mountPath: /Media
         volumes:
           - name: config
@@ -44,15 +44,6 @@
           - name: cache
             persistentVolumeClaim:
               claimName: jellyfin-cache
-          # - name: nfs-media
-          #   csi:
-          #     driver: nfs.csi.k8s.io
-          #     volumeAttributes:
-          #       server: Library.gustend.local
-          #       share: /Media
-          #     nodePublishSecretRef:
-          #       name: jellyfin-nfs-secret
-          - name: nfs-media
-            nfs: 
-              server: Library.gustend.local
-              path: /Media
+          - name: smb-media
+            persistentVolumeClaim:
+              claimName: jellyfin-smb-media-pvc
