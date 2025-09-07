@@ -16,7 +16,7 @@ spec:
       csi.storage.k8s.io/provisioner-secret-name: jellyfin-smb-secret
       csi.storage.k8s.io/provisioner-secret-namespace: media
       csi.storage.k8s.io/node-stage-secret-name: jellyfin-smb-secret
-      space: media
+      csi.storage.k8s.io/node-stage-secret-namespace: media
       csi.storage.k8s.io/node-publish-secret-name: jellyfin-smb-secret
       csi.storage.k8s.io/node-publish-secret-namespace: media
   mountOptions:
