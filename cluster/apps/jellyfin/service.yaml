@@ -13,4 +13,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: bp-tools
+    app.kubernetes.io/name: jellyfin
