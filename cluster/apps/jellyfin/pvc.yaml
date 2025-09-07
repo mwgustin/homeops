@@ -35,6 +35,7 @@ spec:
   nfs:
     server: library.gustend.local
     path: /volume1/Media
+  storageClassName: nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
