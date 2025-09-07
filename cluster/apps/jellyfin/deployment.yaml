@@ -6,16 +6,15 @@
     namespace: media
     labels:
       app.kubernetes.io/name: jellyfin
-      app: jellyfin
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: jellyfin
+        app.kubernetes.io/name: jellyfin
     template:
       metadata:
         labels:
-          app: jellyfin
+          app.kubernetes.io/name: jellyfin
       spec:
         containers:
           - name: jellyfin
