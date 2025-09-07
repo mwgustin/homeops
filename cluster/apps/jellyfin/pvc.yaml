@@ -47,5 +47,4 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  volumeName: jellyfin-nfs-media-pv
-  storageClassName: ""
+  storageClassName:  nfs-library-media
