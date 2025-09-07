@@ -3,6 +3,7 @@
   kind: Deployment
   metadata:
     name: jellyfin
+    namespace: media
     labels:
       app: jellyfin
   spec:
