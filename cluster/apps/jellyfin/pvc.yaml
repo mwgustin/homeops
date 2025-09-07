@@ -21,3 +21,31 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: synology-iscsi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-nfs-media-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: library.gustend.local
+    path: /volume1/Media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-nfs-media-pvc
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: jellyfin-nfs-media-pv
+  storageClassName: ""

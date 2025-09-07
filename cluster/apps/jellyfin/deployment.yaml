@@ -36,15 +36,15 @@
                 mountPath: /config
               - name: cache
                 mountPath: /cache
-              - name: smb-media
+              - name: nfs-media
                 mountPath: /Media
         volumes:
-          - name: config
-            persistentVolumeClaim:
-              claimName: jellyfin-config
-          - name: cache
-            persistentVolumeClaim:
-              claimName: jellyfin-cache
-          - name: smb-media
-            persistentVolumeClaim:
-              claimName: jellyfin-smb-media-pvc
+            - name: config
+              persistentVolumeClaim:
+                claimName: jellyfin-config
+            - name: cache
+              persistentVolumeClaim:
+                claimName: jellyfin-cache
+            - name: nfs-media
+              persistentVolumeClaim:
+                claimName: jellyfin-nfs-media-pvc
