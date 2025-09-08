@@ -33,9 +33,15 @@ spec:
           - name: SA_CREDENTIALS_PATH
             value: /etc/creds/client_secret.json
           - name: SHEET_ID
-            value: 1tLYJt0as36EXu_H8Lw6QhWdJf7lYLyagBOjFtV9yklM
+            valueFrom:
+              secretKeyRef:
+                name: sheet-id
+                key: sheet-id
           - name: DISCORD_SERVER_ID
-            value: "611317976242716672"
+            valueFrom:
+              secretKeyRef:
+                name: discord-server-id
+                key: discord-server-id
       imagePullSecrets:
         - name: ghcr-docker-pull-secret
       volumes:
