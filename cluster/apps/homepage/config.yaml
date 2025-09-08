@@ -52,6 +52,9 @@ data:
     - search:
         provider: duckduckgo
         target: _blank
+    - printers:
+        type: moonraker
+        url: http://10.1.9.111
         
   docker.yaml: ""
 
