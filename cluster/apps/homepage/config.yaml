@@ -35,6 +35,14 @@ data:
             icon: radarr.png
             href: http://radarr.host/
             description: Movie management
+    - Printers:
+      - Bastion: 
+          icon: tbd.png
+          href: http://10.1.9.111/
+          description: Bastion
+          widget:
+            type: moonraker
+            url:  http://10.1.9.111/
 
   widgets.yaml: |
     - kubernetes:
@@ -52,9 +60,6 @@ data:
     - search:
         provider: duckduckgo
         target: _blank
-    - printers:
-        type: moonraker
-        url: http://10.1.9.111
         
   docker.yaml: ""
 
