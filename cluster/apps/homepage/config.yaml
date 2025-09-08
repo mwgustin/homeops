@@ -37,12 +37,19 @@ data:
             description: Movie management
     - Printers:
       - Bastion: 
-          icon: tbd.png
-          href: http://10.1.9.111/
+          icon: sh-mainsail.png
+          href: http://10.1.9.111
           description: Bastion
           widget:
             type: moonraker
-            url:  http://10.1.9.111/
+            url:  http://10.1.9.111
+      - Aurora: 
+          icon: sh-mainsail.png
+          href: http://10.1.11.169
+          description: Bastion
+          widget:
+            type: moonraker
+            url:  http://10.1.11.169
 
   widgets.yaml: |
     - kubernetes:
