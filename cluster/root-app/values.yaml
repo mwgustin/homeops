@@ -60,6 +60,9 @@ apps:
   - name: external-secrets
     namespace: external-secrets
     path: cluster/apps/external-secrets
+  - name: azkv-secret-store
+    namespace: external-secrets
+    path: cluster/apps/azkv-secret-store
     
   - name: jellyfin
     namespace: media
