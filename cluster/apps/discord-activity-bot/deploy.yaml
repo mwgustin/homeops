@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: activity-randomizer-discord-bot
+spec:
+  selector:
+    matchLabels:
+      app: activity-randomizer-discord-bot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: activity-randomizer-discord-bot
+    spec:
+      containers:
+      - name: activity-randomizer-discord-bot
+        image: ghcr.io/mwgustin/activity-randomizer-worker:latest
+        volumeMounts:
+        - name: creds
+          mountPath: /etc/creds
+          readOnly: true
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        env:
+          - name: DISCORD_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: discord-token
+                key: discord-token
+          - name: SA_CREDENTIALS_PATH
+            value: /etc/creds/client_secret.json
+          - name: SHEET_ID
+            value: 1tLYJt0as36EXu_H8Lw6QhWdJf7lYLyagBOjFtV9yklM
+          - name: DISCORD_SERVER_ID
+            value: "611317976242716672"
+      imagePullSecrets:
+        - name: ghcr-docker-pull-secret
+      volumes:
+      - name: creds
+        secret:
+          secretName: google-sa

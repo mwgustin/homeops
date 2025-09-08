@@ -68,9 +68,9 @@ apps:
     namespace: media
     path: cluster/apps/jellyfin
   
-  # - name: discord-activity-bot
-  #   namespace: default
-  #   path: cluster/apps/discord-activity-bot
+  - name: discord-activity-bot
+    namespace: default
+    path: cluster/apps/discord-activity-bot
 
   # - name: ghost-blog
   #   namespace: ghost-k8s
