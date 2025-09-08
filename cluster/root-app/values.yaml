@@ -51,14 +51,15 @@ apps:
   - name: csi-driver-smb
     namespace: kube-system 
     path: cluster/apps/csi-driver-smb
-
   - name: csi-driver-nfs
     namespace: kube-system 
     path: cluster/apps/csi-driver-nfs
   - name: metrics-server
     namespace: kube-system
     path: cluster/apps/metrics-server
-
+  - name: external-secrets
+    namespace: external-secrets
+    path: cluster/apps/external-secrets
     
   - name: jellyfin
     namespace: media

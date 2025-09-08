@@ -1,0 +1,11 @@
+# https://raw.githubusercontent.com/external-secrets/external-secrets/<replace_with_your_version>/deploy/crds/bundle.yaml" --server-side
+
+apiVersion: v2
+name: external-secrets
+description: Deploys the external-secrets CRDs and operators
+type: application
+version: 1.0.0
+dependencies:
+  - name: external-secrets
+    version: 0.19.2
+    repository:  https://charts.external-secrets.io/external-secrets
