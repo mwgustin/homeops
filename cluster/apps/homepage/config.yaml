@@ -24,16 +24,6 @@ data:
             - abbr: GH
               href: https://github.com/mwgustin
   services.yaml: |
-    - My First Group:
-        - My First Service:
-            href: http://localhost/
-            description: Homepage is awesome
-
-    - My Second Group:
-        - My Second Service:
-            href: http://localhost/
-            description: Homepage is the best
-
     - Group A:
       - Sonarr:
           icon: sonarr.png
@@ -59,12 +49,6 @@ data:
           cpu: true
           memory: true
           showLabel: true
-    - resources:
-        backend: resources
-        expanded: true
-        cpu: true
-        memory: true
-        network: default
     - search:
         provider: duckduckgo
         target: _blank
