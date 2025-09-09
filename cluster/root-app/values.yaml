@@ -72,6 +72,13 @@ apps:
     namespace: default
     path: cluster/apps/discord-activity-bot
 
+  - name: postgres-operator
+    namespace: postgres-operator
+    path: cluster/apps/postgres-operator
+  - name: postgres-operator-ui
+    namespace: postgres-operator
+    path: cluster/apps/postgres-operator-ui
+
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost
