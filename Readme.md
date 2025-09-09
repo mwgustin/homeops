@@ -25,3 +25,4 @@ TODO:
 - Terraform
   - Proxmox
   - Cloudflare
+  - AZ Keyvault + service principal
