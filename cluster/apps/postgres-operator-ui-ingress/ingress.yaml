@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: postgres-operator-ui-ingress
+  namespace: postgres-operator
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - pgop.internal.gustend.net
+      secretName: pgop-internal-gustend-net-cert
+  rules:
+    - host: pgop.internal.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: postgres-operator-ui
+                port:
+                  number: 80

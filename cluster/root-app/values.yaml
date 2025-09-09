@@ -78,6 +78,9 @@ apps:
   - name: postgres-operator-ui
     namespace: postgres-operator
     path: cluster/apps/postgres-operator-ui
+  - name: postgres-operator-ui-ingress
+    namespace: postgres-operator
+    path: cluster/apps/postgres-operator-ui-ingress
 
   # - name: ghost-blog
   #   namespace: ghost-k8s
