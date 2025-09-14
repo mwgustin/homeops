@@ -93,7 +93,7 @@ spec:
 
       containers:
       - name: ghost-k8s
-        image: ghcr.io/sredevopsorg/ghost-on-kubernetes:v5.101.1
+        image: ghcr.io/sredevopsorg/ghost-on-kubernetes:v5.130.4
         imagePullPolicy: Always
         ports:
         - name: ghk3s
