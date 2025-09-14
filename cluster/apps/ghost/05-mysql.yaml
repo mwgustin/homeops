@@ -7,7 +7,7 @@ metadata:
     app: mysql-ghost-k8s
     app.kubernetes.io/name: mysql-ghost-k8s
     app.kubernetes.io/instance: ghost-k8s
-    app.kubernetes.io/version: "5.8"
+    app.kubernetes.io/version: "5.92"
     app.kubernetes.io/component: database
     app.kubernetes.io/part-of: ghost-k8s
 spec:
@@ -37,15 +37,13 @@ spec:
         - /bin/sh
         - -c
         - |
-          set -ex
-          echo 'Changing ownership of mysql mount directory to 999:999'
-          chown -R 999:999 /mnt/mysql || echo 'Error changing ownership of mysql mount directory to 999:999' && true
-          echo 'Changing ownership of tmp mount directory to 999:999'
-          chown -R 999:999 /mnt/tmp || echo 'Error changing ownership of tmp mount directory to 999:999' && true
-          echo 'Changing ownership of socket mount directory to 999:999'
-          chown -R 999:999 /mnt/var/run/mysqld || echo 'Error changing ownership of socket mount directory to 999:999' && true
-          exit 0
-          
+          set -e
+          echo 'Changing ownership of mysql mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/mysql || echo 'Error changing ownership of mysql mount directory to 65534:65534'
+          echo 'Changing ownership of tmp mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/tmp || echo 'Error changing ownership of tmp mount directory to 65534:65534'
+          echo 'Changing ownership of socket mount directory to 65534:65534'
+          chown -Rfv 65534:65534 /mnt/var/run/mysqld || echo 'Error changing ownership of socket mount directory to 65534:65534'
           
         volumeMounts:
         - name: mysql-ghost-k8s-volume
@@ -75,10 +73,10 @@ spec:
           privileged: false
           readOnlyRootFilesystem: true
           runAsNonRoot: true
-          runAsUser: 999
+          runAsUser: 65534
 
-        image: docker.io/mysql:8.2
-        imagePullPolicy: IfNotPresent # You can change this value according to your needs
+        image: docker.io/mysql:8.4
+        imagePullPolicy: Always # You can change this value according to your needs
         envFrom:
         - secretRef:
             name: mysql-ghost-k8s
@@ -99,6 +97,7 @@ spec:
         - name: mysql-ghost-k8s-volume
           mountPath: /var/lib/mysql
           subPath: mysql-empty-dir
+          readOnly: false
 
         - name: mysql-ghost-k8s-tmp
           mountPath: /tmp
@@ -133,4 +132,4 @@ spec:
           sizeLimit: 128Mi
       - name: mysql-ghost-k8s-socket
         emptyDir:
-          sizeLimit: 16Mi
+          sizeLimit: 128Mi
