@@ -15,7 +15,7 @@ spec:
           service:
             name: service-ghost-k8s
             port:
-              name: ghk3s
+              name: ghk8s
   # Optional:
   # - host: www.tests.yourdomain.com
   #   http:
@@ -26,6 +26,6 @@ spec:
   #         service:
   #           name: service-ghost-k8s
   #           port:
-  #             name: ghk3s
+  #             name: ghk8s
 
 
