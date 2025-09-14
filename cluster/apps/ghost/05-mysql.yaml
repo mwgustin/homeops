@@ -75,7 +75,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 65534
 
-        image: docker.io/mysql:8.4
+        image: docker.io/mysql:9.4
         imagePullPolicy: Always # You can change this value according to your needs
         envFrom:
         - secretRef:
