@@ -3,6 +3,20 @@ kind: Ingress
 metadata:
   name: ghost-k8s-ingress
   namespace: ghost-k8s
+  annotations:
+    kubernetes.io/ingress.class: "external"
+    gethomepage.dev/description: Gustend Blog
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Personal
+    gethomepage.dev/icon: sh-ghost
+    gethomepage.dev/name: Gustend Blog
+  labels:
+    app: ghost-k8s
+    app.kubernetes.io/name: ghost-k8s
+    app.kubernetes.io/instance: ghost-k8s
+    app.kubernetes.io/version: "5.92"
+    app.kubernetes.io/component: ingress
+    app.kubernetes.io/part-of: ghost-k8s
 spec:
   ingressClassName: external # Or your ingress controller 
   rules:
@@ -15,17 +29,7 @@ spec:
           service:
             name: service-ghost-k8s
             port:
-              name: ghk8s
-  # Optional:
-  # - host: www.tests.yourdomain.com
-  #   http:
-  #     paths:
-  #     - path: /
-  #       pathType: ImplementationSpecific
-  #       backend:
-  #         service:
-  #           name: service-ghost-k8s
-  #           port:
-  #             name: ghk8s
+              number: 2368
+
 
 

@@ -4,7 +4,6 @@ metadata:
   name: service-ghost-k8s
   namespace: ghost-k8s
   labels:
-    app: ghost-k8s
     app.kubernetes.io/name: ghost-k8s
     app.kubernetes.io/instance: ghost-k8s
     app.kubernetes.io/version: "5.92"
@@ -12,14 +11,13 @@ metadata:
     app.kubernetes.io/part-of: ghost-k8s
 
 spec:
+  type: ClusterIP
   ports:
   - port: 2368
+    targetPort: 2368
     protocol: TCP
-    targetPort: ghost-k8s
     name: ghk8s
-  type: ClusterIP
   selector:
-    app: ghost-k8s
     app.kubernetes.io/name: ghost-k8s
 
 ---
