@@ -79,7 +79,7 @@ spec:
         imagePullPolicy: Always # You can change this value according to your needs
         envFrom:
         - secretRef:
-            name: mysql-ghost-k8s
+            name: mysql-ghost-k8s-config
         - secretRef:
             name: ghost-config-mysql-pass
         resources:
