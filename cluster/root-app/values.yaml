@@ -82,6 +82,10 @@ apps:
     namespace: postgres-operator
     path: cluster/apps/postgres-operator-ui-ingress
 
+  - name: gustend-ghost
+    namespace: ghost-k8s
+    path: cluster/apps/ghost
+
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost

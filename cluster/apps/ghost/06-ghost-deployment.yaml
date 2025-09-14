@@ -1,0 +1,167 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost-k8s
+  namespace: ghost-k8s
+  labels:
+    app: ghost-k8s
+    app.kubernetes.io/name: ghost-k8s
+    app.kubernetes.io/instance: ghost-k8s
+    app.kubernetes.io/version: "5.8"
+    app.kubernetes.io/component: ghost
+    app.kubernetes.io/part-of: ghost-k8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ghost-k8s
+  template:
+    metadata:
+      namespace: ghost-k8s
+      labels:
+        app: ghost-k8s
+        app.kubernetes.io/name: ghost-k8s
+    spec:
+      automountServiceAccountToken: false # Disable automounting of service account token
+      volumes:
+      - name: ghost-k8s-static-ghost
+        persistentVolumeClaim:
+          claimName: ghost-k8s-static-ghost
+
+      - name: ghost-config-prod
+        secret:
+          secretName: ghost-config-prod
+          defaultMode: 420
+
+      - name: tmp
+        emptyDir:
+          sizeLimit: 64Mi
+
+      initContainers:
+      - name: ghost-k8s-init
+        image: docker.io/bitnami/git:2
+        env:
+        - name: GHOST_INSTALL
+          value: /var/lib/ghost
+        - name: GHOST_CONTENT
+          value: /var/lib/ghost/content
+        - name: NODE_ENV
+          value: production
+        securityContext:
+          readOnlyRootFilesystem: false
+          allowPrivilegeEscalation: false
+          runAsNonRoot: false
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        command:
+          - /bin/bash
+          - '-c'
+          - |
+            set -ex
+            # Check if $GHOST_CONTENT/themes/source exists
+            if [ ! -d "$GHOST_CONTENT/themes/source" ]; then
+              # Clone the repository if the directory doesn't exist
+              git clone https://github.com/TryGhost/Source.git $GHOST_CONTENT/themes/source  --single-branch --branch=main --depth=1
+              echo "Cloned Source theme"
+              # Remove gitconfig file and gitcredentials file.
+              rm -f $GHOST_CONTENT/themes/source/.gitconfig $GHOST_CONTENT/themes/source/.git-credentials || true
+            else
+              # If the directory exists, recursively delete it.
+              rm -rf $GHOST_CONTENT/themes/source
+              # Clone the repository 
+              git clone https://github.com/TryGhost/Source.git $GHOST_CONTENT/themes/source  --single-branch --branch=main --depth=1
+              # Remove gitconfig file and gitcredentials file.
+              rm -f $GHOST_CONTENT/themes/source/.gitconfig $GHOST_CONTENT/themes/source/.git-credentials || true
+            fi
+            if [ ! -d "$GHOST_CONTENT/data" ]; then
+              mkdir "$GHOST_CONTENT/data"
+            fi
+            chown -Rf 1000:1000 $GHOST_CONTENT || true
+            echo "Assured ownership of the ghost installation"
+
+            exit 0
+
+        volumeMounts:
+        - name: ghost-k8s-static-ghost
+          mountPath: /var/lib/ghost/content
+          readOnly: false
+
+      containers:
+      - name: ghost-k8s
+        image: ghcr.io/sredevopsorg/ghost-on-kubernetes:v5.101.1
+        imagePullPolicy: Always
+        ports:
+        - name: ghk3s
+          containerPort: 2368
+          protocol: TCP
+
+        # You should uncomment the following lines in production. Change the values according to your environment.
+
+        livenessProbe:
+          httpGet:
+            path: /ghost/api/v4/admin/site/
+            port: ghk3s
+            httpHeaders:
+            - name: X-Forwarded-Proto
+              value: https
+            - name: Host
+              value: blog.gustend.net
+          periodSeconds: 3600
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 1
+          initialDelaySeconds: 60
+
+        env:
+        - name: NODE_ENV
+          value: production
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+
+        volumeMounts:
+        - name: ghost-k8s-static-ghost
+          mountPath: /var/lib/ghost/content
+        - name: ghost-config-prod
+          readOnly: true
+          mountPath: /var/lib/ghost/config.production.json
+          subPath: config.production.json
+        - name: tmp # This is the temporary volume mount to allow loading themes
+          mountPath: /tmp
+          readOnly: false
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 15
+      dnsPolicy: ClusterFirst
+      # Optional: Uncomment the following to specify node selectors
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: static
+      #               operator: In
+      #               values:
+      #                 - "true"
+
+
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 600

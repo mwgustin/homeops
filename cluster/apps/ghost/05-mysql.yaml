@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-ghost-k8s
+  namespace: ghost-k8s
+  labels:
+    app: mysql-ghost-k8s
+    app.kubernetes.io/name: mysql-ghost-k8s
+    app.kubernetes.io/instance: ghost-k8s
+    app.kubernetes.io/version: "5.8"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: ghost-k8s
+spec:
+  serviceName: service-mysql-ghost-k8s
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-ghost-k8s
+  template:
+    metadata:
+      labels:
+        app: mysql-ghost-k8s
+        app.kubernetes.io/name: mysql-ghost-k8s
+      # annotations:
+        # container.apparmor.security.beta.kubernetes.io/mysql-ghost-k8s: runtime/default
+    spec:
+      initContainers:
+      - name: mysql-ghost-k8s-init
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: false
+        image: docker.io/busybox:stable-musl
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -ex
+          echo 'Changing ownership of mysql mount directory to 999:999'
+          chown -R 999:999 /mnt/mysql || echo 'Error changing ownership of mysql mount directory to 999:999' && true
+          echo 'Changing ownership of tmp mount directory to 999:999'
+          chown -R 999:999 /mnt/tmp || echo 'Error changing ownership of tmp mount directory to 999:999' && true
+          echo 'Changing ownership of socket mount directory to 999:999'
+          chown -R 999:999 /mnt/var/run/mysqld || echo 'Error changing ownership of socket mount directory to 999:999' && true
+          exit 0
+          
+          
+        volumeMounts:
+        - name: mysql-ghost-k8s-volume
+          mountPath: /mnt/mysql
+          subPath: mysql-empty-dir
+
+        - name: mysql-ghost-k8s-tmp
+          mountPath: /mnt/tmp
+          readOnly: false
+
+        - name: mysql-ghost-k8s-socket
+          mountPath: /mnt/var/run/mysqld
+          readOnly: false
+
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 300m
+          limits:
+            memory: 1000Mi # You c
+            cpu: 1000m
+
+      containers:
+      - name: mysql-ghost-k8s
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 999
+
+        image: docker.io/mysql:8.2
+        imagePullPolicy: IfNotPresent # You can change this value according to your needs
+        envFrom:
+        - secretRef:
+            name: mysql-ghost-k8s
+        - secretRef:
+            name: ghost-config-mysql-pass
+        resources:
+          requests:
+            memory: 400Mi
+            cpu: 300m
+          limits:
+            memory: 1Gi # You can change this value according to your needs
+            cpu: 1000m # You can change this value according to your needs
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+          name: mysqlgh
+        volumeMounts:
+        - name: mysql-ghost-k8s-volume
+          mountPath: /var/lib/mysql
+          subPath: mysql-empty-dir
+
+        - name: mysql-ghost-k8s-tmp
+          mountPath: /tmp
+          readOnly: false
+
+        - name: mysql-ghost-k8s-socket
+          mountPath: /var/run/mysqld
+          readOnly: false
+      automountServiceAccountToken: false
+
+      # Optional: Uncomment the following to specify node selectors
+      # affinity:
+      #   nodeAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       nodeSelectorTerms:
+      #         - matchExpressions:
+      #             - key: static
+      #               operator: In
+      #               values:
+      #                 - "true"
+
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+
+      volumes:
+      - name: mysql-ghost-k8s-volume
+        persistentVolumeClaim:
+          claimName: mysql-ghost-k8s
+      - name: mysql-ghost-k8s-tmp
+        emptyDir:
+          sizeLimit: 128Mi
+      - name: mysql-ghost-k8s-socket
+        emptyDir:
+          sizeLimit: 16Mi
