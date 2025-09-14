@@ -39,7 +39,7 @@ spec:
 
       initContainers:
       - name: ghost-k8s-init
-        image: docker.io/bitnami/git:2
+        image: docker.io/bitnami/git:latest
         env:
         - name: GHOST_INSTALL
           value: /var/lib/ghost
