@@ -5,5 +5,5 @@ name: n8n
 version: 1.0.0
 dependencies:
   - name: n8n
-    version: 1.0.14
+    version: 1.0.15
     repository: oci://8gears.container-registry.com/library
