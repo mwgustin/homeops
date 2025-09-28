@@ -6,10 +6,22 @@ This repository manages a Kubernetes cluster using Talos, with a focus on declar
 When requested to onboard a new app, follow these steps and reference the example manifests defined in the "Specific cluster resource details and examples" section below:
 1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits and the `app.kubernetes.io/name` label.
 2. **Define a Service**: Create a service manifest (usually `ClusterIP`) with selectors matching the deployment labels.
-3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass and update the deployment to mount the PVC.
+3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass, associated PVCs and PV entries.  Ensure the Deployment yaml has the mounts defined. 
 4. **Define an Ingress**: By default, use the internal ingress manifest pattern unless otherwise specified.
 5. **Add Other Resources**: Create any additional resources needed (ConfigMaps, Secrets, RBAC, etc.).
 6. **Update ArgoCD App-of-Apps**: Add an entry for the app in `cluster/root-app/values.yaml` to onboard it into ArgoCD management.
+
+YAML files should be created for each of the resource types and naming should remain consistent as follows
+
+- deployment.yaml
+- storage-class.yaml
+- pvc.yaml
+- pv.yaml
+- service.yaml
+- ingress.yaml
+- config-map.yaml
+
+for any resources not specified in that list, take a best guess and follow the conventions. 
 
 ## Architecture Overview
 - **Talos Cluster**: Cluster configuration is generated and managed via Talos (`talos/_out/controlplane.yaml`, `talos/Readme.md`). Talos replaces traditional Linux OS for Kubernetes nodes.
@@ -233,9 +245,11 @@ parameters:
   share: /volume1/Media
 
 ### Persistent Volume Claims
-- Most PVCs use `synology-iscsi`. For shared volumes, use a custom NFS storage class and mount.
+- Most PVCs use `synology-iscsi`. 
+- For shared volumes, use a custom NFS storage class and mount. Ensure an associated PV is also created
 
-**PVC Examples:**
+
+**PVC and PV Examples:**
 ```yaml
 # synology-iscsi PVC
 apiVersion: v1
@@ -251,6 +265,18 @@ spec:
   storageClassName: synology-iscsi
 
 # NFS PVC and PV
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: <pvc-name>
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: nfs-library-media
+
 apiVersion: v1
 kind: PersistentVolume
 metadata:
