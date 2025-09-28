@@ -81,6 +81,9 @@ apps:
   - name: radarr-route
     namespace: media
     path: cluster/apps/radarr-route
+  - name: nzbget-route
+    namespace: media
+    path: cluster/apps/nzbget-route
   
   - name: discord-activity-bot
     namespace: default

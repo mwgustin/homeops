@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nzbget-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 7890 # The service port can be anything, but matching is clear.
+      targetPort: 7890 # This must match the port in the Endpoints object.
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nzbget-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: nzbget
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-nzbget
+    gethomepage.dev/name: nzbget
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - nzbget.internal.gustend.net
+      secretName: nzbget-internal-gustend-net-tls
+  rules:
+    - host: "nzbget.internal.gustend.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nzbget-service # Routes traffic to our service.
+                port:
+                  number: 7890 # Must match the port defined in the Service.
