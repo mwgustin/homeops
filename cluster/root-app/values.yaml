@@ -85,9 +85,9 @@ apps:
   - name: radarr
     namespace: media
     path: cluster/apps/radarr
-  - name: nzbget-route
+  - name: nzbget
     namespace: media
-    path: cluster/apps/nzbget-route
+    path: cluster/apps/nzbget
   - name: deluge-route
     namespace: media
     path: cluster/apps/deluge-route

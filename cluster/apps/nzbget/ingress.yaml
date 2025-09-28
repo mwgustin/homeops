@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nzbget
+  labels:
+    app.kubernetes.io/name: nzbget
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: NZBGet Usenet Downloader
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media Management
+    gethomepage.dev/icon: sh-nzbget
+    gethomepage.dev/name: NZBGet
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=nzbget
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - nzbget.internal.gustend.net
+      secretName: nzbget-internal-gustend-net-cert
+  rules:
+    - host: nzbget.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: nzbget
+                port:
+                  number: 6789
