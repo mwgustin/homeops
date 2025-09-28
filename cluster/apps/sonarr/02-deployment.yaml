@@ -35,9 +35,6 @@ spec:
               mountPath: /downloads
             - name: media
               mountPath: /TheBarns/Media
-            - name: rtc
-              mountPath: /dev/rtc
-              readOnly: true
       volumes:
         - name: config
           persistentVolumeClaim:
@@ -51,7 +48,3 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: sonarr-media
-        - name: rtc
-          hostPath:
-            path: /dev/rtc
-            type: File
