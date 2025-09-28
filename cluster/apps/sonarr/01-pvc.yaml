@@ -43,5 +43,6 @@ spec:
   accessModes:
     - ReadWriteMany
   resources:
+    requests:
       storage: 2Ti
   storageClassName: nfs-library-media
