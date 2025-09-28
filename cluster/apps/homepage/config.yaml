@@ -24,8 +24,6 @@ data:
             - abbr: GH
               href: https://github.com/mwgustin
   services.yaml: |
-    - Media:
-    - Media Management:
     - Printers:
       - Bastion: 
           icon: sh-mainsail.png
