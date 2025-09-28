@@ -7,18 +7,28 @@ spec:
     - protocol: TCP
       port: 32400 # The service port can be anything, but matching is clear.
       targetPort: 32400 # This must match the port in the Endpoints object.
+      
 ---
-apiVersion: v1
-kind: Endpoints
+
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
 metadata:
   name: plex-service
-subsets:
+  namespace: media
+  labels:
+    kubernetes.io/service-name: plex-service
+addressType: IPv4
+endpoints:
   - addresses:
-      - ip: "10.1.10.194"
-    ports:
-      - name: http 
-        port: 32400 
-        protocol: TCP
+      - "10.1.10.194"
+    conditions:
+      ready: true
+ports:
+  - name: http
+    protocol: TCP
+    port: 32400
+
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
