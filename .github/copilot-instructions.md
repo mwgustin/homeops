@@ -2,6 +2,15 @@
 
 This repository manages a Kubernetes cluster using Talos, with a focus on declarative infrastructure, GitOps, and external integrations. AI agents should follow these guidelines for effective contributions:
 
+## Steps for Adding a New App
+When requested to onboard a new app, follow these steps:
+1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits and the `app.kubernetes.io/name` label.
+2. **Define a Service**: Create a service manifest (usually `ClusterIP`) with selectors matching the deployment labels.
+3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass and update the deployment to mount the PVC.
+4. **Define an Ingress**: By default, use the internal ingress manifest pattern unless otherwise specified.
+5. **Add Other Resources**: Create any additional resources needed (ConfigMaps, Secrets, RBAC, etc.).
+6. **Update ArgoCD App-of-Apps**: Add an entry for the app in `cluster/root-app/values.yaml` to onboard it into ArgoCD management.
+
 ## Architecture Overview
 - **Talos Cluster**: Cluster configuration is generated and managed via Talos (`talos/_out/controlplane.yaml`, `talos/Readme.md`). Talos replaces traditional Linux OS for Kubernetes nodes.
 - **Bootstrap**: The `bootstrap/` directory contains manifests and scripts for initial cluster setup, including external snapshotter CRDs/controllers and Synology CSI integration.
@@ -32,7 +41,7 @@ This repository manages a Kubernetes cluster using Talos, with a focus on declar
 
 ## Integration Points
 
-## Examples
+## Details
 
 ## ArgoCD & App-of-Apps Pattern
 - **Cluster Management**: The cluster is managed declaratively with ArgoCD (`cluster/apps/argo-cd/`).
