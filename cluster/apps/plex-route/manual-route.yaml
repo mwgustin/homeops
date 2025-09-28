@@ -25,7 +25,7 @@ kind: Ingress
 metadata:
   name: plex-ingress
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-rod
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/description: Plex
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
