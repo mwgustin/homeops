@@ -75,6 +75,12 @@ apps:
   - name: plex-route
     namespace: media
     path: cluster/apps/plex-route
+  - name: sonarr-route
+    namespace: media
+    path: cluster/apps/sonarr-route
+  - name: radarr-route
+    namespace: media
+    path: cluster/apps/radarr-route
   
   - name: discord-activity-bot
     namespace: default

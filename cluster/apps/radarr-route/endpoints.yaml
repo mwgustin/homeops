@@ -1,0 +1,18 @@
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: radarr-service
+  namespace: media
+  labels:
+    kubernetes.io/service-name: radarr-service
+addressType: IPv4
+endpoints:
+  - addresses:
+      - "10.1.10.194"
+    conditions:
+      ready: true
+ports:
+  - name: http
+    protocol: TCP
+    port: 7878

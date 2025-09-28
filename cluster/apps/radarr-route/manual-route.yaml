@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 7878 # The service port can be anything, but matching is clear.
+      targetPort: 7878 # This must match the port in the Endpoints object.
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: radarr-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: radarr
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-radarr
+    gethomepage.dev/name: radarr
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - radarr.internal.gustend.net
+      secretName: radarr-internal-gustend-net-tls
+  rules:
+    - host: "radarr.internal.gustend.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: radarr-service # Routes traffic to our service.
+                port:
+                  number: 7878 # Must match the port defined in the Service.
