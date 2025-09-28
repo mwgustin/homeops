@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prowlarr-internal
+  labels:
+    app.kubernetes.io/name: prowlarr
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: "Prowlarr Indexer Manager"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Media Management"
+    gethomepage.dev/icon: sh-prowlarr
+    gethomepage.dev/name: "Prowlarr"
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=prowlarr
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - prowlarr.internal.gustend.net
+      secretName: prowlarr-internal-gustend-net-cert
+  rules:
+    - host: prowlarr.internal.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prowlarr
+                port:
+                  number: 9696

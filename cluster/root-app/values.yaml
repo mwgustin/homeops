@@ -87,6 +87,9 @@ apps:
   - name: deluge-route
     namespace: media
     path: cluster/apps/deluge-route
+  - name: prowlarr
+    namespace: media
+    path: cluster/apps/prowlarr
   
   - name: discord-activity-bot
     namespace: default
