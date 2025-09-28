@@ -9,11 +9,10 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: tautulli
-      app: tautulli
   template:
     metadata:
       labels:
-        app: tautulli
+        app.kubernetes.io/name: tautulli
     spec:
       containers:
         - name: tautulli
@@ -42,10 +41,10 @@ kind: Service
 metadata:
   name: tautulli
   labels:
-    app: tautulli
+    app.kubernetes.io/name: tautulli
 spec:
   selector:
-    app: tautulli 
+    app.kubernetes.io/name: tautulli
   ports:
     - protocol: TCP
       port: 80 
