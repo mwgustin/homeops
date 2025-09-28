@@ -68,9 +68,9 @@ apps:
     namespace: media
     path: cluster/apps/jellyfin
     
-  - name: medialytics
+  - name: tautulli
     namespace: media
-    path: cluster/apps/medialytics
+    path: cluster/apps/tautulli
     
   - name: plex-route
     namespace: media

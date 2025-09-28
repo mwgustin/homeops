@@ -1,30 +1,30 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: medialytics
+  name:   tautulli
   labels:
-    app.kubernetes.io/name: medialytics
+    app.kubernetes.io/name: tautulli
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    gethomepage.dev/description: Medialytics
+    gethomepage.dev/description: tautulli
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: medialytics.png
-    gethomepage.dev/name: Medialytics
+    gethomepage.dev/icon: sh-tautulli
+    gethomepage.dev/name: tautulli
 spec:
   ingressClassName: internal
   tls:
     - hosts:
-      - medialytics.internal.gustend.net
-      secretName: medialytics-internal-gustend-net-cert
+      - plex-mon.internal.gustend.net
+      secretName: plex-mon-internal-gustend-net-cert
   rules:
-    - host: medialytics.internal.gustend.net
+    - host: plex-mon.internal.gustend.net
       http:
         paths:
           - path: "/"
             pathType: Prefix
             backend:
               service:
-                name: medialytics
+                name: tautulli
                 port:
                   number: 80
