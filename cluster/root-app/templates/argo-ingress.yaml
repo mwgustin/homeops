@@ -15,6 +15,7 @@ metadata:
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
     #
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=argocd-server
 spec:
   ingressClassName: internal
   tls:
