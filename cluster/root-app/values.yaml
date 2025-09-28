@@ -67,6 +67,10 @@ apps:
   - name: jellyfin
     namespace: media
     path: cluster/apps/jellyfin
+    
+  - name: medialytics
+    namespace: media
+    path: cluster/apps/medialytics
   
   - name: discord-activity-bot
     namespace: default

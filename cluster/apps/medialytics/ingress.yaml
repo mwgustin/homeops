@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: medialytics
+  labels:
+    app.kubernetes.io/name: medialytics
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: Medialytics
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: medialytics.png
+    gethomepage.dev/name: Medialytics
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - medialytics.internal.gustend.net
+      secretName: medialytics-internal-gustend-net-cert
+  rules:
+    - host: medialytics.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: medialytics
+                port:
+                  number: 80

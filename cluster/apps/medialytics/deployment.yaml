@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: medialytics
+  labels:
+    app: medialytics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: medialytics
+  template:
+    metadata:
+      labels:
+        app: medialytics
+    spec:
+      containers:
+        - name: medialytics
+          image: ghcr.io/drewpeifer/medialytics:latest
+          env:
+            - name: SERVER_IP
+              valueFrom:
+                secretKeyRef:
+                  name: medialytics-secret
+                  key: SERVER_IP
+            - name: SERVER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: medialytics-secret
+                  key: SERVER_TOKEN
+          ports:
+          - containerPort: 80
