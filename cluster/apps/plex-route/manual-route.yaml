@@ -15,6 +15,7 @@ metadata:
   name: plex-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/href: "https://plex.internal.gustend.net"
     gethomepage.dev/description: Plex
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
