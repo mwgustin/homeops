@@ -15,7 +15,7 @@ metadata:
   name: plex-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    gethomepage.dev/pod-selector: "none"
+    gethomepage.dev/pod-selector: ""
     gethomepage.dev/description: Plex
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
