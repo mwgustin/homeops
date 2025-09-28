@@ -24,8 +24,12 @@ data:
             - abbr: GH
               href: https://github.com/mwgustin
   services.yaml: |
-    - Media
-    - Media Management
+    - Media:
+        style: row
+        columns: 3
+    - Media Management:
+        style: row
+        columns: 3
     - Printers:
       - Bastion: 
           icon: sh-mainsail.png
@@ -41,6 +45,7 @@ data:
           widget:
             type: moonraker
             url:  http://10.1.11.169
+
 
   widgets.yaml: |
     - kubernetes:
