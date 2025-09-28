@@ -10,7 +10,7 @@ metadata:
     gethomepage.dev/group: Personal
     gethomepage.dev/icon: sh-ghost
     gethomepage.dev/name: Gustend Blog
-    gethomepage.dev/pod-selector: ghost-k8s
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=ghost-k8s
   labels:
     app: ghost-k8s
     app.kubernetes.io/name: ghost-k8s

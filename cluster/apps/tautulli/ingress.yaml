@@ -11,7 +11,7 @@ metadata:
     gethomepage.dev/group: Media
     gethomepage.dev/icon: sh-tautulli
     gethomepage.dev/name: tautulli
-    gethomepage.dev/pod-selector: ghost-k8s
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=tautulli
 spec:
   ingressClassName: internal
   tls:
