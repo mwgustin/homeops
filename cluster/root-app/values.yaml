@@ -79,9 +79,9 @@ apps:
   - name: plex-route
     namespace: media
     path: cluster/apps/plex-route
-  - name: sonarr-route
+  - name: sonarr
     namespace: media
-    path: cluster/apps/sonarr-route
+    path: cluster/apps/sonarr
   - name: radarr-route
     namespace: media
     path: cluster/apps/radarr-route
