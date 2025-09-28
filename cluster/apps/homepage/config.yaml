@@ -12,6 +12,12 @@ data:
         image: https://images.unsplash.com/photo-1756370382832-1c8fe9965d67?auto=format&fit=crop&w=2560&q=80
         blur: xl
     cardBlur: xs
+    layout:
+      - Personal:
+      - Media: 
+      - Misc:
+      - Cluster Management:
+      - Media Management:
   #settings.yaml: |
   #  providers:
   #    longhorn:
