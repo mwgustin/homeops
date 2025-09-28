@@ -21,12 +21,12 @@ spec:
             - name: SERVER_IP
               valueFrom:
                 secretKeyRef:
-                  name: medialytics-secret
+                  name: medialytics-server-ip
                   key: SERVER_IP
             - name: SERVER_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: medialytics-secret
+                  name: medialytics-server-token
                   key: SERVER_TOKEN
           ports:
           - containerPort: 80
