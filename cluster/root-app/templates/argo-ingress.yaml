@@ -11,11 +11,11 @@ metadata:
     gethomepage.dev/group: Cluster Management
     gethomepage.dev/icon: sh-argo-cd
     gethomepage.dev/name: Argo CD
+    gethomepage.dev/pod-selector: ""
     # If you encounter a redirect loop or are getting a 307 response code
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
     #
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    gethomepage.dev/pod-selector: app.kubernetes.io/name=argocd-server
 spec:
   ingressClassName: internal
   tls:
