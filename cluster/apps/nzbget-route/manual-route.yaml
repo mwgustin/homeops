@@ -18,7 +18,7 @@ metadata:
     gethomepage.dev/pod-selector: ""
     gethomepage.dev/description: nzbget
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Media
+    gethomepage.dev/group: Media Management
     gethomepage.dev/icon: sh-nzbget
     gethomepage.dev/name: nzbget
 spec:
