@@ -16,11 +16,11 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/pod-selector: ""
-    gethomepage.dev/description: radarr
+    gethomepage.dev/description: Radarr
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
     gethomepage.dev/icon: sh-radarr
-    gethomepage.dev/name: radarr
+    gethomepage.dev/name: Radarr
 spec:
   ingressClassName: internal
   tls:

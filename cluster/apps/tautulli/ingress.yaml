@@ -6,11 +6,11 @@ metadata:
     app.kubernetes.io/name: tautulli
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    gethomepage.dev/description: tautulli
+    gethomepage.dev/description: Tautulli
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
     gethomepage.dev/icon: sh-tautulli
-    gethomepage.dev/name: tautulli
+    gethomepage.dev/name: Tautulli
     gethomepage.dev/pod-selector: app.kubernetes.io/name=tautulli
 spec:
   ingressClassName: internal
