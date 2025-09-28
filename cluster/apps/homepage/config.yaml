@@ -17,6 +17,7 @@ data:
       - Media: 
       - Misc:
       - Cluster Management:
+      - Printers:
       - Media Management:
   #settings.yaml: |
   #  providers:
