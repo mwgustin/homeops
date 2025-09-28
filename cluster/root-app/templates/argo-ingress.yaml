@@ -9,7 +9,7 @@ metadata:
     gethomepage.dev/description: Argo CD
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Cluster Management
-    gethomepage.dev/icon: sh-argocd-cd
+    gethomepage.dev/icon: sh-argo-cd
     gethomepage.dev/name: Argo CD
     # If you encounter a redirect loop or are getting a 307 response code
     # then you need to force the nginx ingress to connect to the backend using HTTPS.
