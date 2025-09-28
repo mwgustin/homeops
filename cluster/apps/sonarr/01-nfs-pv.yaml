@@ -11,7 +11,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: library.gustend.local
-    path: /TheBarns/Media/Television
+    path: /volume1/Media/Television
   storageClassName: nfs-library-media
 ---
 apiVersion: v1
@@ -26,7 +26,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: library.gustend.local
-    path: /TheBarns/Media/docker/downloads
+    path: /volume1/Media/docker/downloads
   storageClassName: nfs-library-media
 ---
 apiVersion: v1
@@ -41,5 +41,5 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: library.gustend.local
-    path: /TheBarns/Media
+    path: /volume1/Media
   storageClassName: nfs-library-media
