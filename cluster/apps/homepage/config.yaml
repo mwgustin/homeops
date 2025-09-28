@@ -24,17 +24,6 @@ data:
             - abbr: GH
               href: https://github.com/mwgustin
   services.yaml: |
-    - Group A:
-      - Sonarr:
-          icon: sonarr.png
-          href: http://sonarr.host/
-          description: Series management
-
-    - Group B:
-        - Radarr:
-            icon: radarr.png
-            href: http://radarr.host/
-            description: Movie management
     - Printers:
       - Bastion: 
           icon: sh-mainsail.png
