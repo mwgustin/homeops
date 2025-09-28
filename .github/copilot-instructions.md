@@ -3,7 +3,7 @@
 This repository manages a Kubernetes cluster using Talos, with a focus on declarative infrastructure, GitOps, and external integrations. AI agents should follow these guidelines for effective contributions:
 
 ## Steps for Adding a New App
-When requested to onboard a new app, follow these steps and reference the example manifests defined below:
+When requested to onboard a new app, follow these steps and reference the example manifests defined in the "Specific cluster resource details and examples" section below:
 1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits and the `app.kubernetes.io/name` label.
 2. **Define a Service**: Create a service manifest (usually `ClusterIP`) with selectors matching the deployment labels.
 3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass and update the deployment to mount the PVC.
