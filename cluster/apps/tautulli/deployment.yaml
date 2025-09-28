@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: tautulli
   labels:
-    app: tautulli
+    app.kubernetes.io/name: tautulli
 spec:
   replicas: 1
   selector:
