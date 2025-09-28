@@ -71,6 +71,10 @@ apps:
   - name: medialytics
     namespace: media
     path: cluster/apps/medialytics
+    
+  - name: plex-route
+    namespace: media
+    path: cluster/apps/plex-route
   
   - name: discord-activity-bot
     namespace: default

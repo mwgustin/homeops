@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: plex-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 32400 # The service port can be anything, but matching is clear.
+      targetPort: 32400 # This must match the port in the Endpoints object.
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: plex-service
+subsets:
+  - addresses:
+      - ip: "10.1.10.194"
+    ports:
+      - name: http 
+        port: 32400 
+        protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plex-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-rod
+    gethomepage.dev/description: Plex
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-plex
+    gethomepage.dev/name: Plex
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - plex.internal.gustend.net
+      secretName: plex-internal-gustend-net-tls
+  rules:
+    - host: "plex.internal.gustend.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: plex-service # Routes traffic to our service.
+                port:
+                  number: 32400 # Must match the port defined in the Service.
