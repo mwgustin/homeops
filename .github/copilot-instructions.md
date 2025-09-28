@@ -131,7 +131,7 @@ spec:
 ### Ingress
 - **Internal ingress** uses domain `{service}.internal.gustend.net` and must reference a TLS certificate from `letsencrypt-prod`.
 - **External ingress** uses domain `{service}.gustend.net` and does NOT require a TLS reference (handled by external Cloudflare tunnel).
-- Both ingress types use `gethomepage.dev` annotations for homepage integration.
+- Both ingress types use `gethomepage.dev` annotations for homepage integration. For the icon, use the selfhost icon package which follows the convention of `sh-{service-name}`
 
 **Internal Ingress Example:**
 ```yaml
