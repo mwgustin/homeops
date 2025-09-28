@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy
+  labels:
+    app.kubernetes.io/name: ntfy
+data:
+  server.yml: |
+    # See https://github.com/binwiederhier/ntfy/blob/main/server/server.yml for options
+    base-url: https://ntfy.internal.gustend.net
+    upstream-base-url: "https://ntfy.sh"

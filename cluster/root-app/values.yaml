@@ -113,6 +113,10 @@ apps:
     namespace: ghost-k8s
     path: cluster/apps/ghost
 
+  - name: ntfy
+    namespace: ntfy
+    path: cluster/apps/ntfy
+    
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost

@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ntfy
+  labels:
+    app.kubernetes.io/name: ntfy
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: "Push notification server"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: "Messaging"
+    gethomepage.dev/icon: "sh-ntfy"
+    gethomepage.dev/name: "ntfy"
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=ntfy
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - ntfy.internal.gustend.net
+      secretName: ntfy-internal-gustend-net-cert
+  rules:
+    - host: ntfy.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ntfy
+                port:
+                  number: 80
