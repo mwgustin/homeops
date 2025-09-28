@@ -84,6 +84,9 @@ apps:
   - name: nzbget-route
     namespace: media
     path: cluster/apps/nzbget-route
+  - name: deluge-route
+    namespace: media
+    path: cluster/apps/deluge-route
   
   - name: discord-activity-bot
     namespace: default
