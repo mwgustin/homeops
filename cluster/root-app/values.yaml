@@ -82,9 +82,9 @@ apps:
   - name: sonarr
     namespace: media
     path: cluster/apps/sonarr
-  - name: radarr-route
+  - name: radarr
     namespace: media
-    path: cluster/apps/radarr-route
+    path: cluster/apps/radarr
   - name: nzbget-route
     namespace: media
     path: cluster/apps/nzbget-route
@@ -98,6 +98,7 @@ apps:
   - name: discord-activity-bot
     namespace: default
     path: cluster/apps/discord-activity-bot
+
 
   - name: postgres-operator
     namespace: postgres-operator

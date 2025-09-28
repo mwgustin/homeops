@@ -1,0 +1,52 @@
+---
+# PVC for Radarr config (Synology iSCSI)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: synology-iscsi
+---
+# PVC for downloads (NFS)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-downloads
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: nfs-library-media
+---
+# PVC for movies (NFS)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-movies
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: nfs-library-media
+---
+# PVC for media (NFS)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: radarr-media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: nfs-library-media
