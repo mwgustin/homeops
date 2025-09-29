@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: synology-iscsi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-resources-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: nfs-foundry-resources
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: foundry-zip-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs-foundry-zip

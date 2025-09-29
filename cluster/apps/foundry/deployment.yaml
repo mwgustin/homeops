@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foundry
+  labels:
+    app.kubernetes.io/name: foundry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: foundry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: foundry
+    spec:
+      containers:
+        - name: foundry
+          image: direckthit/fvtt-docker:latest
+          ports:
+            - containerPort: 30000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          volumeMounts:
+            - name: foundry-config
+              mountPath: /data/foundryvtt
+            - name: foundry-resources
+              mountPath: /data/foundryvtt/Data/resources
+            - name: foundry-zip
+              mountPath: /host
+      volumes:
+        - name: foundry-config
+          persistentVolumeClaim:
+            claimName: foundry-config-pvc
+        - name: foundry-resources
+          persistentVolumeClaim:
+            claimName: foundry-resources-pvc
+        - name: foundry-zip
+          persistentVolumeClaim:
+            claimName: foundry-zip-pvc

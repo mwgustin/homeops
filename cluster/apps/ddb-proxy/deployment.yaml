@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ddb-proxy
+  labels:
+    app.kubernetes.io/name: ddb-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ddb-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ddb-proxy
+    spec:
+      containers:
+        - name: ddb-proxy
+          image: ghcr.io/mrprimate/ddb-proxy:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "512Mi"

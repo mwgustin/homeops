@@ -58,6 +58,7 @@ apps:
   - name: csi-driver-nfs
     namespace: kube-system 
     path: cluster/apps/csi-driver-nfs
+
   - name: metrics-server
     namespace: kube-system
     path: cluster/apps/metrics-server
@@ -95,6 +96,9 @@ apps:
   - name: prowlarr
     namespace: media
     path: cluster/apps/prowlarr
+  - name: ytdl
+    namespace: media
+    path: cluster/apps/ytdl
   
   - name: discord-activity-bot
     namespace: default
@@ -119,9 +123,12 @@ apps:
     namespace: ntfy
     path: cluster/apps/ntfy
 
-  - name: ytdl
-    namespace: media
-    path: cluster/apps/ytdl
+  - name: foundry
+    namespace: foundry
+    path: cluster/apps/foundry
+  - name: ddb-proxy
+    namespace: foundry
+    path: cluster/apps/ddb-proxy
     
   # - name: ghost-blog
   #   namespace: ghost-k8s

@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ddb-proxy
+  labels:
+    app.kubernetes.io/name: ddb-proxy
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - ddb-proxy.internal.gustend.net
+      secretName: ddb-proxy-internal-gustend-net-cert
+  rules:
+    - host: ddb-proxy.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ddb-proxy
+                port:
+                  number: 3000

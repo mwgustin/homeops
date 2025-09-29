@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: foundry
+  labels:
+    app.kubernetes.io/name: foundry
+  annotations:
+    kubernetes.io/ingress.class: "external"
+    gethomepage.dev/description: Foundry VTT
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Games
+    gethomepage.dev/icon: sh-foundry-virtual-tabletop
+    gethomepage.dev/name: Foundry VTT
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=foundry
+spec:
+  ingressClassName: external
+  rules:
+    - host: foundry.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: foundry
+                port:
+                  number: 30000
