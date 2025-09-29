@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tautulli
-          image: ghcr.io/tautulli/tautulli:latest
+          image: ghcr.io/tautulli/tautulli:v2.16.0
           ports:
           - containerPort: 8181
           resources:

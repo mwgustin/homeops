@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nzbget
-          image: linuxserver/nzbget
+          image: linuxserver/nzbget:v25.3-ls214
           ports:
             - containerPort: 6789
           resources:
