@@ -28,4 +28,4 @@ spec:
               service:
                 name: ytdl
                 port:
-                  number: 3033
+                  number: 8945

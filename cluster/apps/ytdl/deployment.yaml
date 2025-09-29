@@ -15,10 +15,10 @@ spec:
         app.kubernetes.io/name: ytdl
     spec:
       containers:
-        - name: yt-dlp-webui
-          image: marcobaobao/yt-dlp-webui
+        - name: pinchflat
+          image: ghcr.io/kieraneglin/pinchflat:latest
           ports:
-            - containerPort: 3033
+            - containerPort: 8945
           resources:
             requests:
               cpu: "100m"
