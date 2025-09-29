@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: foundry
-          image: direckthit/fvtt-docker:latest
+          image: felddy/foundryvtt:13.348.0
           ports:
             - containerPort: 30000
           resources:
@@ -27,19 +27,25 @@ spec:
               cpu: "500m"
               memory: "1Gi"
           volumeMounts:
-            - name: foundry-config
-              mountPath: /data/foundryvtt
-            - name: foundry-resources
-              mountPath: /data/foundryvtt/Data/resources
-            - name: foundry-zip
-              mountPath: /host
+            - name: foundry-data
+              mountPath: /data
+          env:
+            - name: FOUNDRY_ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: foundry-external-secret
+                  key: foundry-admin-key
+            - name: FOUNDRY_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: foundry-external-secret
+                  key: foundry-user-name
+            - name: FOUNDRY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: foundry-external-secret
+                  key: foundry-user-password
       volumes:
-        - name: foundry-config
+        - name: foundry-data
           persistentVolumeClaim:
             claimName: foundry-config-pvc
-        - name: foundry-resources
-          persistentVolumeClaim:
-            claimName: foundry-resources-pvc
-        - name: foundry-zip
-          persistentVolumeClaim:
-            claimName: foundry-zip-pvc
