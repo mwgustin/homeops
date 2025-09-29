@@ -9,7 +9,7 @@ metadata:
     gethomepage.dev/description: Youtube DL WebUI
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: Media
-    gethomepage.dev/icon: sh-ytdl
+    gethomepage.dev/icon: sh-youtube-dl
     gethomepage.dev/name: YTDL
     gethomepage.dev/pod-selector: app.kubernetes.io/name=ytdl
 spec:
