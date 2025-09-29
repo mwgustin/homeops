@@ -88,9 +88,6 @@ apps:
   - name: nzbget
     namespace: media
     path: cluster/apps/nzbget
-  - name: deluge-route
-    namespace: media
-    path: cluster/apps/deluge-route
 
   - name: deluge
     namespace: media
