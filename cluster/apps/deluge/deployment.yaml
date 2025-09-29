@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deluge
+  labels:
+    app.kubernetes.io/name: deluge
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: deluge
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: deluge
+    spec:
+      containers:
+        - name: deluge
+          image: linuxserver/deluge
+          ports:
+            - containerPort: 8112
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: deluge-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: deluge-downloads

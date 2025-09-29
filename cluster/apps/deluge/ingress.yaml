@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: deluge
+  labels:
+    app.kubernetes.io/name: deluge
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: Deluge BitTorrent client
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-deluge
+    gethomepage.dev/name: Deluge
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=deluge
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - deluge.internal.gustend.net
+      secretName: deluge-internal-gustend-net-cert
+  rules:
+    - host: deluge.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: deluge
+                port:
+                  number: 8112

@@ -91,6 +91,10 @@ apps:
   - name: deluge-route
     namespace: media
     path: cluster/apps/deluge-route
+
+  - name: deluge
+    namespace: media
+    path: cluster/apps/deluge
   - name: prowlarr
     namespace: media
     path: cluster/apps/prowlarr
