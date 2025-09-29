@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ytdl
+  labels:
+    app.kubernetes.io/name: ytdl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ytdl
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ytdl
+    spec:
+      containers:
+        - name: yt-dlp-webui
+          image: marcobaobao/yt-dlp-webui
+          ports:
+            - containerPort: 3033
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: downloads
+              mountPath: /downloads
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: ytdl-downloads-pvc
+        - name: config
+          persistentVolumeClaim:
+            claimName: ytdl-config-pvc

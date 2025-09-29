@@ -118,6 +118,10 @@ apps:
   - name: ntfy
     namespace: ntfy
     path: cluster/apps/ntfy
+
+  - name: ytdl
+    namespace: media
+    path: cluster/apps/ytdl
     
   # - name: ghost-blog
   #   namespace: ghost-k8s
