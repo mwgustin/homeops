@@ -80,22 +80,24 @@ apps:
   - name: plex-route
     namespace: media
     path: cluster/apps/plex-route
+  - name: prowlarr
+    namespace: media
+    path: cluster/apps/prowlarr
+  - name: nzbget
+    namespace: media
+    path: cluster/apps/nzbget
   - name: sonarr
     namespace: media
     path: cluster/apps/sonarr
   - name: radarr
     namespace: media
     path: cluster/apps/radarr
-  - name: nzbget
+  - name: lidarr
     namespace: media
-    path: cluster/apps/nzbget
-
+    path: cluster/apps/lidarr
   - name: deluge
     namespace: media
     path: cluster/apps/deluge
-  - name: prowlarr
-    namespace: media
-    path: cluster/apps/prowlarr
   - name: ytdl
     namespace: media
     path: cluster/apps/ytdl

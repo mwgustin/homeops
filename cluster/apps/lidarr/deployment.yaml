@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lidarr
+  labels:
+    app.kubernetes.io/name: lidarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: lidarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: lidarr
+    spec:
+      containers:
+        - name: lidarr
+          image: linuxserver/lidarr:2.13.3
+          ports:
+            - containerPort: 8686
+          env:
+            - name: TZ
+              value: "America/Chicago"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: music
+              mountPath: /music
+            - name: downloads
+              mountPath: /downloads
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: lidarr-config-pvc
+        - name: music
+          persistentVolumeClaim:
+            claimName: lidarr-music-pvc
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: lidarr-downloads-pvc

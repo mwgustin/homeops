@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lidarr
+  labels:
+    app.kubernetes.io/name: lidarr
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: Lidarr music manager
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-lidarr
+    gethomepage.dev/name: Lidarr
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=lidarr
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - lidarr.internal.gustend.net
+      secretName: lidarr-internal-gustend-net-cert
+  rules:
+    - host: lidarr.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: lidarr
+                port:
+                  number: 8686
