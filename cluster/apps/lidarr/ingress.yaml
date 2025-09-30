@@ -8,7 +8,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/description: Lidarr music manager
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Media
+    gethomepage.dev/group: Media Management
     gethomepage.dev/icon: sh-lidarr
     gethomepage.dev/name: Lidarr
     gethomepage.dev/pod-selector: app.kubernetes.io/name=lidarr
