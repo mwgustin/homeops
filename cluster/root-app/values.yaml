@@ -140,10 +140,6 @@ apps:
     namespace: mongodb
     path: cluster/apps/mongodb
 
-  - name: mongo-test
-    namespace: mongodb
-    path: cluster/apps/mongo-test
-    
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost
