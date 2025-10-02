@@ -106,6 +106,9 @@ apps:
     namespace: default
     path: cluster/apps/discord-activity-bot
 
+  - name: qbittorrent
+    namespace: default
+    path: cluster/apps/qbittorrent
 
   - name: postgres-operator
     namespace: postgres-operator
