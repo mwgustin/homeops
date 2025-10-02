@@ -365,3 +365,22 @@ spec:
 ```
 
 
+### Helm
+Instead of the manual manifests, some applications will be deployed exclusively with Helm charts. For helm chart apps, we should follow this format
+
+```yaml
+apiVersion: v2
+name: <service name>
+description: <service description>
+type: application
+version: 1.0.0
+dependencies:
+  - name: <helm chart name>
+    version: <helm chart version>
+    repository: <helm chart repository>
+```
+
+The Chart should be stored in Chart.yaml and any relevant customization values should be in values.yaml
+
+An entry in the root-app values should still be specified. 
+

@@ -135,6 +135,10 @@ apps:
   - name: ddb-proxy
     namespace: foundry
     path: cluster/apps/ddb-proxy
+
+  - name: mongodb-operator
+    namespace: mongodb
+    path: cluster/apps/mongodb
     
   # - name: ghost-blog
   #   namespace: ghost-k8s
