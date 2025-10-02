@@ -141,7 +141,7 @@ apps:
     path: cluster/apps/mongodb
 
   - name: mongo-test
-    namespace: default
+    namespace: mongodb
     path: cluster/apps/mongo-test
     
   # - name: ghost-blog
