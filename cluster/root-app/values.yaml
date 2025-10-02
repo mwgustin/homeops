@@ -101,10 +101,7 @@ apps:
   - name: ytdl
     namespace: media
     path: cluster/apps/ytdl
-  - name: qbittorrent
-    namespace: media
-    path: cluster/apps/qbittorrent
-  
+
   - name: discord-activity-bot
     namespace: default
     path: cluster/apps/discord-activity-bot
