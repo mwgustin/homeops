@@ -48,6 +48,10 @@ apps:
     namespace: homepage
     path: cluster/apps/homepage
 
+  - name: jellyseer
+    namespace: media
+    path: cluster/apps/jellyseer
+
   - name: uptime-kuma
     namespace: default
     path: cluster/apps/uptime-kuma
