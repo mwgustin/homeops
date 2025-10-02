@@ -139,6 +139,10 @@ apps:
   - name: mongodb-operator
     namespace: mongodb
     path: cluster/apps/mongodb
+
+  - name: mongo-test
+    namespace: default
+    path: cluster/apps/mongo-test
     
   # - name: ghost-blog
   #   namespace: ghost-k8s
