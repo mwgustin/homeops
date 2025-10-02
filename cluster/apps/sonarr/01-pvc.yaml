@@ -21,7 +21,7 @@ spec:
   resources:
     requests:
       storage: 500Gi
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -33,7 +33,7 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -45,4 +45,4 @@ spec:
   resources:
     requests:
       storage: 2Ti
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media

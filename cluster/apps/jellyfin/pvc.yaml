@@ -35,7 +35,7 @@ spec:
   nfs:
     server: library.gustend.local
     path: /volume1/Media
-  storageClassName: nfs-library-media
+  storageClassName: jellyfin-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -48,4 +48,4 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  storageClassName:  nfs-library-media
+  storageClassName:  jellyfin-nfs-library-media

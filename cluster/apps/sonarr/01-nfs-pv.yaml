@@ -12,7 +12,7 @@ spec:
   nfs:
     server: library.gustend.local
     path: /volume1/Media/Television
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -27,7 +27,7 @@ spec:
   nfs:
     server: library.gustend.local
     path: /volume1/Media/docker/downloads
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -42,4 +42,4 @@ spec:
   nfs:
     server: library.gustend.local
     path: /volume1/Media
-  storageClassName: nfs-library-media
+  storageClassName: sonarr-nfs-library-media
