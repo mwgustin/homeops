@@ -9,7 +9,7 @@ metadata:
     gethomepage.dev/description: "Jellyseerr - Media Requests"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: "Media Management"
-    gethomepage.dev/icon: "sh-jellyseer"
+    gethomepage.dev/icon: "sh-jellyseerr"
     gethomepage.dev/name: "Jellyseerr"
     gethomepage.dev/pod-selector: app.kubernetes.io/name=jellyseer
 spec:
