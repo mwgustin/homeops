@@ -15,19 +15,30 @@ spec:
         app.kubernetes.io/name: qbittorrent
     spec:
       containers:
-        - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:latest
+        - name: gluetun
+          image: qmcgaw/gluetun
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
           env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: "Etc/UTC"
-            - name: WEBUI_PORT
-              value: "8080"
-            - name: TORRENTING_PORT
-              value: "6881"
+            - name: VPN_SERVICE_PROVIDER
+              value: "vyprvpn"
+            - name: OPENVPN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-gluetun-openvpn-user
+                  key: OPENVPN_USER
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-gluetun-openvpn-password
+                  key: OPENVPN_PASSWORD
+            - name: SERVER_REGIONS
+              value: "Canada"
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
           ports:
             - containerPort: 8080
               name: webui
@@ -43,11 +54,54 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          livenessProbe:
+            exec:
+              command:
+                - ping
+                - -c
+                - "1"
+                - www.google.com
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
+
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:latest
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: WEBUI_PORT
+              value: "8080"
+            - name: TORRENTING_PORT
+              value: "6881"
           volumeMounts:
             - name: downloads
               mountPath: /downloads
             - name: config
               mountPath: /config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            exec:
+              command:
+                - ping
+                - -c
+                - "1"
+                - www.google.com
+            initialDelaySeconds: 20
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: downloads
           persistentVolumeClaim:
@@ -55,3 +109,6 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: qbittorrent-config-pvc
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: qbittorrent-gluetun-config-pvc
