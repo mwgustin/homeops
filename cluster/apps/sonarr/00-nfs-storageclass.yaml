@@ -6,3 +6,5 @@ provisioner: nfs.csi.k8s.io
 parameters:
   server: library.gustend.local
   share: /volume1/Media
+mountOptions:
+  - nolock

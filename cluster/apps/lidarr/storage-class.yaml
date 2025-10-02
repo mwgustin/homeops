@@ -5,6 +5,8 @@ metadata:
 provisioner: nfs.csi.k8s.io
 parameters:
   share: /volume1/Media/Music
+mountOptions:
+  - nolock
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -13,3 +15,5 @@ metadata:
 provisioner: nfs.csi.k8s.io
 parameters:
   share: /volume1/Media/docker/downloads
+mountOptions:
+  - nolock

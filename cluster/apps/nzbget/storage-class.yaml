@@ -5,3 +5,5 @@ metadata:
 provisioner: nfs.csi.k8s.io
 parameters:
   share: /volume1/Media/docker/downloads
+mountOptions:
+  - nolock
