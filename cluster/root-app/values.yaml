@@ -76,6 +76,9 @@ apps:
   - name: jellyfin
     namespace: media
     path: cluster/apps/jellyfin
+  - name: immich
+    namespace: media
+    path: cluster/apps/immich
     
   - name: tautulli
     namespace: media

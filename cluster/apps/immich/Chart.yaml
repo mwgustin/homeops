@@ -1,0 +1,9 @@
+apiVersion: v2
+name: immich
+description: Immich photo and video backup app
+version: 1.0.0
+type: application
+dependencies:
+  - name: immich
+    version: "0.9.3"
+    repository: "oci://ghcr.io/immich-app/immich-charts/immich"
