@@ -55,9 +55,8 @@ apps:
   - name: uptime-kuma
     namespace: default
     path: cluster/apps/uptime-kuma
-    
   - name: csi-driver-smb
-    namespace: kube-system 
+    namespace: kube-system
     path: cluster/apps/csi-driver-smb
   - name: csi-driver-nfs
     namespace: kube-system 
@@ -143,6 +142,10 @@ apps:
   - name: mongodb-operator
     namespace: mongodb
     path: cluster/apps/mongodb
+
+  - name: printers
+    namespace: default
+    path: cluster/apps/printers
 
   # - name: ghost-blog
   #   namespace: ghost-k8s

@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bastion-printer
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: Bastion Printer
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Printers
+    gethomepage.dev/icon: sh-klipper
+    gethomepage.dev/name: Bastion
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - bastion.internal.gustend.net
+      secretName: bastion-internal-gustend-net-tls
+  rules:
+    - host: "bastion.internal.gustend.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bastion-printer
+                port:
+                  number: 80

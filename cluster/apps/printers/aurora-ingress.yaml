@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aurora-printer
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: Aurora Printer
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Printers
+    gethomepage.dev/icon: sh-klipper
+    gethomepage.dev/name: Aurora
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - aurora.internal.gustend.net
+      secretName: aurora-internal-gustend-net-tls
+  rules:
+    - host: "aurora.internal.gustend.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aurora-printer
+                port:
+                  number: 80

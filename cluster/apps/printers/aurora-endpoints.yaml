@@ -1,0 +1,16 @@
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: aurora-printer
+  labels:
+    kubernetes.io/service-name: aurora-printer
+addressType: IPv4
+endpoints:
+  - addresses:
+      - "10.1.11.169"
+    conditions:
+      ready: true
+ports:
+  - name: http
+    protocol: TCP
+    port: 80
