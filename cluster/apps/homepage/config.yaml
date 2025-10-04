@@ -34,18 +34,18 @@ data:
     - Printers:
       - Bastion: 
           icon: sh-mainsail.png
-          href: http://10.1.9.111
+          href: https://bastion.internal.gustend.net
           description: Bastion
           widget:
             type: moonraker
-            url:  http://10.1.9.111
+            url:  https://bastion.internal.gustend.net
       - Aurora: 
           icon: sh-mainsail.png
-          href: http://10.1.11.169
+          href: https://aurora.internal.gustend.net
           description: Bastion
           widget:
             type: moonraker
-            url:  http://10.1.11.169
+            url:  https://aurora.internal.gustend.net
 
 
   widgets.yaml: |
