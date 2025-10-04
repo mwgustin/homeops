@@ -6,7 +6,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/pod-selector: ""
     gethomepage.dev/description: Bastion Printer
-    gethomepage.dev/enabled: "true"
+    gethomepage.dev/enabled: "false"
     gethomepage.dev/group: Printers
     gethomepage.dev/icon: sh-klipper
     gethomepage.dev/name: Bastion

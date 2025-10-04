@@ -42,7 +42,7 @@ data:
       - Aurora: 
           icon: sh-mainsail.png
           href: https://aurora.internal.gustend.net
-          description: Bastion
+          description: Aurora
           widget:
             type: moonraker
             url:  https://aurora.internal.gustend.net
