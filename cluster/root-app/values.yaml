@@ -149,10 +149,6 @@ apps:
     namespace: default
     path: cluster/apps/printers
 
-  - name: homeassistant
-    namespace: default
-    path: cluster/apps/homeassistant
-
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost
