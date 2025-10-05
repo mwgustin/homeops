@@ -18,8 +18,6 @@ spec:
       containers:
         - name: homeassistant
           image: ghcr.io/home-assistant/home-assistant:stable
-          securityContext:
-            privileged: true
           resources:
             requests:
               cpu: "100m"
