@@ -1,0 +1,2 @@
+creation_rules:
+  - azure_keyvault: https://gustend-mgmt.vault.azure.net/keys/sops-key/5f16ea9e07e34c8a8258484924a6f1be
