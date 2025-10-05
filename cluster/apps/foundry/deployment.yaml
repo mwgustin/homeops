@@ -27,7 +27,7 @@ spec:
             runAsUser: 0
       containers:
         - name: foundry
-          image: felddy/foundryvtt:13.348.0
+          image: felddy/foundryvtt:13.350.0
           ports:
             - containerPort: 30000
           resources:
