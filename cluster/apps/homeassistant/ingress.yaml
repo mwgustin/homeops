@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homeassistant
+  labels:
+    app.kubernetes.io/name: homeassistant
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: Home automation platform
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Home Automation
+    gethomepage.dev/icon: sh-home-assistant
+    gethomepage.dev/name: Home Assistant
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=homeassistant
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+      - ha.internal.gustend.net
+      secretName: ha-internal-gustend-net-cert
+  rules:
+    - host: ha.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: homeassistant
+                port:
+                  number: 8123
