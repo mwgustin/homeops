@@ -9,3 +9,5 @@ cluster/main/apps/ghost/01-secrets.yaml
 bootstrap/synology-csi-talos/config/client-info.yml
 cluster/apps/cloudflared/credentials.json
 cluster/apps/cert-manager-cloudflare/secrets.yaml
+
+*.dec.*

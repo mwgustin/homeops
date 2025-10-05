@@ -1,0 +1,81 @@
+version: '3'
+
+env:
+  mgmt_infra_dir: cluster/infra/mgmt
+  main_infra_dir: cluster/infra/main
+
+tasks:
+  default: 
+    cmds: 
+      - echo "Hello World"
+  sops-encrypt-mgmt:
+    desc: "Encrypt Mgmt secrets"
+    dir: '{{ .mgmt_infra_dir }}'
+    cmds:
+      - sops -encrypt env/secrets.dec.json > env/secrets.enc.json
+  sops-decrypt-mgmt:
+    desc: "Decrypt Mgmt secrets"
+    dir: '{{ .mgmt_infra_dir }}'
+    cmds:
+      - sops -decrypt env/secrets.enc.json > env/secrets.dec.json
+  sops-encrypt-main:
+    desc: "Encrypt Main secrets"
+    dir: '{{ .main_infra_dir }}'
+    cmds:
+      - sops -encrypt env/secrets.dec.json > env/secrets.enc.json
+  sops-decrypt-main:
+    desc: "Decrypt Main secrets"
+    dir: '{{ .main_infra_dir }}'
+    cmds:
+      - sops -decrypt env/secrets.enc.json > env/secrets.dec.json
+  sops-encrypt-all:
+    desc: "Encrypt all secret files"
+    aliases:
+      - enc
+    cmds:
+      - task: sops-encrypt-mgmt
+      - task: sops-encrypt-main
+  sops-decrypt-all:
+    desc: "Decrypt all secret files"
+    aliases:
+      - dec
+    cmds:
+      - task: sops-decrypt-mgmt
+      - task: sops-decrypt-main
+  tf-plan-mgmt:
+    desc: "Terraform plan MGMT"
+    dir: '{{ .mgmt_infra_dir }}'
+    cmds:
+      - terraform plan
+  tf-plan-main:
+    desc: "Terraform plan Main"
+    dir: '{{ .main_infra_dir }}'
+    cmds:
+      - terraform plan
+  tf-plan-all:
+    desc: "Terraform plan all"
+    aliases:
+      - tfpa
+    cmds:
+      - task: tf-plan-mgmt
+      - task: tf-plan-main
+  tf-apply-mgmt:
+    desc: "Terraform apply MGMT"
+    dir: '{{ .mgmt_infra_dir }}'
+    cmds:
+      - terraform apply
+  tf-apply-main:
+    desc: "Terraform apply Main"
+    dir: '{{ .main_infra_dir }}'
+    cmds:
+      - terraform apply
+  tf-apply-all:
+    desc: "Terraform apply all"
+    aliases:
+      - tfaa
+    cmds:
+      - task: tf-apply-mgmt
+      - task: tf-apply-main
+    
+
+
