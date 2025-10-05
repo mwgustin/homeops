@@ -33,13 +33,3 @@ resource "azurerm_key_vault_key" "sops-key" {
     "wrapKey",
   ]
 }
-
-
-import {
-    to = azurerm_key_vault.kv
-    id = "/subscriptions/1d68b170-4207-426d-bd03-580077f57234/resourceGroups/gustend-mgmt/providers/Microsoft.KeyVault/vaults/gustend-mgmt"
-}
-import {
-    to = azurerm_key_vault_key.sops-key
-    id = "https://gustend-mgmt.vault.azure.net/keys/sops-key/5f16ea9e07e34c8a8258484924a6f1be"
-}
