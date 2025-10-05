@@ -43,6 +43,11 @@ for any resources not specified in that list, take a best guess and follow the c
 - **App Deployment**:
   - Each app in `cluster/apps/` is self-contained. Some use Helm charts (`Chart.yaml`, `values.yaml`), others use raw manifests.
   - Ingress, service, and deployment patterns are consistent across apps.
+- **Infrastructure initialization**:
+  - Terraform is used to orchestrate the Azure Key Vault external secrets via an initial SOPS encrypted json.
+  - A management keyvault is also created for the sops keys.
+  - The Terraform workspaces and workspace variables are configured via the management terraform workspace. 
+
 
 ## Project-Specific Conventions
 - **Directory Structure**: All cluster resources are organized by function (bootstrap, apps, root-app, talos).

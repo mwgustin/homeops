@@ -27,3 +27,11 @@ import {
 }
 ```
 
+
+NOTE: the secrets for the service principals will need to be cycled every couple years.  The management project will manage the TF workspace variables.
+
+To update the k8s-operator SPN secrets:
+
+```bash
+kubectl create secret generic -n external-secrets azure-secret-sp --from-literal=ClientID=<client_id> --from-literal=ClientSecret=<client_secret>
+```
