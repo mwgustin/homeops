@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ersatztv
+  labels:
+    app.kubernetes.io/name: ersatztv
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: ErsatzTV IPTV server
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media Management
+    gethomepage.dev/icon: sh-ersatztv
+    gethomepage.dev/name: ErsatzTV
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=ersatztv
+spec:
+  ingressClassName: internal
+  tls:
+    - hosts:
+        - ersatztv.internal.gustend.net
+      secretName: ersatztv-internal-gustend-net-cert
+  rules:
+    - host: ersatztv.internal.gustend.net
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ersatztv
+                port:
+                  number: 8409

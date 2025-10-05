@@ -108,11 +108,13 @@ apps:
   - name: ytdl
     namespace: media
     path: cluster/apps/ytdl
+  - name: ersatztv
+    namespace: media
+    path: cluster/apps/ersatztv
 
   - name: discord-activity-bot
     namespace: default
     path: cluster/apps/discord-activity-bot
-
 
   - name: postgres-operator
     namespace: postgres-operator
