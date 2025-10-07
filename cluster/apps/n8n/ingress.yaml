@@ -6,6 +6,12 @@ metadata:
   namespace: n8n
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    gethomepage.dev/description: n8n Workflow Automation
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Automation
+    gethomepage.dev/icon: sh-n8n
+    gethomepage.dev/name: n8n
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=n8n
 spec:
   ingressClassName: internal
   tls:

@@ -1,9 +1,0 @@
-# helm install my-n8n oci://8gears.container-registry.com/library/n8n --version 1.0.0
-
-apiVersion: v2
-name: n8n
-version: 1.0.0
-dependencies:
-  - name: n8n
-    version: 1.0.15
-    repository: oci://8gears.container-registry.com/library
