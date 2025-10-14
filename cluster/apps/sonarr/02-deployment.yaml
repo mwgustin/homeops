@@ -15,7 +15,7 @@ spec:
         app.kubernetes.io/name: sonarr
     spec:
       initContainers:
-        - name: init-chown-volumes
+        - name: fix-permissions
           image: busybox
           command: ["sh", "-c", "chown -R 1000:1000 /tv /downloads /TheBarns/Media"]
           volumeMounts:
@@ -25,9 +25,18 @@ spec:
               mountPath: /downloads
             - name: media
               mountPath: /TheBarns/Media
+          securityContext:
+            runAsUser: 0
       containers:
         - name: sonarr
           image: linuxserver/sonarr
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "America/Chicago"
           ports:
             - containerPort: 8989
           resources:
@@ -46,6 +55,10 @@ spec:
               mountPath: /downloads
             - name: media
               mountPath: /TheBarns/Media
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       volumes:
         - name: config
           persistentVolumeClaim:
