@@ -17,6 +17,13 @@ spec:
       containers:
         - name: sonarr
           image: linuxserver/sonarr
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "America/Chicago"
           ports:
             - containerPort: 8989
           resources:
@@ -26,6 +33,10 @@ spec:
             limits:
               cpu: "500m"
               memory: "2Gi"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
           volumeMounts:
             - name: config
               mountPath: /config
