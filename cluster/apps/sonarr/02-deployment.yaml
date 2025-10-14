@@ -14,6 +14,17 @@ spec:
       labels:
         app.kubernetes.io/name: sonarr
     spec:
+      initContainers:
+        - name: init-chown-volumes
+          image: busybox
+          command: ["sh", "-c", "chown -R 1000:1000 /tv /downloads /TheBarns/Media"]
+          volumeMounts:
+            - name: tv
+              mountPath: /tv
+            - name: downloads
+              mountPath: /downloads
+            - name: media
+              mountPath: /TheBarns/Media
       containers:
         - name: sonarr
           image: linuxserver/sonarr
