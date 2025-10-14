@@ -14,19 +14,6 @@ spec:
       labels:
         app.kubernetes.io/name: sonarr
     spec:
-      initContainers:
-        - name: fix-permissions
-          image: busybox
-          command: ["sh", "-c", "chown -R 1000:1000 /tv /downloads /TheBarns/Media"]
-          volumeMounts:
-            - name: tv
-              mountPath: /tv
-            - name: downloads
-              mountPath: /downloads
-            - name: media
-              mountPath: /TheBarns/Media
-          securityContext:
-            runAsUser: 0
       containers:
         - name: sonarr
           image: linuxserver/sonarr
