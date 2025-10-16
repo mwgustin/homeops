@@ -26,9 +26,12 @@ spec:
           args:
             - |
               set -eux
-              # Best-effort perms; NFS root_squash may prevent chown, so ignore failures
-              chmod -R 775 /downloads /config || true
-              chown -R 1000:1000 /downloads /config || true
+              # Best-effort perms on local/iSCSI config volume
+              chmod -R 775 /config || true
+              chown -R 1000:1000 /config || true
+              # NOTE: /downloads is NFS (root_squash). Skipping chown/chmod to avoid
+              # noisy "Operation not permitted" errors. Ensure NAS path ownership
+              # is set to uid:gid 1000:1000, or adjust NFS export mapping on the NAS.
           volumeMounts:
             - name: config
               mountPath: /config
