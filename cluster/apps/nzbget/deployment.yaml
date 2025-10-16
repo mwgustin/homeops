@@ -17,6 +17,8 @@ spec:
       securityContext:
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+        supplementalGroups:
+          - 100
       initContainers:
         - name: init-perms
           image: alpine:3.20
@@ -30,6 +32,11 @@ spec:
               # Adjust config (RWO) ownership, but do not chown the NFS share to avoid noisy errors
               chmod -R 775 /downloads /config 2>/dev/null || true
               chown -R 1000:1000 /config 2>/dev/null || true
+
+              # Create NZBGet temp directory on the NFS share; with root_squash we can't chown,
+              # so ensure it is writable by everyone (tmp semantics)
+              mkdir -p /downloads/tmp
+              chmod 0777 /downloads/tmp || true
           volumeMounts:
             - name: config
               mountPath: /config
