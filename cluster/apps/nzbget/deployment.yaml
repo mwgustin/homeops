@@ -15,10 +15,10 @@ spec:
         app.kubernetes.io/name: nzbget
     spec:
       securityContext:
-        fsGroup: 1000
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
         supplementalGroups:
-          - 100
+          - 1000
       initContainers:
         - name: init-perms
           image: alpine:3.20
@@ -30,13 +30,13 @@ spec:
               set -eux
               # Best-effort perms; NFS root_squash blocks ownership changes on /downloads
               # Adjust config (RWO) ownership, but do not chown the NFS share to avoid noisy errors
-              chmod -R 775 /downloads /config 2>/dev/null || true
+              chmod -R 775 /config 2>/dev/null || true
               chown -R 1000:1000 /config 2>/dev/null || true
 
-              # Create NZBGet temp directory on the NFS share; with root_squash we can't chown,
-              # so ensure it is writable by everyone (tmp semantics)
-              mkdir -p /downloads/tmp
-              chmod 0777 /downloads/tmp || true
+              # Create NZBGet temp directory on the NFS share; with root_squash we can't chown.
+              # Rely on group 100 access and umask 002 for group-writable directory.
+              umask 0002
+              install -d -m 0775 /downloads/tmp 2>/dev/null || true
           volumeMounts:
             - name: config
               mountPath: /config
@@ -49,7 +49,7 @@ spec:
             - name: PUID
               value: "1000"
             - name: PGID
-              value: "1000"
+              value: "100"
             - name: UMASK
               value: "002"
             - name: TZ
