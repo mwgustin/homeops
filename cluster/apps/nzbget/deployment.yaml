@@ -26,9 +26,10 @@ spec:
           args:
             - |
               set -eux
-              # Best-effort perms; NFS root_squash may prevent chown, so ignore failures
-              chmod -R 775 /downloads /config || true
-              chown -R 1000:1000 /downloads /config || true
+              # Best-effort perms; NFS root_squash blocks ownership changes on /downloads
+              # Adjust config (RWO) ownership, but do not chown the NFS share to avoid noisy errors
+              chmod -R 775 /downloads /config 2>/dev/null || true
+              chown -R 1000:1000 /config 2>/dev/null || true
           volumeMounts:
             - name: config
               mountPath: /config
