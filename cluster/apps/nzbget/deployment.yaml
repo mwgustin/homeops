@@ -14,9 +14,38 @@ spec:
       labels:
         app.kubernetes.io/name: nzbget
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+        - name: init-perms
+          image: alpine:3.20
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eux
+              # Best-effort perms; NFS root_squash may prevent chown, so ignore failures
+              chmod -R 775 /downloads /config || true
+              chown -R 1000:1000 /downloads /config || true
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
       containers:
         - name: nzbget
           image: linuxserver/nzbget:v25.3-ls214
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: UMASK
+              value: "002"
+            - name: TZ
+              value: "UTC"
           ports:
             - containerPort: 6789
           resources:
