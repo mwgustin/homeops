@@ -16,6 +16,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: sonarr-tv
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+      pv-role: tv
   accessModes:
     - ReadWriteMany
   resources:
@@ -28,6 +32,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: sonarr-downloads
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+      pv-role: downloads
   accessModes:
     - ReadWriteMany
   resources:
@@ -40,6 +48,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: sonarr-media
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sonarr
+      pv-role: media
   accessModes:
     - ReadWriteMany
   resources:

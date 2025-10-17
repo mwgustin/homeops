@@ -18,6 +18,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: radarr-downloads
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: radarr
+      pv-role: downloads
   accessModes:
     - ReadWriteMany
   resources:
@@ -31,6 +35,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: radarr-movies
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: radarr
+      pv-role: movies
   accessModes:
     - ReadWriteMany
   resources:
@@ -44,6 +52,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: radarr-media
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: radarr
+      pv-role: media
   accessModes:
     - ReadWriteMany
   resources:
