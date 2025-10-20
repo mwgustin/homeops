@@ -58,8 +58,8 @@ spec:
   ingressClassName: internal
   tls:
     - hosts:
-        - radarr.internal.gustend.net
-      secretName: radarr-internal-gustend-net-cert
+        - gustindev.internal.gustend.net
+      secretName: gustindev-internal-gustend-net-cert
   rules:
     - host: gustindev.internal.gustend.net
       http:
