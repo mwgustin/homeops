@@ -145,6 +145,10 @@ apps:
     namespace: default
     path: cluster/apps/printers
 
+  - name: gustin.dev
+    namespace: gustindev
+    path: cluster/apps/gustindev
+
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost
