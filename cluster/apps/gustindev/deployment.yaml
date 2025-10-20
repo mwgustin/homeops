@@ -7,16 +7,12 @@ spec:
   selector:
     matchLabels:
       app: httpbin
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
         app: httpbin
     spec:
-      volumes:
-      - name: test-app-volume
-        persistentVolumeClaim:
-          claimName: test-app-pvc
       containers:
       - name: httpbin
         image: kennethreitz/httpbin:latest
