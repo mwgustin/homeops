@@ -23,7 +23,7 @@
       spec:
         containers:
           - name: jellyfin
-            image: jellyfin/jellyfin:10.11.0
+            image: jellyfin/jellyfin:10.11.2
             env:
               - name: JELLYFIN_PublishedServerUrl
                 value: "https://jellyfin.gustend.net"
