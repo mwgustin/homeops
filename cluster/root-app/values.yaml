@@ -107,6 +107,9 @@ apps:
   - name: ersatztv
     namespace: media
     path: cluster/apps/ersatztv
+  - name: komga
+    namespace: media
+    path: cluster/apps/komga
 
   - name: discord-activity-bot
     namespace: default
