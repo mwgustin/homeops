@@ -36,6 +36,10 @@ apps:
     namespace: default
     path: cluster/apps/bp-tools
 
+  - name: planner-gen
+    namespace: default
+    path: cluster/apps/planner-gen
+
   - name: n8n
     namespace: n8n
     path: cluster/apps/n8n

@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: planner-gen-deployment
+  labels:
+    app.kubernetes.io/name: planner-gen
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: planner-gen
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: planner-gen
+    spec:
+      containers:
+      - name: planner-gen
+        image: ghcr.io/mwgustin/remarkably-organized:1.0.0
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: planner-gen-service
+spec:
+  selector:
+    app.kubernetes.io/name: planner-gen
+  ports:
+    - protocol: TCP
+      port: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: planner-gen
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "http-cookie"
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+    gethomepage.dev/description: Planner Generator
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: mdi-calendar-check
+    gethomepage.dev/name: Planner Gen
+spec:
+  ingressClassName: external
+  rules:
+    - host: planner-gen.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: planner-gen-service
+                port:
+                  number: 3000
