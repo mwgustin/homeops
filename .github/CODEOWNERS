@@ -1,0 +1,6 @@
+# CODEOWNERS file for homeops repository
+# This file defines code ownership for automatic PR assignment
+# More info: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owner - all files in the repository
+* @mwgustin
