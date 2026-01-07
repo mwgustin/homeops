@@ -27,7 +27,7 @@ spec:
               cpu: "200m"
               memory: "128Mi"
         - name: netshoot
-          image: nicolaka/netshoot:v0.14
+          image: nicolaka/netshoot:v0.15
           command: ["/bin/bash"]
           args: ["-c", "while true; do ping localhost; sleep 60;done"]
           resources:
