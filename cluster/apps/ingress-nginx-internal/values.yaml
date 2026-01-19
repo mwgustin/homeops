@@ -21,6 +21,14 @@ ingress-nginx:
     service:
       annotations:
         metallb.io/loadBalancerIPs: 10.1.0.22
+      ports:
+        http: 80
+        https: 443
+        mqtt: 1883
+      targetPorts:
+        http: http
+        https: https
+        mqtt: 1883
     tcp:
       1883: "default/mosquitto:1883"
     config:
