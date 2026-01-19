@@ -21,20 +21,6 @@ ingress-nginx:
     service:
       annotations:
         metallb.io/loadBalancerIPs: 10.1.0.22
-      enablePorts:
-        http: true
-        https: true
-        mqtt: true
-      ports:
-        http: 80
-        https: 443
-        mqtt: 1883
-      targetPorts:
-        http: http
-        https: https
-        mqtt: mqtt-tcp
-    tcp:
-      1883: "default/mosquitto:1883"
     config:
       block-user-agents: "GPTBot,~*GPTBot*,ChatGPT-User,~*ChatGPT-User*,Google-Extended,~*Google-Extended*,CCBot,~*CCBot*,Omgilibot,~*Omgilibot*,FacebookBot,~*FacebookBot*" # taken from https://github.com/superseriousbusiness/gotosocial/blob/main/internal/web/robots.go
       client-body-buffer-size: 100M

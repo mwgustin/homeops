@@ -17,3 +17,21 @@ spec:
       name: websocket
   selector:
     app.kubernetes.io/name: mosquitto
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mosquitto-mqtt
+  labels:
+    app.kubernetes.io/name: mosquitto
+  annotations:
+    metallb.io/loadBalancerIPs: 10.1.0.23
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 1883
+      targetPort: 1883
+      protocol: TCP
+      name: mqtt
+  selector:
+    app.kubernetes.io/name: mosquitto
