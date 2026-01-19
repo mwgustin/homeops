@@ -156,6 +156,10 @@ apps:
     namespace: gustindev
     path: cluster/apps/gustindev
 
+  - name: mosquitto
+    namespace: default
+    path: cluster/apps/mosquitto
+
   # - name: ghost-blog
   #   namespace: ghost-k8s
   #   path: cluster/apps/ghost
