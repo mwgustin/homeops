@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kutt
+  annotations:
+    kubernetes.io/ingress.class: "external"
+    gethomepage.dev/description: URL Shortener
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Services
+    gethomepage.dev/icon: sh-kutt
+    gethomepage.dev/name: Kutt
+spec:
+  ingressClassName: external
+  rules:
+    - host: lnk.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kutt
+                port:
+                  number: 3000

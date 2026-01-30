@@ -115,6 +115,10 @@ apps:
     namespace: media
     path: cluster/apps/komga
 
+  - name: kutt
+    namespace: default
+    path: cluster/apps/kutt
+
   - name: discord-activity-bot
     namespace: default
     path: cluster/apps/discord-activity-bot
