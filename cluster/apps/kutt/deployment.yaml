@@ -26,6 +26,11 @@ spec:
               value: "true"
             - name: DEFAULT_DOMAIN
               value: "lnk.gustend.net"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kutt-jwt-secret
+                  key: JWT_SECRET
           resources:
             requests:
               cpu: "100m"
