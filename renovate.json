@@ -15,5 +15,13 @@
       "/\\.yaml$/"
     ]
   },
-  "ignorePaths": ["**/talos/**"]
+  "ignorePaths": ["**/talos/**"],
+  "hostRules": [
+    {
+      "hostType": "docker",
+      "matchHost": "ghcr.io",
+      "username": "mwgustin",
+      "password": "{{ secrets.MEND_GHCR_PAT }}"
+    }
+  ]
 }
