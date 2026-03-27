@@ -1,0 +1,48 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gustindev-external
+  namespace: gustindev
+  labels:
+    app.kubernetes.io/name: gustindev-test
+  annotations:
+    gethomepage.dev/description: gustin.dev validation endpoint
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: sh-httpbin
+    gethomepage.dev/name: Gustin Dev Validation
+spec:
+  parentRefs:
+    - name: external
+      namespace: envoy-gateway
+  hostnames:
+    - gustin.dev
+  rules:
+    - backendRefs:
+        - name: gustindev-test
+          port: 80
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: gustindev-internal
+  namespace: gustindev
+  labels:
+    app.kubernetes.io/name: gustindev-test
+  annotations:
+    gethomepage.dev/description: Internal gustin.dev validation endpoint
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: sh-httpbin
+    gethomepage.dev/name: Gustin Dev Validation (Internal)
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=gustindev-test
+spec:
+  parentRefs:
+    - name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - gustindev.internal.gustend.net
+  rules:
+    - backendRefs:
+        - name: gustindev-test
+          port: 80

@@ -20,9 +20,9 @@ data:
       - hostname: "*.gustend.net"
         service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       - hostname: gustin.dev
-        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+        service: http://envoy-external.envoy-gateway.svc.cluster.local:80
       - hostname: "*.gustin.dev"
-        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+        service: http://envoy-external.envoy-gateway.svc.cluster.local:80
       - hostname: anonafamilycounseling.com
         service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       - hostname: "*.anonafamilycounseling.com"
