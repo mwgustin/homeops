@@ -7,9 +7,6 @@ metadata:
     app.kubernetes.io/name: envoy-gateway
 spec:
   gatewayClassName: envoy-gateway
-  addresses:
-    - type: IPAddress
-      value: 10.1.0.23
   infrastructure:
     parametersRef:
       group: gateway.envoyproxy.io

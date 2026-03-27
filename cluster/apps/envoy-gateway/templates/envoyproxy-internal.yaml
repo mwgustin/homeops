@@ -21,6 +21,5 @@ spec:
       envoyService:
         name: envoy-internal
         type: LoadBalancer
-        loadBalancerIP: 10.1.0.23
         annotations:
-          metallb.io/loadBalancerIPs: 10.1.0.23
+          metallb.io/loadBalancerIPs: 10.1.0.24
