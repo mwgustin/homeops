@@ -20,6 +20,11 @@ apps:
     namespace: cert-manager
     path: cluster/apps/cert-manager
 
+  - name: envoy-gateway
+    namespace: envoy-gateway
+    path: cluster/apps/envoy-gateway
+    syncWave: 1
+
   # - name: prometheus
   #   namespace: prometheus
   #   path: cluster/apps/prometheus
