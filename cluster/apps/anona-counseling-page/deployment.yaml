@@ -18,7 +18,7 @@ spec:
         - name: ghcr-docker-pull-secret
       containers:
         - name: anona-counseling-page
-          image: ghcr.io/mwgustin/anona-counseling-site:latest
+          image: ghcr.io/mwgustin/anona-counseling-site:sha-8109328
           ports:
             - containerPort: 80
           resources:
