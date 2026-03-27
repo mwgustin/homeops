@@ -13,14 +13,23 @@ metadata:
     gethomepage.dev/name: Gustin Dev Validation
 spec:
   parentRefs:
-    - name: external
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
       namespace: envoy-gateway
   hostnames:
     - gustin.dev
   rules:
-    - backendRefs:
-        - name: gustindev-test
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: gustindev-test
           port: 80
+          weight: 1
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -38,11 +47,20 @@ metadata:
     gethomepage.dev/pod-selector: app.kubernetes.io/name=gustindev-test
 spec:
   parentRefs:
-    - name: internal
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
       namespace: envoy-gateway
   hostnames:
     - gustindev.internal.gustend.net
   rules:
-    - backendRefs:
-        - name: gustindev-test
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: gustindev-test
           port: 80
+          weight: 1

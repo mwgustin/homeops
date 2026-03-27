@@ -140,14 +140,23 @@ metadata:
     gethomepage.dev/name: Gustin Dev Validation
 spec:
   parentRefs:
-    - name: external
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
       namespace: envoy-gateway
   hostnames:
     - gustin.dev
   rules:
-    - backendRefs:
-        - name: gustindev-test
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: gustindev-test
           port: 80
+          weight: 1
 ```
 
 **`httproute.yaml`** — Internal route (same file, `---` separated):
@@ -166,14 +175,23 @@ metadata:
     gethomepage.dev/pod-selector: app.kubernetes.io/name=gustindev-test
 spec:
   parentRefs:
-    - name: internal
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
       namespace: envoy-gateway
   hostnames:
     - gustindev.internal.gustend.net
   rules:
-    - backendRefs:
-        - name: gustindev-test
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: gustindev-test
           port: 80
+          weight: 1
 ```
 
 **ReferenceGrant** — Required for cross-namespace backend references. Since HTTPRoutes in app namespaces reference Gateways in `envoy-gateway`, and the Gateways reference services in app namespaces, a `ReferenceGrant` may be needed. Envoy Gateway's `allowedRoutes.namespaces.from: All` handles the route→gateway direction. The route→backend direction is same-namespace (HTTPRoute and Service both in `gustindev`), so no ReferenceGrant needed for backends.
@@ -242,14 +260,23 @@ metadata:
     gethomepage.dev/pod-selector: app.kubernetes.io/name=<app-name>
 spec:
   parentRefs:
-    - name: internal
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
       namespace: envoy-gateway
   hostnames:
     - <service>.internal.gustend.net
   rules:
-    - backendRefs:
-        - name: <service-name>
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: <service-name>
           port: <service-port>
+          weight: 1
 ```
 
 **External app HTTPRoute template:**
@@ -267,14 +294,23 @@ metadata:
     gethomepage.dev/name: <display-name>
 spec:
   parentRefs:
-    - name: external
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
       namespace: envoy-gateway
   hostnames:
     - <service>.gustend.net
   rules:
-    - backendRefs:
-        - name: <service-name>
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: <service-name>
           port: <service-port>
+          weight: 1
 ```
 
 **EndpointSlice route apps** (plex-route, sonarr-route, etc.): These already have a Service pointing at the EndpointSlice. The HTTPRoute just references that Service — same pattern, no special handling needed.
