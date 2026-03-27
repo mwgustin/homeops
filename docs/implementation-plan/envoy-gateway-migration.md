@@ -411,6 +411,24 @@ Features from the ingress-nginx config blocks that need consideration:
 
 ---
 
+## Deferred: Blocked User Agents
+
+User-agent blocking is intentionally out of scope for the initial Envoy Gateway migration.
+
+Reasoning:
+- Cloudflare already provides upstream filtering where it matters most for external traffic.
+- This behavior is not a hard requirement for the gateway cutover.
+- Deferring it keeps the migration focused on routing, TLS, and controller replacement.
+
+If this is revisited later, the preferred implementation is an `EnvoyExtensionPolicy` with a small Lua script attached to the `external` Gateway. That approach is a good fit for case-insensitive substring matching on the `User-Agent` header.
+
+Future enhancement notes:
+- Target the `external` Gateway first
+- Keep the logic GitOps-managed via ConfigMap + `EnvoyExtensionPolicy`
+- Treat it as an optional edge-hardening feature, not a routing dependency
+
+---
+
 ## Future: Observability Integration
 
 When the Prometheus + Grafana + logging stack is built out (separate initiative), integrate Envoy Gateway metrics:
