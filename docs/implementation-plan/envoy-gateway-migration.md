@@ -33,6 +33,9 @@ HTTPRoutes bind to a specific Gateway via `parentRefs`. A route attached to the 
 
 ## Phase 0 — Stand Up Envoy Gateway (Parallel to ingress-nginx)
 
+### Status
+Completed (2026-03-27)
+
 ### Goal
 Install Envoy Gateway alongside the existing ingress-nginx controllers. No traffic moves yet.
 
@@ -109,8 +112,11 @@ Validation evidence (2026-03-27):
 
 ## Phase 1 — Pilot: gustindev
 
+### Status
+Completed (2026-03-27)
+
 ### Goal
-Route `gustin.dev` (external) and `gustindev.internal.gustend.net` (internal) through Envoy Gateway while keeping ingress-nginx as fallback.
+Route `gustin.dev` (external) and `gustindev.internal.gustend.net` (internal) through Envoy Gateway to validate pilot cutover.
 
 ### Pilot App: gustindev
 This is a test/validation site (httpbin) with both external and internal ingress — ideal for validation.
@@ -120,7 +126,7 @@ This is a test/validation site (httpbin) with both external and internal ingress
 ```
 cluster/apps/gustindev/
 ├── httproute.yaml    # NEW: Two HTTPRoute resources (external + internal)
-├── ingress.yaml      # KEEP: Existing ingress as rollback
+├── ingress.yaml      # REMOVED after successful pilot validation
 ├── deployment.yaml   # UNCHANGED
 └── service.yaml      # UNCHANGED
 ```
