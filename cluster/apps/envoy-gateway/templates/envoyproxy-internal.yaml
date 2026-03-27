@@ -1,0 +1,26 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: internal-proxy-config
+  namespace: envoy-gateway
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyDeployment:
+        name: envoy-internal
+        replicas: 2
+        container:
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      envoyService:
+        name: envoy-internal
+        type: LoadBalancer
+        loadBalancerIP: 10.1.0.23
+        annotations:
+          metallb.io/loadBalancerIPs: 10.1.0.23
