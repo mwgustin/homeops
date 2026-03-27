@@ -24,3 +24,13 @@ spec:
                 name: anona-counseling-page
                 port:
                   number: 80
+    - host: anonafamilycounseling.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: anona-counseling-page
+                port:
+                  number: 80

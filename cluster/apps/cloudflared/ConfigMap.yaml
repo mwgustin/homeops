@@ -19,6 +19,14 @@ data:
         service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       - hostname: "*.gustend.net"
         service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      - hostname: gustin.dev
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      - hostname: "*.gustin.dev"
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      - hostname: anonafamilycounseling.com
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
+      - hostname: "*.anonafamilycounseling.com"
+        service: http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80
       # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
       - service: http_status:404
 
