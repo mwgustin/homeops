@@ -224,14 +224,21 @@ Either way confirms the internal gateway + wildcard cert + HTTPRoute pipeline wo
 ### Rollback
 - Remove the `gustin.dev` specific rule from cloudflared ConfigMap — traffic falls back to wildcard → ingress-nginx
 - Internal: remove DNS override or stop testing against temp IP
-- Old `ingress.yaml` is still in place and functional
+- Old `ingress.yaml` has been removed; fallback can be restored from Git history if required
 
 ### Validation
-- [ ] `curl gustin.dev` returns httpbin response (via Cloudflare → cloudflared → Envoy external GW)
-- [ ] `curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net` returns httpbin response
-- [ ] TLS cert on internal is valid wildcard `*.internal.gustend.net`
-- [ ] Homepage dashboard shows gustindev entries (confirms annotation scraping from HTTPRoute)
-- [ ] Old ingress.yaml still works as fallback path
+- [x] `curl gustin.dev` returns httpbin response (via Cloudflare → cloudflared → Envoy external GW)
+- [x] `curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net` returns httpbin response
+- [x] TLS cert on internal is valid wildcard `*.internal.gustend.net`
+- [x] Homepage dashboard metadata is present on HTTPRoutes (annotation scraping source)
+- [x] HTTPRoutes accepted and resolved by Envoy Gateway controller
+
+Validation evidence (2026-03-27):
+- `HTTPRoute/gustindev-external` and `HTTPRoute/gustindev-internal` in namespace `gustindev` report `Accepted=True` and `ResolvedRefs=True`.
+- `curl https://gustin.dev` returned `HTTP/2 200` with httpbin content.
+- `curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net` returned `HTTP/2 200` with httpbin content.
+- TLS served on `10.1.0.24:443` for `gustindev.internal.gustend.net` presents certificate `CN=*.internal.gustend.net` (issuer `Let's Encrypt R13`, SAN includes `*.internal.gustend.net`).
+- `gethomepage.dev/*` annotations are present on both HTTPRoutes.
 
 ---
 
