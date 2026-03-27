@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: anona-counseling-page
+  labels:
+    app.kubernetes.io/name: anona-counseling-page
+  annotations:
+    kubernetes.io/ingress.class: external
+    gethomepage.dev/description: Anona Counseling landing page
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: sh-anona-counseling-page
+    gethomepage.dev/name: Anona Counseling Page
+spec:
+  ingressClassName: external
+  rules:
+    - host: anona-test-page.gustend.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: anona-counseling-page
+                port:
+                  number: 80

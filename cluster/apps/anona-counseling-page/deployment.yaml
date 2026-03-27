@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: anona-counseling-page
+  labels:
+    app.kubernetes.io/name: anona-counseling-page
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: anona-counseling-page
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: anona-counseling-page
+    spec:
+      imagePullSecrets:
+        - name: ghcr-docker-pull-secret
+      containers:
+        - name: anona-counseling-page
+          image: ghcr.io/mwgustin/anona-counseling-site:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi

@@ -40,6 +40,10 @@ apps:
     namespace: default
     path: cluster/apps/planner-gen
 
+  - name: anona-counseling-page
+    namespace: default
+    path: cluster/apps/anona-counseling-page
+
   - name: n8n
     namespace: n8n
     path: cluster/apps/n8n
