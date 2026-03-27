@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gustindev-test
+  name: httpbin-ingress
   labels:
     app.kubernetes.io/name: gustindev-test
   annotations:
@@ -28,7 +28,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gustindev-test-internal
+  name: httpbin-ingress2
   labels:
     app.kubernetes.io/name: gustindev-test
   annotations:
