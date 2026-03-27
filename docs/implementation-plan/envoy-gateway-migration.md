@@ -70,7 +70,7 @@ cluster/apps/envoy-gateway/
   - HTTPS port 443, hostname `*.internal.gustend.net`, TLS terminationMode: Terminate, certificateRef to wildcard cert
   - HTTP port 80, hostname `*.internal.gustend.net` (redirect to HTTPS via HTTPRoute or policy)
 - Service type: LoadBalancer
-- **TEMP**: Annotated `metallb.io/loadBalancerIPs: 10.1.0.23` during pilot phase
+- **TEMP**: Annotated `metallb.io/loadBalancerIPs: 10.1.0.24` during pilot phase
 - **FINAL**: Will be changed to `10.1.0.22` when ingress-nginx-internal is decommissioned (see Phase 3)
 - `allowedRoutes.namespaces.from: All`
 
@@ -88,13 +88,22 @@ cluster/apps/envoy-gateway/
   ```
 
 ### Validation
-- [ ] Envoy Gateway controller pod running in `envoy-gateway` namespace
-- [ ] GatewayClass accepted (`kubectl get gatewayclass`)
-- [ ] Both Gateways programmed (`kubectl get gateways -n envoy-gateway`)
-- [ ] Internal gateway has temp MetalLB IP `10.1.0.23` assigned
-- [ ] External gateway has ClusterIP service
-- [ ] Wildcard cert issued (`kubectl get certificate -n envoy-gateway`)
-- [ ] No impact to existing ingress-nginx traffic
+- [x] Envoy Gateway controller pod running in `envoy-gateway` namespace
+- [x] GatewayClass accepted (`kubectl get gatewayclass`)
+- [x] Both Gateways programmed (`kubectl get gateways -n envoy-gateway`)
+- [x] Internal gateway has temp MetalLB IP `10.1.0.24` assigned
+- [x] External gateway has ClusterIP service
+- [x] Wildcard cert issued (`kubectl get certificate -n envoy-gateway`)
+- [x] No impact to existing ingress-nginx traffic
+
+Validation evidence (2026-03-27):
+- Envoy pods are running in `envoy-gateway` (controller and both proxy fleets healthy).
+- `GatewayClass/envoy-gateway` condition `Accepted=True`.
+- `Gateway/envoy-gateway/external` and `Gateway/envoy-gateway/internal` conditions include `Programmed=True`.
+- `Service/envoy-internal` is `LoadBalancer` with external IP `10.1.0.24`.
+- `Service/envoy-external` is `ClusterIP` (`10.105.169.209` at validation time).
+- `Certificate/internal-wildcard-gustend-net` is `Ready=True` and bound to secret `internal-wildcard-gustend-net-cert`.
+- Existing ingress-nginx and ingress-nginx-internal controller pods/services remained healthy during validation.
 
 ---
 
@@ -188,9 +197,9 @@ ingress:
 Note: The exact service name for the external gateway will be determined by the Envoy Gateway Helm chart output. Verify with `kubectl get svc -n envoy-gateway` after Phase 0.
 
 ### Internal Pilot Validation
-Since `*.internal.gustend.net` is a wildcard pointing at `10.1.0.22` (ingress-nginx-internal), the pilot internal route on the temp IP `10.1.0.23` won't receive traffic via the wildcard. Options:
-1. **Manual test**: `curl --resolve gustindev.internal.gustend.net:443:10.1.0.23 https://gustindev.internal.gustend.net`
-2. **Individual DNS override**: Add a specific DNS record for `gustindev.internal.gustend.net` → `10.1.0.23` if your internal DNS supports it.
+Since `*.internal.gustend.net` is a wildcard pointing at `10.1.0.22` (ingress-nginx-internal), the pilot internal route on the temp IP `10.1.0.24` won't receive traffic via the wildcard. Options:
+1. **Manual test**: `curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net`
+2. **Individual DNS override**: Add a specific DNS record for `gustindev.internal.gustend.net` → `10.1.0.24` if your internal DNS supports it.
 
 Either way confirms the internal gateway + wildcard cert + HTTPRoute pipeline works.
 
@@ -201,7 +210,7 @@ Either way confirms the internal gateway + wildcard cert + HTTPRoute pipeline wo
 
 ### Validation
 - [ ] `curl gustin.dev` returns httpbin response (via Cloudflare → cloudflared → Envoy external GW)
-- [ ] `curl --resolve gustindev.internal.gustend.net:443:10.1.0.23 https://gustindev.internal.gustend.net` returns httpbin response
+- [ ] `curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net` returns httpbin response
 - [ ] TLS cert on internal is valid wildcard `*.internal.gustend.net`
 - [ ] Homepage dashboard shows gustindev entries (confirms annotation scraping from HTTPRoute)
 - [ ] Old ingress.yaml still works as fallback path
@@ -337,7 +346,7 @@ ingress:
 
 ### Step 2c: Cut Over MetalLB IP (Internal)
 Update `cluster/apps/envoy-gateway/gateway-internal.yaml`:
-- Change `metallb.io/loadBalancerIPs` from `10.1.0.23` (temp) to `10.1.0.22` (production)
+- Change `metallb.io/loadBalancerIPs` from `10.1.0.24` (temp) to `10.1.0.22` (production)
 
 This step requires coordinating with ingress-nginx-internal to release the IP:
 1. Scale down ingress-nginx-internal controller to 0 replicas (or delete its LoadBalancer service)
@@ -459,7 +468,7 @@ kubectl logs -n envoy-gateway -l app.kubernetes.io/name=envoy-gateway
 kubectl get svc -n envoy-gateway
 
 # Test internal gateway on temp IP
-curl --resolve gustindev.internal.gustend.net:443:10.1.0.23 https://gustindev.internal.gustend.net
+curl --resolve gustindev.internal.gustend.net:443:10.1.0.24 https://gustindev.internal.gustend.net
 
 # Check HTTPRoute status
 kubectl describe httproute <name> -n <namespace>
