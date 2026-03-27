@@ -29,6 +29,11 @@ The `kubernetes/ingress-nginx` repository was archived on March 24, 2026. This p
 ### Isolation Model
 HTTPRoutes bind to a specific Gateway via `parentRefs`. A route attached to the `external` Gateway is only reachable through cloudflared's ClusterIP connection. A route attached to `internal` is only reachable via the MetalLB IP. There is no cross-gateway traffic path.
 
+## Progress Summary
+- Phase 0: Completed (2026-03-27)
+- Phase 1: Completed (2026-03-27)
+- Current focus: Phase 2 migration of remaining app routes
+
 ---
 
 ## Phase 0 — Stand Up Envoy Gateway (Parallel to ingress-nginx)
