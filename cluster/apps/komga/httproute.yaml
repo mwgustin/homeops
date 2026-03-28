@@ -1,0 +1,31 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: komga
+  namespace: media
+  annotations:
+    gethomepage.dev/description: Comic and Manga Server
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media
+    gethomepage.dev/icon: sh-komga
+    gethomepage.dev/name: Komga
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=komga
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - komga.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: komga
+          port: 25600
+          weight: 1
