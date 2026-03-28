@@ -1,0 +1,31 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ersatztv
+  namespace: media
+  annotations:
+    gethomepage.dev/description: ErsatzTV IPTV server
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media Management
+    gethomepage.dev/icon: sh-ersatztv
+    gethomepage.dev/name: ErsatzTV
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=ersatztv
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - ersatztv.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: ersatztv
+          port: 8409
+          weight: 1

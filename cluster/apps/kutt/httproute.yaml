@@ -1,0 +1,30 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: kutt
+  namespace: default
+  annotations:
+    gethomepage.dev/description: URL Shortener
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Services
+    gethomepage.dev/icon: sh-kutt
+    gethomepage.dev/name: Kutt
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
+      namespace: envoy-gateway
+  hostnames:
+    - lnk.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: kutt
+          port: 3000
+          weight: 1

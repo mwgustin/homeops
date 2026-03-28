@@ -1,0 +1,31 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: nzbget
+  namespace: media
+  annotations:
+    gethomepage.dev/description: NZBGet Usenet Downloader
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Media Management
+    gethomepage.dev/icon: sh-nzbget
+    gethomepage.dev/name: NZBGet
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=nzbget
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - nzbget.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: nzbget
+          port: 6789
+          weight: 1

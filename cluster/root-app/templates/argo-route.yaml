@@ -1,0 +1,46 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    gethomepage.dev/description: Argo CD
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Cluster Management
+    gethomepage.dev/icon: sh-argo-cd
+    gethomepage.dev/name: Argo CD
+    gethomepage.dev/pod-selector: ""
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - argocd.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: argocd-server
+          port: 443
+          weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1alpha3
+kind: BackendTLSPolicy
+metadata:
+  name: argocd-server-backend-tls
+  namespace: argocd
+spec:
+  targetRefs:
+    - group: ""
+      kind: Service
+      name: argocd-server
+      sectionName: https
+  validation:
+    hostname: argocd.internal.gustend.net
+    wellKnownCACertificates: System

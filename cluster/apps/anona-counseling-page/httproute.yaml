@@ -1,0 +1,31 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: anona-counseling-page
+  namespace: default
+  annotations:
+    gethomepage.dev/description: Anona Counseling landing page
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Misc
+    gethomepage.dev/icon: sh-anona-counseling-page
+    gethomepage.dev/name: Anona Counseling Page
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
+      namespace: envoy-gateway
+  hostnames:
+    - anona-test-page.gustend.net
+    - anonafamilycounseling.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: anona-counseling-page
+          port: 80
+          weight: 1

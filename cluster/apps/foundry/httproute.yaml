@@ -1,0 +1,31 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: foundry
+  namespace: foundry
+  annotations:
+    gethomepage.dev/description: Foundry VTT
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/group: Games
+    gethomepage.dev/icon: sh-foundry-virtual-tabletop
+    gethomepage.dev/name: Foundry VTT
+    gethomepage.dev/pod-selector: app.kubernetes.io/name=foundry
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
+      namespace: envoy-gateway
+  hostnames:
+    - foundry.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: foundry
+          port: 30000
+          weight: 1
