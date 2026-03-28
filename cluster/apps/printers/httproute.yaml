@@ -1,0 +1,63 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: aurora-printer
+  namespace: default
+  annotations:
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: Aurora Printer
+    gethomepage.dev/enabled: "false"
+    gethomepage.dev/group: Printers
+    gethomepage.dev/icon: sh-klipper
+    gethomepage.dev/name: Aurora
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - aurora.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: aurora-printer
+          port: 80
+          weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: bastion-printer
+  namespace: default
+  annotations:
+    gethomepage.dev/pod-selector: ""
+    gethomepage.dev/description: Bastion Printer
+    gethomepage.dev/enabled: "false"
+    gethomepage.dev/group: Printers
+    gethomepage.dev/icon: sh-klipper
+    gethomepage.dev/name: Bastion
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - bastion.internal.gustend.net
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: bastion-printer
+          port: 80
+          weight: 1
