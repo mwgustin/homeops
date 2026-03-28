@@ -224,6 +224,7 @@ spec:
 ### External Secrets
 - All secrets are managed using the external secret store (Azure KeyVault).
 - The external secret store is a `ClusterSecretStore` named `azure-secret-store`.
+- To avoid ArgoCD OutOfSync drift from controller-defaulted values, explicitly define ExternalSecret defaults in manifests.
 
 **External Secret Example:**
 ```yaml
@@ -239,11 +240,20 @@ spec:
   target:
     name: <secret-name>
     creationPolicy: Owner
+    deletionPolicy: Retain
   data:
     - secretKey: <secret-key>
       remoteRef:
+        conversionStrategy: Default
+        decodingStrategy: None
         key: <remote-key>
+        metadataPolicy: None
 ```
+
+If using `target.template` (for example for docker pull secrets), also define:
+- `engineVersion: v2`
+- `mergePolicy: Replace`
+- `metadata: {}`
 
 - Two primary storage methods:
   - `synology-iscsi` for most PVCs (creates iSCSI volumes on Synology NAS).
