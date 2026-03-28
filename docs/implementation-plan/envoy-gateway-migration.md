@@ -342,6 +342,9 @@ spec:
 |-----|-----------|----------|------|
 | gustindev | gustindev | gustin.dev | 80 |
 | anona-counseling-page | default | anona-test-page.gustend.net, anonafamilycounseling.com | 80 |
+| bp-tools | default | bptools.gustend.net | 5262 |
+| planner-gen | default | planner-gen.gustend.net | 3000 |
+| test-app | default | home.gustend.net, bintest.gustend.net, protectedtest.gustend.net | 80 |
 | jellyfin | media | jellyfin.gustend.net | 8096 |
 | kutt | default | lnk.gustend.net | 3000 |
 | foundry | foundry | foundry.gustend.net | 30000 |
@@ -368,6 +371,9 @@ spec:
 | uptime-kuma | default | uptime.internal.gustend.net | 3001 |
 | ntfy | ntfy | ntfy.internal.gustend.net | 80 |
 | ddb-proxy | foundry | ddb-proxy.internal.gustend.net | 3000 |
+| printers-aurora | default | aurora.internal.gustend.net | 80 |
+| printers-bastion | default | bastion.internal.gustend.net | 80 |
+| test-app | default | test.internal.gustend.net | 80 |
 
 **Internal route apps (EndpointSlice → legacy server 10.1.10.194):**
 | App | Namespace | Hostname | Legacy Port |
@@ -377,6 +383,14 @@ spec:
 | radarr-route | media | radarr.internal.gustend.net | 7878 |
 | deluge-route | media | deluge.internal.gustend.net | 8112 |
 | nzbget-route | media | nzbget.internal.gustend.net | 7890 |
+
+**Special route (root-app template, separate from normal internal app routes):**
+| Route | Template Source | Hostname | Backend | Port | Notes |
+|-------|------------------|----------|---------|------|-------|
+| argocd-server | `cluster/root-app/templates/argo-route.yaml` | argocd.internal.gustend.net | argocd-server (namespace `argocd`) | 443 | Includes `BackendTLSPolicy` and is managed from root-app templates, not an app-local `cluster/apps/*/httproute.yaml` |
+
+**Current known exception:**
+- `immich.internal.gustend.net` has not been udpated as it's been removed from the cluster values.yaml. Had issues, so it will need reworking either way. 
 
 ### Step 2b: Cut Over Cloudflared (External)
 Update `cluster/apps/cloudflared/ConfigMap.yaml` — replace all `ingress-nginx-controller.ingress-nginx.svc.cluster.local:80` references with the Envoy external gateway service:
