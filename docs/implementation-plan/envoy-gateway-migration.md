@@ -476,6 +476,9 @@ Decision record:
 
 ## Phase 3 — Decommission ingress-nginx
 
+### Status
+Repository cleanup completed (2026-03-28)
+
 ### Goal
 Remove ingress-nginx and ingress-nginx-internal from the cluster.
 

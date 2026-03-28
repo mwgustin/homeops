@@ -3,7 +3,7 @@
 ## Purpose
 This implementation plan describes how to add a new primary domain that follows the existing routing pattern:
 
-Cloudflare -> cloudflared tunnel -> external ingress controller -> app-level ingress rule
+Cloudflare -> cloudflared tunnel -> Envoy external Gateway -> app-level HTTPRoute
 
 ## Prerequisite
 1. Domain registration and DNS setup in Cloudflare
@@ -16,7 +16,7 @@ Cloudflare -> cloudflared tunnel -> external ingress controller -> app-level ing
   - `<new-domain.tld>`
   - `*.<new-domain.tld>`
 - Route both to:
-  - `http://ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`
+  - `http://envoy-external.envoy-gateway.svc.cluster.local:80`
 
 ## Validation
 3. Verify routing end-to-end
@@ -25,8 +25,8 @@ Cloudflare -> cloudflared tunnel -> external ingress controller -> app-level ing
 - Confirm requests resolve through Cloudflare to the cluster.
 
 ## Note: Per-Resource Implementation
-To expose a specific app/resource on the new domain, add an external ingress host like:
+To expose a specific app/resource on the new domain, add an external HTTPRoute hostname like:
 
 - `<app>.<new-domain.tld>`
 
-No in-cluster certificate/TLS configuration is required for this Cloudflare tunnel routing path.
+No app-level in-cluster certificate/TLS configuration is required for this Cloudflare tunnel routing path.

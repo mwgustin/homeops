@@ -7,7 +7,7 @@ When requested to onboard a new app, follow these steps and reference the exampl
 1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits and the `app.kubernetes.io/name` label.
 2. **Define a Service**: Create a service manifest (usually `ClusterIP`) with selectors matching the deployment labels.
 3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass, associated PVCs and PV entries.  Ensure the Deployment yaml has the mounts defined. 
-4. **Define an Ingress**: By default, use the internal ingress manifest pattern unless otherwise specified.
+4. **Define an HTTPRoute**: By default, use the internal Gateway HTTPRoute pattern unless otherwise specified.
 5. **Add Other Resources**: Create any additional resources needed (ConfigMaps, Secrets, RBAC, etc.).
 6. **Update ArgoCD App-of-Apps**: Add an entry for the app in `cluster/root-app/values.yaml` to onboard it into ArgoCD management.
 
@@ -18,7 +18,7 @@ YAML files should be created for each of the resource types and naming should re
 - pvc.yaml
 - pv.yaml
 - service.yaml
-- ingress.yaml
+- httproute.yaml
 - config-map.yaml
 
 for any resources not specified in that list, take a best guess and follow the conventions. 
@@ -53,7 +53,7 @@ for any resources not specified in that list, take a best guess and follow the c
 - **Directory Structure**: All cluster resources are organized by function (bootstrap, apps, root-app, talos).
 - **Secrets Management**: Sensitive credentials are stored in external secret stores or Kubernetes secrets, never hardcoded.
 - **RBAC**: Cluster roles and permissions are defined per app (see `cluster-role.yaml` in app folders).
-- **Ingress**: Ingress resources use consistent annotations and pathing (see `manual-route.yaml` in route apps).
+- **Gateway API**: HTTPRoute resources use consistent annotations and pathing across internal and external Gateways.
 - **Cloud Integrations**: Cloudflare and Azure Key Vault integrations require manual secret creation and manifest updates.
 
 ## Integration Points
@@ -145,21 +145,22 @@ spec:
 ```
 
 
-### Ingress
-- **Internal ingress** uses domain `{service}.internal.gustend.net` and must reference a TLS certificate from `letsencrypt-prod`.
-- **External ingress** uses domain `{service}.gustend.net` and does NOT require a TLS reference (handled by external Cloudflare tunnel).
-- Both ingress types use `gethomepage.dev` annotations for homepage integration. For the icon, use the selfhost icon package which follows the convention of `sh-{service-name}`
+### HTTPRoute
+- **Internal routes** use the `internal` Gateway in namespace `envoy-gateway` with hostnames like `{service}.internal.gustend.net`.
+- **External routes** use the `external` Gateway in namespace `envoy-gateway` with hostnames like `{service}.gustend.net`.
+- Internal TLS terminates at the Gateway listener with a wildcard cert. Individual app routes do not define TLS secrets.
+- Both route types use `gethomepage.dev` annotations for homepage integration. For the icon, use the selfhost icon package convention `sh-{service-name}`.
 
-**Internal Ingress Example:**
+**Internal HTTPRoute Example:**
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: <service-name>
+  namespace: <app-namespace>
   labels:
     app.kubernetes.io/name: <service-name>
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/description: <Service Description>
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: <Service Group>
@@ -167,49 +168,58 @@ metadata:
     gethomepage.dev/name: <Service Display Name>
     gethomepage.dev/pod-selector: app.kubernetes.io/name=<service-name>
 spec:
-  ingressClassName: internal
-  tls:
-    - hosts:
-      - <service>.internal.gustend.net
-      secretName: <service>-internal-gustend-net-cert
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - <service>.internal.gustend.net
   rules:
-    - host: <service>.internal.gustend.net
-      http:
-        paths:
-          - path: "/"
-            pathType: Prefix
-            backend:
-              service:
-                port:
-                  number: <service-port>
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: <service-name>
+          port: <service-port>
+          weight: 1
 ```
 
-**External Ingress Example:**
+**External HTTPRoute Example:**
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
   name: <service-name>
+  namespace: <app-namespace>
   annotations:
-    kubernetes.io/ingress.class: "external"
     gethomepage.dev/description: <Service Description>
     gethomepage.dev/enabled: "true"
     gethomepage.dev/group: <Service Group>
     gethomepage.dev/icon: <Service Icon>
     gethomepage.dev/name: <Service Display Name>
 spec:
-  ingressClassName: external
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: external
+      namespace: envoy-gateway
+  hostnames:
+    - <service>.gustend.net
   rules:
-    - host: <service>.gustend.net
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: <service-name>
-                port:
-                  number: <service-port>
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: <service-name>
+          port: <service-port>
+          weight: 1
 ```
 ### External Secrets
 - All secrets are managed using the external secret store (Azure KeyVault).
@@ -299,7 +309,7 @@ spec:
 ```
 
 ### External Manual Route (Proxy to Legacy Server)
-To temporarily proxy requests to resources on a legacy server, create an EndpointSlice, a Service, and an Ingress. The Service and Ingress route traffic to the external IP defined in the EndpointSlice. 
+To temporarily proxy requests to resources on a legacy server, create an EndpointSlice, a Service, and an HTTPRoute. The Service and HTTPRoute route traffic to the external IP defined in the EndpointSlice.
 
 Unless otherwise specified, the legacy service will always be at 10.1.10.194, but with different ports
 
@@ -336,14 +346,13 @@ spec:
       targetPort: <external-port>
 ```
 
-**Ingress Example:**
+**HTTPRoute Example:**
 ```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
 metadata:
-  name: <service-ingress>
+  name: <service-name>
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
     gethomepage.dev/pod-selector: ""
     gethomepage.dev/description: <Service Description>
     gethomepage.dev/enabled: "true"
@@ -351,22 +360,24 @@ metadata:
     gethomepage.dev/icon: <Service Icon>
     gethomepage.dev/name: <Service Display Name>
 spec:
-  ingressClassName: internal
-  tls:
-    - hosts:
-        - <service>.internal.gustend.net
-      secretName: <service>-internal-gustend-net-tls
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
+    - <service>.internal.gustend.net
   rules:
-    - host: "<service>.internal.gustend.net"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: <service-name>
-                port:
-                  number: <service-port>
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: <service-name>
+          port: <service-port>
+          weight: 1
 ```
 
 
