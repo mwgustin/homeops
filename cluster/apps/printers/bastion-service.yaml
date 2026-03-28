@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: bastion-printer
 spec:
+  selector:
+    app.kubernetes.io/name: bastion-printer-proxy
   ports:
     - protocol: TCP
       port: 80

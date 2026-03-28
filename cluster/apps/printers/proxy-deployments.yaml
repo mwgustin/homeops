@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aurora-printer-proxy
+  namespace: default
+  labels:
+    app.kubernetes.io/name: aurora-printer-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aurora-printer-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: aurora-printer-proxy
+    spec:
+      containers:
+        - name: socat
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "-d"
+            - "TCP-LISTEN:80,fork,reuseaddr"
+            - "TCP:10.1.11.169:80"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bastion-printer-proxy
+  namespace: default
+  labels:
+    app.kubernetes.io/name: bastion-printer-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bastion-printer-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bastion-printer-proxy
+    spec:
+      containers:
+        - name: socat
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "-d"
+            - "TCP-LISTEN:80,fork,reuseaddr"
+            - "TCP:10.1.9.111:80"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
