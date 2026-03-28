@@ -32,7 +32,8 @@ HTTPRoutes bind to a specific Gateway via `parentRefs`. A route attached to the 
 ## Progress Summary
 - Phase 0: Completed (2026-03-27)
 - Phase 1: Completed (2026-03-27)
-- Current focus: Phase 2 migration of remaining app routes
+- Phase 2: Completed (2026-03-28)
+- Current focus: Phase 3 ingress-nginx decommission and cleanup
 
 ---
 
@@ -255,6 +256,9 @@ Validation evidence (2026-03-27):
 
 ## Phase 2 — Migrate Remaining Apps
 
+### Status
+Completed (2026-03-28)
+
 ### Goal
 Convert all remaining Ingress resources to HTTPRoute and cut over cloudflared + MetalLB to Envoy Gateway.
 
@@ -425,11 +429,48 @@ This step requires coordinating with ingress-nginx-internal to release the IP:
 Because `*.internal.gustend.net` is a wildcard DNS record, all internal services will cut over simultaneously at this point.
 
 ### Validation
-- [ ] All external apps reachable via their public domains
-- [ ] All internal apps reachable via `*.internal.gustend.net`
-- [ ] TLS working on all internal apps (wildcard cert)
-- [ ] Homepage showing all services correctly
-- [ ] EndpointSlice route apps (plex-route, etc.) working through new gateway
+- [x] External routes migrated and validated through Envoy external Gateway
+- [x] Internal routes validated through Envoy internal Gateway on production IP `10.1.0.22`
+- [x] TLS termination working via wildcard `*.internal.gustend.net` certificate on internal Gateway
+- [x] Homepage annotations present on migrated HTTPRoute resources
+- [x] EndpointSlice-style internal routes validated through new gateway path
+
+Validation evidence (2026-03-28):
+- HTTPRoute coverage was expanded for the previously missing targets: `bp-tools`, `planner-gen`, `test-app` (external + internal), and `printers` (aurora + bastion internal).
+- Internal MetalLB cutover was completed by moving Envoy internal from temporary `10.1.0.24` to production `10.1.0.22`, then releasing the legacy ingress-nginx-internal ownership.
+- ingress-nginx-internal was converted to non-LB/paused state for migration, and Envoy internal became the active LB endpoint for wildcard internal DNS traffic.
+- Envoy autosync was resumed after cutover; ingress-nginx remained paused for phased decommission safety.
+- Standard route validation returned expected healthy/app-auth responses across migrated services (including success responses such as `200` and expected auth/redirect responses such as `401`/`302` where applicable).
+- EndpointSlice/manual-route style validations succeeded post-cutover, including restored `200` responses for `aurora.internal.gustend.net` and `bastion.internal.gustend.net` after rollback of a regression attempt.
+- Noted exception during validation pass: `jellyfin` was intentionally excluded from blocker status for this phase's completion criteria.
+
+### Phase 3 Go/No-Go Checklist
+
+Use this checklist immediately before starting Phase 3 decommission tasks.
+
+Go criteria (all required unless explicitly waived):
+- [x] Envoy internal service is stable on `10.1.0.22`
+- [x] Sampled external routes return expected outcomes (`2xx`, expected auth `401`, or expected redirect `3xx`) through Envoy external.
+- [x] Sampled internal routes return expected outcomes through Envoy internal, including at least one route from each app group (media, default, foundry, ntfy, homepage).
+- [x] EndpointSlice/manual-route paths are verified working (`plex-route`, `sonarr-route`, `radarr-route`, `deluge-route`, `nzbget-route`, plus printer legacy routes).
+- [x] HTTPRoute status checks are clean for critical apps: `Accepted=True`, `ResolvedRefs=True`, and no persistent backend availability errors.
+- [x] Wildcard TLS cert (`*.internal.gustend.net`) is `Ready=True` and actively served by Envoy internal listener.
+- [x] Cloudflared points external wildcard/public host rules to Envoy external service with no stale ingress-nginx backend references.
+- [x] ArgoCD app health is green for envoy and routing-related apps; intended pause state is documented for ingress-nginx apps. 
+- [x] Rollback path is confirmed (ability to re-enable ingress-nginx-internal and restore prior service wiring if required).
+
+No-go triggers (stop Phase 3 and remediate first):
+- [ ] Reproducible `5xx`/timeout on critical routes without a known app-side cause.
+- [ ] Any critical HTTPRoute has unresolved refs or backend-unavailable conditions that persist across retries.
+- [ ] Envoy internal loses or flaps `10.1.0.22` assignment.
+- [ ] TLS handshake/certificate mismatch for `*.internal.gustend.net` hosts.
+- [ ] Cloudflared still routes any production external wildcard traffic to ingress-nginx.
+
+Decision record:
+- [x] Final go/no-go decision captured in PR or operations log with timestamp and approver.
+- [x] Decision: GO
+- [x] Timestamp: 2026-03-28 17:37:59 CDT
+- [x] Approver: gustin
 
 ---
 
