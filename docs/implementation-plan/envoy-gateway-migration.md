@@ -33,7 +33,8 @@ HTTPRoutes bind to a specific Gateway via `parentRefs`. A route attached to the 
 - Phase 0: Completed (2026-03-27)
 - Phase 1: Completed (2026-03-27)
 - Phase 2: Completed (2026-03-28)
-- Current focus: Phase 3 ingress-nginx decommission and cleanup
+- Phase 3: Completed (2026-03-28)
+- Migration status: Completed (2026-03-28)
 
 ---
 
@@ -477,7 +478,7 @@ Decision record:
 ## Phase 3 — Decommission ingress-nginx
 
 ### Status
-Repository cleanup completed (2026-03-28)
+Completed (2026-03-28)
 
 ### Goal
 Remove ingress-nginx and ingress-nginx-internal from the cluster.
@@ -506,10 +507,20 @@ Remove ingress-nginx and ingress-nginx-internal from the cluster.
 5. **Update external-domain-routing-via-cloudflare-tunnel.md** — The existing implementation plan references `ingress-nginx-controller.ingress-nginx.svc.cluster.local:80`. Update to reference the Envoy external gateway service.
 
 ### Validation
-- [ ] ingress-nginx and ingress-nginx-internal namespaces cleaned up
-- [ ] No Ingress resources remain in cluster (except any third-party Helm charts that create them)
-- [ ] All traffic flowing through Envoy Gateway
-- [ ] ArgoCD shows clean sync state
+- [x] ingress-nginx and ingress-nginx-internal namespaces cleaned up
+- [x] No Ingress resources remain in cluster (except any third-party Helm charts that create them)
+- [x] All traffic flowing through Envoy Gateway
+- [x] ArgoCD sync exception acknowledged for this phase: remaining `OutOfSync` apps are pre-existing and related to external-secrets issues, tracked separately and out of scope for Envoy migration closure.
+
+Validation evidence (2026-03-28 18:30:15 CDT):
+- `kubectl get ns ingress-nginx ingress-nginx-internal` returned `NotFound` for both namespaces.
+- `kubectl get ingress -A` returned `No resources found`.
+- `GatewayClass/envoy-gateway` is `Accepted=True`; `Gateway/envoy-gateway/external` and `Gateway/envoy-gateway/internal` are `Programmed=True`.
+- `Service/envoy-internal` is `LoadBalancer` with external IP `10.1.0.22`; `Service/envoy-external` is `ClusterIP`.
+- `Certificate/internal-wildcard-gustend-net` is `Ready=True` and serves `CN=*.internal.gustend.net` (issuer `Let's Encrypt R13`).
+- `cloudflared` ConfigMap ingress backends reference only `http://envoy-external.envoy-gateway.svc.cluster.local:80` for public host rules.
+- Representative route probes returned expected results through Envoy (`200` for public/internal apps and expected auth `401` for protected endpoints such as Plex/NZBGet).
+- ArgoCD application exceptions remain pre-existing external-secrets-related `OutOfSync` states and are intentionally tracked outside this migration.
 
 ---
 
