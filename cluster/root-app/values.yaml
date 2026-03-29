@@ -109,6 +109,9 @@ apps:
   - name: ytdl
     namespace: media
     path: cluster/apps/ytdl
+  - name: tunarr
+    namespace: media
+    path: cluster/apps/tunarr
   - name: komga
     namespace: media
     path: cluster/apps/komga
