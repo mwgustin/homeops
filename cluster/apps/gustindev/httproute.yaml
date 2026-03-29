@@ -8,8 +8,8 @@ metadata:
   annotations:
     gethomepage.dev/description: gustin.dev validation endpoint
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Misc
-    gethomepage.dev/icon: sh-httpbin
+    gethomepage.dev/group: Personal
+    gethomepage.dev/icon: mdi-web
     gethomepage.dev/name: Gustin Dev Validation
 spec:
   parentRefs:
@@ -41,8 +41,8 @@ metadata:
   annotations:
     gethomepage.dev/description: Internal gustin.dev validation endpoint
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Misc
-    gethomepage.dev/icon: sh-httpbin
+    gethomepage.dev/group: Personal
+    gethomepage.dev/icon: mdi-web
     gethomepage.dev/name: Gustin Dev Validation (Internal)
     gethomepage.dev/pod-selector: app.kubernetes.io/name=gustindev-test
 spec:

@@ -6,8 +6,8 @@ metadata:
   annotations:
     gethomepage.dev/description: Anona Counseling landing page
     gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: Misc
-    gethomepage.dev/icon: sh-anona-counseling-page
+    gethomepage.dev/group: Hosting
+    gethomepage.dev/icon: mdi-hand-heart
     gethomepage.dev/name: Anona Counseling Page
 spec:
   parentRefs:
