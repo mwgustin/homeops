@@ -5,6 +5,8 @@ Date: 2026-03-28
 ## Scope
 This plan documents current ArgoCD `OutOfSync` applications, diagnosis for each, and a remediation sequence.
 
+Status: Completed (Phase 1 and Phase 2 executed on 2026-03-28)
+
 Data source used:
 - `kubectl get applications.argoproj.io -n argocd -o wide`
 - `kubectl get applications.argoproj.io <app> -n argocd -o jsonpath=...`
@@ -170,12 +172,23 @@ Candidate ignore rule style:
 Note:
 - Prefer explicit manifests first; use ignore rules only when defaults are unstable across versions.
 
+## Documentation Updates
+- ExternalSecret authoring guidance has been updated in `.github/copilot-instructions.md` to require explicit defaulted fields (`deletionPolicy`, `remoteRef` strategies, and `target.template` defaults where applicable).
+
 ## Execution Checklist
-1. Resolve shared ownership for `apps` and `root-app` resources.
-2. Update all ExternalSecret manifests to include explicit defaulted fields.
-3. Sync affected applications in ArgoCD.
-4. Verify all six applications report `Synced`.
-5. If any remain drifted, capture `kubectl get app <name> -n argocd -o yaml` and add app-specific ignore rules.
+1. [x] Resolve shared ownership for `apps` and `root-app` resources.
+2. [x] Update all ExternalSecret manifests to include explicit defaulted fields.
+3. [x] Sync affected applications in ArgoCD.
+4. [x] Verify all six applications report `Synced`.
+5. [ ] If drift reappears in future, capture `kubectl get app <name> -n argocd -o yaml` and add app-specific ignore rules.
+
+## Completion Verification
+- `root-app`: `Synced`, `Healthy`
+- `cloudflared`: `Synced`, `Healthy`
+- `discord-activity-bot`: `Synced`, `Healthy`
+- `foundry`: `Synced`, `Healthy`
+- `gustend-ghost`: `Synced`, `Healthy`
+- `kutt`: `Synced`, `Healthy`
 
 ## Expected Outcome
 After Phase 1 and Phase 2, all currently `OutOfSync` apps should return to `Synced` without changing runtime behavior, because fixes align desired manifests with existing live defaults and remove ownership ambiguity.
