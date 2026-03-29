@@ -14,9 +14,22 @@ spec:
       labels:
         app.kubernetes.io/name: ytdl
     spec:
+      securityContext:
+        fsGroup: 100
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: pinchflat
           image: ghcr.io/kieraneglin/pinchflat:latest
+          securityContext:
+            runAsUser: 99
+            runAsGroup: 100
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 8945
           resources:
