@@ -80,6 +80,7 @@ for any resources not specified in that list, take a best guess and follow the c
 ### Deployment
 - Always include resource requests/limits for containers.
 - Use common Kubernetes labels like `app.kubernetes.io/name`.
+- Set `revisionHistoryLimit` for every Deployment (default: `1`) to prevent unbounded historical ReplicaSet buildup.
 
 **Deployment Example:**
 ```yaml
@@ -91,6 +92,7 @@ metadata:
     app.kubernetes.io/name: <app-name>
 spec:
   replicas: <replica-count>
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: <app-name>
