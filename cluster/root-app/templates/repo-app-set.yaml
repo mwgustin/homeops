@@ -4,7 +4,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ $app.name }}
-  namespace: {{ $.Release.Namespace }}
+  namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: '{{ default 0 $app.syncWave }}'
 spec:
