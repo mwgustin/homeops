@@ -7,6 +7,7 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
+    gateway: true
   settings.yaml: |
     background: 
         image: https://images.unsplash.com/photo-1756370382832-1c8fe9965d67?auto=format&fit=crop&w=2560&q=80
