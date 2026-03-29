@@ -81,11 +81,13 @@ Safety checks before deletion:
 
 ## Execution Checklist
 1. [x] Add `revisionHistoryLimit: 1` to all 26 affected Deployment manifests.
-2. [ ] Sync apps in ArgoCD and verify Deployment specs reflect history limit.
-3. [ ] Clean existing stale ReplicaSets per namespace with safety checks.
-4. [ ] Re-run inventory and confirm stale ReplicaSet count is reduced/controlled.
+2. [x] Sync apps in ArgoCD and verify Deployment specs reflect history limit.
+3. [x] Clean existing stale ReplicaSets per namespace with safety checks.
+4. [x] Re-run inventory and confirm stale ReplicaSet count is reduced/controlled.
 5. [x] Update relevant Deployment templates/guidance in `.github/copilot-instructions.md`.
 
 ## Current Status
 - Phase 1 complete: all 27 Deployment manifests under `cluster/apps` now explicitly define `revisionHistoryLimit`.
 - `.github/copilot-instructions.md` updated so future Deployment examples include `revisionHistoryLimit`.
+- Phase 2 verification complete: Argo apps are `Synced`, and all 26 remediated Deployments report `spec.revisionHistoryLimit=1` in live cluster state.
+- Phase 3 verification complete: no ownerless ReplicaSets and no Deployment with more than one zero-sized historical ReplicaSet in the remediated set; no deletions were required.
