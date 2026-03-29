@@ -8,6 +8,7 @@ spec:
     matchLabels:
       app: cloudflared
   replicas: 2 # You could also consider elastic scaling for this deployment
+  revisionHistoryLimit: 1
   template:
     metadata:
       labels:

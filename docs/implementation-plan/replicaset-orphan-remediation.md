@@ -53,7 +53,6 @@ Deployment manifests scanned under `cluster/apps/**`:
 ### Phase 1: Manifest normalization
 1. Add `revisionHistoryLimit: 1` to each Deployment listed above.
 2. Keep placement directly under `spec` beside `replicas` for consistency.
-3. Open one PR for all Deployment manifest updates to keep rollout cohesive.
 
 Validation:
 - `rg -n "^\s*revisionHistoryLimit:" cluster/apps -g "*deployment*.yaml" -g "*Deployment*.yaml"`
@@ -81,12 +80,12 @@ Safety checks before deletion:
 2. Add review checklist item: any new Deployment without `revisionHistoryLimit` fails review.
 
 ## Execution Checklist
-1. [ ] Add `revisionHistoryLimit: 1` to all 26 affected Deployment manifests.
+1. [x] Add `revisionHistoryLimit: 1` to all 26 affected Deployment manifests.
 2. [ ] Sync apps in ArgoCD and verify Deployment specs reflect history limit.
 3. [ ] Clean existing stale ReplicaSets per namespace with safety checks.
 4. [ ] Re-run inventory and confirm stale ReplicaSet count is reduced/controlled.
 5. [x] Update relevant Deployment templates/guidance in `.github/copilot-instructions.md`.
 
 ## Current Status
-- `cluster/apps/ytdl/deployment.yaml` updated with `revisionHistoryLimit: 1` as reference implementation.
+- Phase 1 complete: all 27 Deployment manifests under `cluster/apps` now explicitly define `revisionHistoryLimit`.
 - `.github/copilot-instructions.md` updated so future Deployment examples include `revisionHistoryLimit`.

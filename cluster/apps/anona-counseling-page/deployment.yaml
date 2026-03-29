@@ -6,6 +6,7 @@ metadata:
     app.kubernetes.io/name: anona-counseling-page
 spec:
   replicas: 1
+  revisionHistoryLimit: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: anona-counseling-page
