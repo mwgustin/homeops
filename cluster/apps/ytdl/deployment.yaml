@@ -16,14 +16,14 @@ spec:
         app.kubernetes.io/name: ytdl
     spec:
       securityContext:
-        fsGroup: 1000
+        fsGroup: 100
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: pinchflat
           image: ghcr.io/kieraneglin/pinchflat:latest
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
+            runAsUser: 99
+            runAsGroup: 100
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
