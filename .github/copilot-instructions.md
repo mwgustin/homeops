@@ -4,7 +4,7 @@ This repository manages a Kubernetes cluster using Talos, with a focus on declar
 
 ## Steps for Adding a New App
 When requested to onboard a new app, follow these steps and reference the example manifests defined in the "Specific cluster resource details and examples" section below:
-1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits and the `app.kubernetes.io/name` label.
+1. **Define a Deployment**: Create a deployment manifest for the app, including resource requests/limits, `revisionHistoryLimit: 1`, and the `app.kubernetes.io/name` label.
 2. **Define a Service**: Create a service manifest (usually `ClusterIP`) with selectors matching the deployment labels.
 3. **Define PVCs (if needed)**: If persistent storage is required, create PVC manifests. For NFS mounts, also define the associated StorageClass, associated PVCs and PV entries.  Ensure the Deployment yaml has the mounts defined. 
 4. **Define an HTTPRoute**: By default, use the internal Gateway HTTPRoute pattern unless otherwise specified.
@@ -19,6 +19,7 @@ YAML files should be created for each of the resource types and naming should re
 - pv.yaml
 - service.yaml
 - httproute.yaml
+- external-secret.yaml
 - config-map.yaml
 
 for any resources not specified in that list, take a best guess and follow the conventions. 
@@ -269,7 +270,9 @@ metadata:
   name: nfs-library-media
 provisioner: nfs.csi.k8s.io
 parameters:
+  server: library.gustend.local
   share: /volume1/Media
+```
 
 ### Persistent Volume Claims
 - Most PVCs use `synology-iscsi`. 
