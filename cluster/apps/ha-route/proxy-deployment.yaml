@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ha-proxy
+  namespace: media
+  labels:
+    app.kubernetes.io/name: ha-proxy
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ha-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ha-proxy
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: socat
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "-d"
+            - "TCP-LISTEN:8123,fork,reuseaddr"
+            - "TCP:10.1.15.115:8123"
+          ports:
+            - containerPort: 8123
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ha-observer-proxy
+  namespace: media
+  labels:
+    app.kubernetes.io/name: ha-observer-proxy
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ha-observer-proxy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ha-observer-proxy
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: socat
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "-d"
+            - "TCP-LISTEN:4357,fork,reuseaddr"
+            - "TCP:10.1.15.115:4357"
+          ports:
+            - containerPort: 4357
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
