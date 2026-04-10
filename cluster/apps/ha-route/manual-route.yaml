@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ha-service
+  namespace: media
+spec:
+  ports:
+    - protocol: TCP
+      port: 8123
+      targetPort: 8123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ha-observer-service
+  namespace: media
+spec:
+  ports:
+    - protocol: TCP
+      port: 4357
+      targetPort: 4357

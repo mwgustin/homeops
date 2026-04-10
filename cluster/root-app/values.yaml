@@ -88,6 +88,9 @@ apps:
   - name: plex-route
     namespace: media
     path: cluster/apps/plex-route
+  - name: ha-route
+    namespace: media
+    path: cluster/apps/ha-route
   - name: prowlarr
     namespace: media
     path: cluster/apps/prowlarr
