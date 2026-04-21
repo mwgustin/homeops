@@ -41,6 +41,10 @@ apps:
     namespace: default
     path: cluster/apps/anona-counseling-page
 
+  - name: uss-champlin-web
+    namespace: default
+    path: cluster/apps/uss-champlin-web
+
   - name: n8n
     namespace: n8n
     path: cluster/apps/n8n
