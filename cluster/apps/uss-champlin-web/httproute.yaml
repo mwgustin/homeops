@@ -17,6 +17,7 @@ spec:
       namespace: envoy-gateway
   hostnames:
     - usschamplin.com
+    - usschamp.internal.gustend.net
   rules:
     - matches:
         - path:
