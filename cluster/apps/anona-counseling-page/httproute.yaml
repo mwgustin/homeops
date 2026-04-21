@@ -16,8 +16,8 @@ spec:
       name: external
       namespace: envoy-gateway
   hostnames:
-    - anona-test-page.gustend.net
     - anonafamilycounseling.com
+    - www.anonafamilycounseling.com
   rules:
     - matches:
         - path:

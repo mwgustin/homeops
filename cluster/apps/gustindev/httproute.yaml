@@ -19,6 +19,7 @@ spec:
       namespace: envoy-gateway
   hostnames:
     - gustin.dev
+    - www.gustin.dev
   rules:
     - matches:
         - path:
