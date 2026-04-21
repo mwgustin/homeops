@@ -17,6 +17,30 @@ spec:
       namespace: envoy-gateway
   hostnames:
     - usschamplin.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - group: ""
+          kind: Service
+          name: uss-champlin-web
+          port: 80
+          weight: 1
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: uss-champlin-web-internal
+  namespace: default
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: internal
+      namespace: envoy-gateway
+  hostnames:
     - usschamp.internal.gustend.net
   rules:
     - matches:
