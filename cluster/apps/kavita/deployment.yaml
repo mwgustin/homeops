@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kavita
+  namespace: media
+  labels:
+    app.kubernetes.io/name: kavita
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kavita
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kavita
+    spec:
+      containers:
+        - name: kavita
+          image: ghcr.io/kareadita/kavita:latest
+          ports:
+            - containerPort: 5000
+              name: http
+          env:
+            - name: TZ
+              value: "America/Chicago"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          volumeMounts:
+            - name: config
+              mountPath: /kavita/config
+            - name: nfs-media
+              mountPath: /manga
+              subPath: Manga
+            - name: nfs-media
+              mountPath: /books
+              subPath: Books
+            - name: nfs-media
+              mountPath: /comics
+              subPath: Comics
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: kavita-config
+        - name: nfs-media
+          persistentVolumeClaim:
+            claimName: kavita-nfs-media-pvc
