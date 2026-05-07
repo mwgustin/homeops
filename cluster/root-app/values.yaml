@@ -123,6 +123,10 @@ apps:
     namespace: media
     path: cluster/apps/komga
 
+  - name: kavita
+    namespace: media
+    path: cluster/apps/kavita
+
   - name: kutt
     namespace: default
     path: cluster/apps/kutt

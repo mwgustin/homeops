@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kavita-config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: synology-iscsi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kavita-nfs-media-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: library.gustend.local
+    path: /volume1/Media
+  storageClassName: kavita-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kavita-nfs-media-pvc
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: kavita-nfs-library-media
