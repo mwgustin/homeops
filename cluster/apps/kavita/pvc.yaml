@@ -13,7 +13,10 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: kavita-nfs-media-pv
+  name: kavita-manga-pv
+  labels:
+    app.kubernetes.io/name: kavita
+    pv-role: manga
 spec:
   capacity:
     storage: 100Gi
@@ -22,15 +25,89 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: library.gustend.local
-    path: /volume1/Media
+    path: /volume1/Media/books/manga
   storageClassName: kavita-nfs-library-media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: kavita-nfs-media-pvc
+  name: kavita-manga
   namespace: media
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kavita
+      pv-role: manga
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: kavita-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kavita-books-pv
+  labels:
+    app.kubernetes.io/name: kavita
+    pv-role: books
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: library.gustend.local
+    path: /volume1/Media/books/books
+  storageClassName: kavita-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kavita-books
+  namespace: media
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kavita
+      pv-role: books
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: kavita-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kavita-comics-pv
+  labels:
+    app.kubernetes.io/name: kavita
+    pv-role: comics
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: library.gustend.local
+    path: /volume1/Media/books/comics
+  storageClassName: kavita-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kavita-comics
+  namespace: media
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kavita
+      pv-role: comics
   accessModes:
     - ReadWriteMany
   resources:

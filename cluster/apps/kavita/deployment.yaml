@@ -37,19 +37,23 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /kavita/config
-            - name: nfs-media
+            - name: manga
               mountPath: /manga
-              subPath: Manga
-            - name: nfs-media
+            - name: books
               mountPath: /books
-              subPath: Books
-            - name: nfs-media
+            - name: comics
               mountPath: /comics
-              subPath: Comics
+              
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: kavita-config
-        - name: nfs-media
+        - name: manga
           persistentVolumeClaim:
-            claimName: kavita-nfs-media-pvc
+            claimName: kavita-manga
+        - name: books
+          persistentVolumeClaim:
+            claimName: kavita-books
+        - name: comics
+          persistentVolumeClaim:
+            claimName: kavita-comics
