@@ -1,0 +1,17 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: bp-tools-websocket
+  namespace: default
+  labels:
+    app.kubernetes.io/name: bp-tools
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: bp-tools
+  timeout:
+    http:
+      streamIdleTimeout: 0s
+  httpUpgrade:
+    - type: websocket
