@@ -10,8 +10,19 @@ spec:
     group: gateway.networking.k8s.io
     kind: HTTPRoute
     name: bp-tools
+  loadBalancer:
+    type: ConsistentHash
+    consistentHash:
+      type: Cookie
+      cookie:
+        name: bp-tools-session
+        ttl: 24h
+        attributes:
+          Path: /
+          Secure: ""
+          SameSite: Lax
   timeout:
     http:
-      streamIdleTimeout: 0s
+      maxStreamDuration: 0s
   httpUpgrade:
     - type: websocket
