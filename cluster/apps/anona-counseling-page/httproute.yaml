@@ -18,6 +18,8 @@ spec:
   hostnames:
     - anonafamilycounseling.com
     - www.anonafamilycounseling.com
+    - anonacounselingcenter.com
+    - www.anonacounselingcenter.com
   rules:
     - matches:
         - path:
