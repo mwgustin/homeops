@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: talos-debug
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: talos-debug
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: talos-debug
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: talos-debug
+    spec:
+      nodeName: talos-cp1
+      hostNetwork: true
+      hostPID: true
+      containers:
+        - name: recovery
+          image: alpine
+          command: ["tail", "-f", "/dev/null"]
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "32Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: host-root
+              mountPath: /host
+      volumes:
+        - name: host-root
+          hostPath:
+            path: /
