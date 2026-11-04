@@ -1,5 +1,9 @@
 *kubeconfig*
 *talosconfig*
+talos/base64-config
+talos/config.yaml
+talos/_out/secrets.yaml
+talos/_out/*-secrets.yaml
 env/*
 cluster/main/apps/argo-cd/charts/argo-cd-5.46.8.tgz
 cluster/main/apps/ghost/config.production.json
