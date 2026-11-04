@@ -22,17 +22,7 @@ spec:
       containers:
         - name: recovery
           image: alpine
-          command: ["/bin/sh", "-ec"]
-          args:
-            - |
-              mkdir -p /recovery
-              if [ -r /host/system/state/config.yaml ]; then
-                base64 /host/system/state/config.yaml > /recovery/machineconfig.b64
-                echo "ready" > /recovery/index.html
-              else
-                echo "config unavailable" > /recovery/index.html
-              fi
-              exec /bin/busybox httpd -f -p 8080 -h /recovery
+          command: ["tail", "-f", "/dev/null"]
           securityContext:
             privileged: true
           resources:
@@ -42,9 +32,6 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
-          ports:
-            - name: http
-              containerPort: 8080
           volumeMounts:
             - name: host-root
               mountPath: /host
