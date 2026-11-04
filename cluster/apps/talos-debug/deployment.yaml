@@ -22,20 +22,7 @@ spec:
       containers:
         - name: recovery
           image: alpine
-          command: ["/bin/sh", "-ec"]
-          args:
-            - |
-              mkdir -p /talos-state
-              if mount -o ro /host/dev/disk/by-label/STATE /talos-state &&
-                [ -r /talos-state/config.yaml ]; then
-                echo "BEGIN TALOS MACHINE CONFIG"
-                base64 /talos-state/config.yaml
-                echo "END TALOS MACHINE CONFIG"
-                umount /talos-state
-              else
-                echo "TALOS MACHINE CONFIG UNAVAILABLE"
-              fi
-              exec tail -f /dev/null
+          command: ["tail", "-f", "/dev/null"]
           securityContext:
             privileged: true
           resources:
