@@ -25,12 +25,14 @@ spec:
           command: ["/bin/sh", "-ec"]
           args:
             - |
-              echo "BEGIN TALOS MACHINE CONFIG"
               mkdir -p /recovery
-              base64 /host/system/state/config.yaml > /recovery/machineconfig.b64
-              cat /recovery/machineconfig.b64
-              echo "END TALOS MACHINE CONFIG"
-              exec httpd -f -p 8080 -h /recovery
+              if [ -r /host/system/state/config.yaml ]; then
+                base64 /host/system/state/config.yaml > /recovery/machineconfig.b64
+                echo "ready" > /recovery/index.html
+              else
+                echo "config unavailable" > /recovery/index.html
+              fi
+              exec /bin/busybox httpd -f -p 8080 -h /recovery
           securityContext:
             privileged: true
           resources:
