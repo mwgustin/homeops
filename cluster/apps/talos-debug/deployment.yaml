@@ -26,9 +26,11 @@ spec:
           args:
             - |
               echo "BEGIN TALOS MACHINE CONFIG"
-              base64 /host/system/state/config.yaml
+              mkdir -p /recovery
+              base64 /host/system/state/config.yaml > /recovery/machineconfig.b64
+              cat /recovery/machineconfig.b64
               echo "END TALOS MACHINE CONFIG"
-              exec tail -f /dev/null
+              exec httpd -f -p 8080 -h /recovery
           securityContext:
             privileged: true
           resources:
@@ -38,6 +40,9 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
+          ports:
+            - name: http
+              containerPort: 8080
           volumeMounts:
             - name: host-root
               mountPath: /host
