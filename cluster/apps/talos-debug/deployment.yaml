@@ -25,9 +25,9 @@ spec:
           command: ["/bin/sh", "-ec"]
           args:
             - |
-              if [ -r /host/system/state/config.yaml ]; then
+              if [ -r /talos-state/config.yaml ]; then
                 echo "BEGIN TALOS MACHINE CONFIG"
-                base64 /host/system/state/config.yaml
+                base64 /talos-state/config.yaml
                 echo "END TALOS MACHINE CONFIG"
               else
                 echo "TALOS MACHINE CONFIG UNAVAILABLE"
@@ -45,7 +45,14 @@ spec:
           volumeMounts:
             - name: host-root
               mountPath: /host
+            - name: talos-state
+              mountPath: /talos-state
+              readOnly: true
       volumes:
         - name: host-root
           hostPath:
             path: /
+        - name: talos-state
+          hostPath:
+            path: /system/state
+            type: Directory
