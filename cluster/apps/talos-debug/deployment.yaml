@@ -25,10 +25,13 @@ spec:
           command: ["/bin/sh", "-ec"]
           args:
             - |
-              if [ -r /talos-state/config.yaml ]; then
+              mkdir -p /talos-state
+              if mount -o ro /host/dev/disk/by-label/STATE /talos-state &&
+                [ -r /talos-state/config.yaml ]; then
                 echo "BEGIN TALOS MACHINE CONFIG"
                 base64 /talos-state/config.yaml
                 echo "END TALOS MACHINE CONFIG"
+                umount /talos-state
               else
                 echo "TALOS MACHINE CONFIG UNAVAILABLE"
               fi
@@ -45,14 +48,7 @@ spec:
           volumeMounts:
             - name: host-root
               mountPath: /host
-            - name: talos-state
-              mountPath: /talos-state
-              readOnly: true
       volumes:
         - name: host-root
           hostPath:
             path: /
-        - name: talos-state
-          hostPath:
-            path: /system/state
-            type: Directory
