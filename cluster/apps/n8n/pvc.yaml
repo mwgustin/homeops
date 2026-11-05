@@ -5,6 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: n8n
 spec:
+  volumeName: pvc-f9cc00ff-0d14-4f84-95ba-ddd8d4f7cd92
   storageClassName: synology-iscsi
   volumeMode: Filesystem
   accessModes:

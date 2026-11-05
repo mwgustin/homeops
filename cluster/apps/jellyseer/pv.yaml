@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-cb97cdbd-f09e-4c35-9cfd-a4a355d096c0
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: jellyseer-config
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: c7a8af44-a4ef-4932-acab-df800bea75e0
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

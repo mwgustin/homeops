@@ -12,3 +12,28 @@ spec:
     server: library.gustend.local
     path: /volume1/Media/docker/deluge-dl
   storageClassName: nfs-deluge-downloads
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-d159f674-0888-47e1-83db-5dd72203048b
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: deluge-config
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 9c0013e1-a5c9-4cd5-a8e6-0e72929bae07
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: tunarr-config
 spec:
+  volumeName: pvc-618982df-f424-4a01-9fec-cd3638ef63eb
   accessModes:
     - ReadWriteOnce
   resources:

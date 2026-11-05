@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mosquitto-data
 spec:
+  volumeName: pvc-99f4b091-c6e0-44f4-8318-2950a7433eac
   accessModes:
     - ReadWriteOnce
   resources:
@@ -15,6 +16,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mosquitto-log
 spec:
+  volumeName: pvc-f8aac8ac-75d0-460e-a86e-f1a51564b9bb
   accessModes:
     - ReadWriteOnce
   resources:

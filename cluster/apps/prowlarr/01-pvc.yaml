@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: prowlarr-config
 spec:
+  volumeName: pvc-d6665ec0-c25d-47cb-b7cb-7c8ecae7b530
   accessModes:
     - ReadWriteOnce
   resources:

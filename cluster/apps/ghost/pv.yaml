@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-ea7d59c4-933d-4ac2-b7c0-1d091e69090b
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ghost-k8s-static-ghost
+    namespace: ghost-k8s
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 3272c765-5c84-433c-9832-320ed467eec4
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-49054fca-feb3-490f-abe3-3d7b72e2ea9e
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: mysql-ghost-k8s
+    namespace: ghost-k8s
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: c3384192-6c02-4409-b7af-fb567d0e6545
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

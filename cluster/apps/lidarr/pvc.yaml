@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: lidarr-config-pvc
 spec:
+  volumeName: pvc-50324d8b-272b-414a-9bdf-aa2ed8a31e3b
   accessModes:
     - ReadWriteOnce
   resources:

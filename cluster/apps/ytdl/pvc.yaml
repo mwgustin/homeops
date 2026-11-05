@@ -18,6 +18,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: ytdl-config-pvc
 spec:
+  volumeName: pvc-2827c9d0-1cb0-4606-a926-d32f857aba03
   accessModes:
     - ReadWriteOnce
   resources:

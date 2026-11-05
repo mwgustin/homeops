@@ -11,6 +11,7 @@ metadata:
     app.kubernetes.io/component: frontend
     app.kubernetes.io/part-of: ghost-k8s
 spec:
+  volumeName: pvc-ea7d59c4-933d-4ac2-b7c0-1d091e69090b
   storageClassName: synology-iscsi # Change this to your storageClassName
   volumeMode: Filesystem
   accessModes:
@@ -33,6 +34,7 @@ metadata:
     app.kubernetes.io/part-of: ghost-k8s
 
 spec:
+  volumeName: pvc-49054fca-feb3-490f-abe3-3d7b72e2ea9e
   storageClassName: synology-iscsi # Change this to your storageClassName
   volumeMode: Filesystem
   accessModes:

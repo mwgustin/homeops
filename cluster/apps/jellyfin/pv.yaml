@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-7ab937d5-b08d-4a1f-860e-95d2ca593f02
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: jellyfin-cache
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 70e8ef8d-b0d5-4113-9a7f-a7fbe3adee07
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-67abd909-c503-4103-bb24-cf2e7a655fb7
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: jellyfin-config
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: ad40fc84-7ef9-44fb-ac97-a9f821b438e8
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

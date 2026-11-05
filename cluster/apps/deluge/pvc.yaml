@@ -4,6 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: deluge-config
 spec:
+  volumeName: pvc-d159f674-0888-47e1-83db-5dd72203048b
   accessModes:
     - ReadWriteOnce
   resources:

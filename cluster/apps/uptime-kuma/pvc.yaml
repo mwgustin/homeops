@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: uptime-kuma-data
 spec:
+  volumeName: pvc-a2c8d3f3-8f73-4eae-88c3-7457ccd2e292
   accessModes:
     - ReadWriteOnce
   resources:

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-f9cc00ff-0d14-4f84-95ba-ddd8d4f7cd92
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: n8n-data-pvc
+    namespace: n8n
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 58b47533-a0ee-4f87-845e-6b9af5b59d8a
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-a2c8d3f3-8f73-4eae-88c3-7457ccd2e292
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: uptime-kuma-data
+    namespace: default
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 8c5b0715-a00e-47e0-86cf-8010ca1231e8
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: kutt-db-data
 spec:
+  volumeName: pvc-45bfc2f8-9198-4075-a8e8-ab9457c383aa
   accessModes:
     - ReadWriteOnce
   resources:
@@ -15,6 +16,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: kutt-custom
 spec:
+  volumeName: pvc-c3af5ead-ad23-4668-8faf-206838616594
   accessModes:
     - ReadWriteOnce
   resources:

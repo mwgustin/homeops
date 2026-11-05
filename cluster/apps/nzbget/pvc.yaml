@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: nzbget-config-pvc
 spec:
+  volumeName: pvc-188a5003-c80e-4cf6-8bee-f8f9891966ce
   accessModes:
     - ReadWriteOnce
   resources:

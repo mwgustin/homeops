@@ -4,6 +4,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: sonarr-config
 spec:
+  volumeName: pvc-00fd81e8-204c-49e7-a9ef-92822d2c99ad
   accessModes:
     - ReadWriteOnce
   resources:

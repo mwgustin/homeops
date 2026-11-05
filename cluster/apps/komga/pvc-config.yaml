@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: komga-config
 spec:
+  volumeName: pvc-1de1361d-125e-4feb-a6e4-9c82dac1b7e8
   accessModes:
     - ReadWriteOnce
   resources:

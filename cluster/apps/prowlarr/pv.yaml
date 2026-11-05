@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-d6665ec0-c25d-47cb-b7cb-7c8ecae7b530
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: prowlarr-config
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: bbd20967-85dc-4fed-8c24-3e394d0dd84f
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

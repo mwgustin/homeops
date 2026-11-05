@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyseer-config
 spec:
+  volumeName: pvc-cb97cdbd-f09e-4c35-9cfd-a4a355d096c0
   accessModes:
     - ReadWriteOnce
   resources:

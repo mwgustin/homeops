@@ -5,6 +5,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: radarr-config
 spec:
+  volumeName: pvc-d711089c-946c-4627-adb6-f994cb9e8406
   accessModes:
     - ReadWriteOnce
   resources:

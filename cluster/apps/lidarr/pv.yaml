@@ -27,3 +27,28 @@ spec:
     server: library.gustend.local
     path: /volume1/Media/docker/downloads
   storageClassName: nfs-library-downloads
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-50324d8b-272b-414a-9bdf-aa2ed8a31e3b
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: lidarr-config-pvc
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 8a4150c9-6858-4647-bf39-47bfb1fbe1bf
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

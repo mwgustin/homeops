@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: tautulli-config
 spec:
+  volumeName: pvc-3f43601d-81c5-431c-9c9c-716b1ab9eb6b
   accessModes:
     - ReadWriteOnce
   resources:

@@ -12,3 +12,28 @@ spec:
     server: library.gustend.local
     path: /volume1/Media/Youtube
   storageClassName: nfs-ytdl-downloads
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-2827c9d0-1cb0-4606-a926-d32f857aba03
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ytdl-config-pvc
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 6f1eb1d8-ae22-44d9-a350-87a7f139f93e
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

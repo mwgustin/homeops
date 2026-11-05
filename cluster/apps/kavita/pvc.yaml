@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: kavita-config
 spec:
+  volumeName: pvc-5c89fb05-c66d-402c-a52e-f1927f91889a
   accessModes:
     - ReadWriteOnce
   resources:

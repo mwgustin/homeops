@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-c3af5ead-ad23-4668-8faf-206838616594
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: kutt-custom
+    namespace: default
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 327fbdda-dd20-41de-b085-a54a4935bc2d
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-45bfc2f8-9198-4075-a8e8-ab9457c383aa
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: kutt-db-data
+    namespace: default
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: a8e5c379-5f5a-4173-ab5b-ac693de2fd5e
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi

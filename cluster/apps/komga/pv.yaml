@@ -12,3 +12,28 @@ spec:
     server: library.gustend.local
     path: /volume1/Media
   storageClassName: komga-nfs-library-media
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-1de1361d-125e-4feb-a6e4-9c82dac1b7e8
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: komga-config
+    namespace: media
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 57369952-1b62-4e99-9233-15a10ab46834
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi
