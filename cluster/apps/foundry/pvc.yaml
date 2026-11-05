@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: foundry-config-pvc
 spec:
+  volumeName: pvc-c2057562-b933-4462-984d-dd0e16984c64
   accessModes:
     - ReadWriteOnce
   resources:

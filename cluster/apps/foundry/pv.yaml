@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvc-c2057562-b933-4462-984d-dd0e16984c64
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: synology-iscsi
+  volumeMode: Filesystem
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: foundry-config-pvc
+    namespace: foundry
+  csi:
+    driver: csi.san.synology.com
+    fsType: ext4
+    volumeHandle: 5288ceb7-95b0-4653-813d-821f5712b9fc
+    volumeAttributes:
+      dsm: Library.gustend.local
+      protocol: iscsi
