@@ -28,10 +28,6 @@ apps:
   - name: test-app
     namespace: default
     path: cluster/apps/test-app
-    
-  - name: talos-debug
-    namespace: kube-system
-    path: cluster/apps/talos-debug
 
   - name: bp-tools
     namespace: default
