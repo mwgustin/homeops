@@ -77,7 +77,15 @@ jellyfin-config, kutt-db-data, uptime-kuma, then the *arr configs.
 
 ## Open items
 
-- Orphaned LUNs from the Nov 2026 rebuild still on the NAS: 3 old `test-app-pvc`,
-  `pgdata-test-pg-0`, and one empty foundry LUN. Delete in DSM when confirmed unneeded.
-- Root `apps` Argo Application was OutOfSync at the end of the recovery; investigate.
+- Resolved 2026-11-05: the orphaned LUNs and their iSCSI targets from the rebuild
+  (3 old `test-app-pvc`, `pgdata-test-pg-0`, empty foundry LUN) were deleted. LUNs
+  deleted directly through the DSM API leave their iSCSI target behind; delete the
+  target too (`SYNO.Core.ISCSI.Target` delete, `target_id` JSON-quoted), and a LUN
+  still mapped to a target will not delete until the target is removed.
+- Resolved 2026-11-05: root `apps` OutOfSync was caused by the bootstrap `apps`
+  Application and the self-managed `root-app` both rendering `cluster/root-app`.
+  Fixed by deleting `apps` with `--cascade=orphan`.
+- `metrics-server` is Degraded: nodes' kubelet serving certs have no IP SANs
+  (needs `--kubelet-insecure-tls` or kubelet-serving-cert-approver with Talos
+  `serverTLSBootstrap`). Not yet fixed.
 - Decide backup tooling for Phase 1.

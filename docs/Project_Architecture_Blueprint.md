@@ -1,1350 +1,589 @@
 # HomeOps Project Architecture Blueprint
 
-> **Generated:** March 29, 2026  
-> **Repository:** homeops-final-final  
-> **Technology Stack:** Proxmox VE, Kubernetes (Talos), ArgoCD, Envoy Gateway, Azure Key Vault, Terraform  
-> **Architecture Pattern:** GitOps with App-of-Apps
+Generated: April 10, 2026
+Repository: homeops-final-final
+Primary pattern: GitOps app-of-apps on Kubernetes (Talos)
+Detail level: Implementation-ready
 
----
+## 1. Architecture Detection and Analysis
 
-## Table of Contents
+### Detected technology stack
 
-1. [Executive Summary](#1-executive-summary)
-2. [Architecture Overview](#2-architecture-overview)
-3. [Architecture Visualization](#3-architecture-visualization)
-4. [Core Architectural Components](#4-core-architectural-components)
-5. [Architectural Layers and Dependencies](#5-architectural-layers-and-dependencies)
-6. [Data Architecture](#6-data-architecture)
-7. [Cross-Cutting Concerns](#7-cross-cutting-concerns)
-8. [Service Communication Patterns](#8-service-communication-patterns)
-9. [Technology-Specific Patterns](#9-technology-specific-patterns)
-10. [Implementation Patterns](#10-implementation-patterns)
-11. [Testing Architecture](#11-testing-architecture)
-12. [Deployment Architecture](#12-deployment-architecture)
-13. [Extension and Evolution Patterns](#13-extension-and-evolution-patterns)
-14. [Architectural Pattern Examples](#14-architectural-pattern-examples)
-15. [Architectural Decision Records](#15-architectural-decision-records)
-16. [Architecture Governance](#16-architecture-governance)
-17. [Blueprint for New Development](#17-blueprint-for-new-development)
+- Kubernetes manifests (YAML) for workloads, routing, storage, security, and operators.
+- Argo CD for GitOps reconciliation and automated drift correction.
+- Helm chart wrappers for selected operators and platform components.
+- Talos for immutable Kubernetes node OS and cluster bootstrap.
+- Terraform (AzureRM, SOPS, TFE) for Azure Key Vault and Terraform Cloud workspace wiring.
+- External Secrets Operator for secret sync from Azure Key Vault into Kubernetes Secrets.
+- Envoy Gateway and Gateway API for ingress/routing.
+- Cloudflare Tunnel (cloudflared) for external traffic ingress.
 
----
+### Detected architectural patterns
 
-## 1. Executive Summary
+- Primary: GitOps declarative architecture.
+- Secondary:
+  - App-of-apps composition via Helm-templated Argo Applications.
+  - Layered platform architecture (bootstrap, platform services, workloads).
+  - Hybrid deployment model (raw manifests plus Helm chart dependencies).
+  - Edge gateway split (internal and external ingress paths).
 
-### Project Purpose
-HomeOps is a **production-grade home Kubernetes infrastructure** managed through GitOps principles. It provides a declarative, reproducible platform for running self-hosted applications including media servers, automation tools, web applications, and development services.
+Evidence highlights:
 
-### Guiding Principles
-- **GitOps Source of Truth**: All cluster state is defined in Git; manual changes are automatically reconciled
-- **Declarative Infrastructure**: Infrastructure and applications are defined as code (IaC)
-- **Security by Default**: External secrets management, TLS everywhere, network segmentation
-- **Minimal OS Footprint**: Talos Linux eliminates traditional OS attack surface
-- **Separation of Concerns**: Platform services, application workloads, routing, storage, and secrets are managed as distinct layers with clear boundaries
-- **Self-Healing**: Automatic drift detection and correction
+- App registry and sync orchestration: cluster/root-app/values.yaml.
+- Application generation template: cluster/root-app/templates/app-set.yaml.
+- Gateway dual-plane setup: cluster/apps/envoy-gateway/templates/gateway-internal.yaml and cluster/apps/envoy-gateway/templates/gateway-external.yaml.
+- Terraform Cloud + Azure infra split: cluster/infra/mgmt and cluster/infra/main.
 
-### Technology Stack Summary
+## 2. Architectural Overview
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| **Virtualization** | Proxmox VE | Hypervisor platform hosting the Talos control plane and worker nodes |
-| **Operating System** | Talos Linux | Immutable, minimal Kubernetes OS |
-| **Kubernetes** | v1.33.4 | Container orchestration |
-| **GitOps** | ArgoCD | Continuous deployment and reconciliation |
-| **Gateway** | Envoy Gateway | Ingress/egress traffic management |
-| **Secrets** | External Secrets + Azure Key Vault | Secure credential management |
-| **Storage** | Synology CSI (iSCSI) + NFS | Persistent storage. iSCSI for internal persistent storage (config, DBs, etc), NFS for shared resources (media, shared downloads/processing, etc) |
-| **Certificates** | cert-manager (internal) + Cloudflare edge certs (external) | Internal ingress TLS is managed in-cluster; external TLS is terminated and managed by Cloudflare pre-tunnel |
-| **Load Balancing** | MetalLB | Internal LAN/VPN ingress IPs for the Envoy internal gateway |
-| **Infrastructure** | Terraform + Terraform Cloud | Cloud resource provisioning |
-| **Tunneling** | Cloudflared | External ingress only via Cloudflare Tunnel to the Envoy external gateway |
+HomeOps is a declarative home-lab platform where Git is the control plane and Argo CD is the reconciler. The repository is organized so that low-level cluster bootstrap operations (snapshotter CRDs/controller and Synology CSI bring-up) are handled first, then steady-state platform and application operations are continuously enforced by Argo CD.
 
----
+Guiding principles implemented in the codebase:
 
-## 2. Architecture Overview
-
-### High-Level Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                               ACCESS PATHS                                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  Internet (external only) ──► Cloudflare ──► cloudflared tunnel ──► Envoy  │
-│  External Gateway                                                           │
-│  VPN/LAN (internal only) ──► MetalLB IP ──► Envoy Internal Gateway         │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-┌─────────────────────────────────────┴───────────────────────────────────────┐
-│                           KUBERNETES CLUSTER                                 │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
-│  │   ArgoCD    │  │ cert-manager│  │  MetalLB    │  │ext-secrets  │        │
-│  │  (GitOps)   │  │   (TLS)     │  │   (L4 LB)   │  │  (secrets)  │        │
-│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘        │
-│                                                                              │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                        APPLICATION WORKLOADS                          │  │
-│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐        │  │
-│  │  │ Media   │ │Automation│ │  Web    │ │Database │ │ Tools   │        │  │
-│  │  │ Stack   │ │  (n8n)   │ │ (Ghost) │ │(Postgres)│ │(Homepage)│       │  │
-│  │  └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘        │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-┌─────────────────────────────────────┴───────────────────────────────────────┐
-│                           STORAGE & SECRETS                                  │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  ┌─────────────────────┐    ┌─────────────────────┐                         │
-│  │   Synology NAS      │    │   Azure Key Vault   │                         │
-│  │  • iSCSI (CSI)      │    │  • Application Secrets                        │
-│  │  • NFS (Media)      │    │  • SOPS Encryption Keys                       │
-│  └─────────────────────┘    └─────────────────────┘                         │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
-### Directory Structure
-
-```
-homeops-final-final/
-├── bootstrap/                    # Initial cluster setup (manual apply)
-│   ├── external-snapshotter-crd/    # CSI snapshot CRDs
-│   ├── external-snapshotter-controller/  # Snapshot controller
-│   └── synology-csi-talos/          # Synology CSI driver
-│
-├── cluster/                      # GitOps-managed resources
-│   ├── apps/                        # Application manifests (50+ apps)
-│   │   ├── argo-cd/                    # ArgoCD configuration
-│   │   ├── envoy-gateway/              # Gateway infrastructure
-│   │   ├── external-secrets/           # ESO operator
-│   │   ├── azkv-secret-store/          # Azure KV integration
-│   │   ├── jellyfin/                   # Media server
-│   │   ├── n8n/                        # Automation
-│   │   └── ...                         # 45+ more applications
-│   │
-│   ├── infra/                       # Terraform infrastructure
-│   │   ├── main/                       # Production Azure resources
-│   │   └── mgmt/                       # Management/SOPS infrastructure
-│   │
-│   └── root-app/                    # ArgoCD app-of-apps
-│       ├── Chart.yaml
-│       ├── values.yaml                 # Application registry
-│       └── templates/                  # ApplicationSet generators
-│
-├── talos/                        # Talos cluster configuration
-│   ├── Readme.md                    # Bootstrap instructions
-│   └── _out/                        # Generated configs
-│
-├── docs/                         # Documentation
-├── Taskfile.yaml                 # Task automation
-└── renovate.json                 # Dependency updates
-```
-
----
+- Source of truth in Git: every managed resource is versioned as YAML/HCL.
+- Idempotent reconciliation: Argo sync policy uses automated prune + self-heal with retries.
+- Platform-first layering: ingress, cert management, storage, and secrets are provisioned before most apps.
+- Explicit drift mitigation: ExternalSecret defaults are made explicit to avoid OutOfSync churn.
+- Operational simplicity: mostly single-replica stateful apps, consistent labels, and revisionHistoryLimit of 1.
 
 ## 3. Architecture Visualization
 
-### Component Interaction Diagram
+### 3.1 High-level C4-style context
 
-```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                              GITOPS FLOW                                      │
-└──────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    Dev[Repo Changes] --> Git[GitHub Repository]
+    Git --> Argo[Argo CD Root App]
+    Argo --> Apps[Generated Argo Applications]
+    Apps --> K8s[Kubernetes Cluster]
 
-  GitHub Repository                ArgoCD                    Kubernetes
-  ┌─────────────┐              ┌─────────────┐            ┌─────────────┐
-  │  homeops    │   webhook    │   root-app  │   sync     │  Namespaces │
-  │  main branch├─────────────►│   (App of   ├───────────►│  & Resources│
-  │             │              │    Apps)    │            │             │
-  └─────────────┘              └──────┬──────┘            └─────────────┘
-                                      │
-                          ┌───────────┼───────────┐
-                          │           │           │
-                          ▼           ▼           ▼
-                   ┌──────────┐ ┌──────────┐ ┌──────────┐
-                   │ Wave 0   │ │ Wave 1   │ │ Wave N   │
-                   │ metallb  │ │ envoy-gw │ │ apps...  │
-                   │ cert-mgr │ │ secrets  │ │          │
-                   └──────────┘ └──────────┘ └──────────┘
-```
+    Internet[Internet] --> CF[Cloudflare]
+    CF --> Tunnel[cloudflared]
+    Tunnel --> ExtGW[Envoy External Gateway]
 
-### Data Flow Diagram
+    LAN[LAN or VPN] --> IntGW[Envoy Internal Gateway]
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           EXTERNAL REQUEST FLOW                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+    ExtGW --> Routes[HTTPRoutes]
+    IntGW --> Routes
+    Routes --> Services[Kubernetes Services]
+    Services --> Pods[Workload Pods]
 
-Public Internet Request (*.gustend.net):
-┌────────┐    ┌───────────┐    ┌───────────┐    ┌────────────┐    ┌─────────┐
-│Internet├───►│Cloudflare ├───►│cloudflared├───►│ Envoy      ├───►│ App     │
-│        │    │   CDN     │    │  tunnel   │    │ External   │    │ Service │
-└────────┘    └───────────┘    └───────────┘    │ Gateway    │    └─────────┘
-                                                └────────────┘
+    AKV[Azure Key Vault] --> ESO[External Secrets Operator]
+    ESO --> K8sSecrets[Kubernetes Secrets]
+    K8sSecrets --> Pods
 
-Internal Request (*.internal.gustend.net):
-┌────────┐    ┌────────────┐    ┌─────────┐
-│VPN/LAN ├───►│ Envoy      ├───►│ App     │
-│        │    │ Internal   │    │ Service │
-└────────┘    │ Gateway    │    └─────────┘
-              └────────────┘
+    NAS[Synology NAS iSCSI and NFS] --> PVC[PV and PVC]
+    PVC --> Pods
 ```
 
-### Storage Architecture
+### 3.2 GitOps reconciliation flow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           STORAGE ARCHITECTURE                               │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌──────────────────────────────────┐    ┌──────────────────────────────────┐
-│      SYNOLOGY NAS (iSCSI)        │    │       SYNOLOGY NAS (NFS)         │
-│      library.gustend.local       │    │       library.gustend.local      │
-├──────────────────────────────────┤    ├──────────────────────────────────┤
-│                                  │    │                                  │
-│  ┌─────────────────────────┐     │    │  ┌─────────────────────────┐     │
-│  │   synology-iscsi        │     │    │  │   nfs.csi.k8s.io        │     │
-│  │   StorageClass          │     │    │  │   StorageClass          │     │
-│  └───────────┬─────────────┘     │    │  └───────────┬─────────────┘     │
-│              │                   │    │              │                   │
-│  Used by:    │                   │    │  Used by:    │                   │
-│  • jellyfin-config (5Gi)         │    │  • jellyfin-media (100Gi)        │
-│  • n8n (5Gi)                     │    │  • radarr-media                  │
-│  • komga (10Gi)                  │    │  • sonarr-media                  │
-│  • foundry (10Gi)                │    │  • lidarr-media                  │
-│  • uptime-kuma (5Gi)             │    │  • nzbget-downloads              │
-│  • kutt (5Gi)                    │    │  • deluge-downloads              │
-│                                  │    │                                  │
-│  AccessMode: ReadWriteOnce       │    │  AccessMode: ReadWriteMany       │
-└──────────────────────────────────┘    └──────────────────────────────────┘
+```mermaid
+flowchart LR
+    A[cluster/root-app/values.yaml] --> B[Helm templates create Argo Applications]
+    B --> C[Argo sync waves and automated retries]
+    C --> D[Namespaces and platform services]
+    D --> E[Application manifests and charts]
+    E --> F[Live cluster state]
+    F --> C
 ```
 
----
+### 3.3 Request/data path flow
+
+```mermaid
+sequenceDiagram
+    participant U as User Client
+    participant C as Cloudflare
+    participant T as cloudflared
+    participant G as Envoy Gateway
+    participant R as HTTPRoute
+    participant S as Service
+    participant P as Pod
+
+    U->>C: HTTPS request to *.gustend.net
+    C->>T: Tunnelled traffic
+    T->>G: Internal cluster HTTP
+    G->>R: Route match
+    R->>S: Backend reference
+    S->>P: Pod endpoint
+```
 
 ## 4. Core Architectural Components
 
-### 4.1 GitOps Layer (ArgoCD)
+### 4.1 Bootstrap layer
 
-**Purpose:** Continuous deployment, drift detection, and reconciliation
+Purpose:
 
-**Internal Structure:**
-- `cluster/apps/argo-cd/` - ArgoCD installation via Kustomize
-- `cluster/root-app/` - App-of-apps Helm chart
-- `cluster/root-app/values.yaml` - Application registry
+- One-time or infrequent bring-up of prerequisites not fully managed in the app-of-apps set.
 
-**Interaction Patterns:**
-- Watches GitHub repository for changes
-- Generates child Applications via ApplicationSet pattern
-- Self-manages its own deployment
-- Exposes UI via internal HTTPRoute
+Key assets:
 
-**Key Files:**
-```
-cluster/root-app/
-├── Chart.yaml                    # Helm chart metadata
-├── values.yaml                   # Application definitions (60+ apps)
-└── templates/
-    ├── app-set.yaml              # ApplicationSet for local apps
-    ├── repo-app-set.yaml         # ApplicationSet for external repos
-    ├── argo-cd.yaml              # ArgoCD self-management
-    ├── argo-route.yaml           # ArgoCD UI routing
-    ├── namespaces.yaml           # Pre-created namespaces
-    └── root-app.yaml             # Bootstrap Application
-```
+- bootstrap/external-snapshotter-crd
+- bootstrap/external-snapshotter-controller
+- bootstrap/synology-csi-talos
 
-### 4.2 Gateway Layer (Envoy Gateway)
+Responsibilities:
 
-**Purpose:** L7 traffic routing, TLS termination, access control
+- Install CRDs/controllers for snapshot ecosystem.
+- Deploy Synology CSI integration for persistent storage.
 
-**Internal Structure:**
-- Helm chart deployment: `gateway-helm:v1.7.1`
-- Two Gateway instances: `internal` and `external`
-- Internal gateway TLS certificates are managed in-cluster via cert-manager
-- External ingress TLS is terminated at Cloudflare and is not cluster-managed
+### 4.2 GitOps control layer (Argo CD + root-app)
 
-**Key Resources:**
-```
-cluster/apps/envoy-gateway/
-├── Chart.yaml                    # Helm dependency
-├── values.yaml                   # Envoy configuration
-└── templates/
-    ├── gateway-class.yaml        # GatewayClass definition
-    ├── gateway-internal.yaml     # Internal gateway (*.internal.gustend.net)
-    ├── gateway-external.yaml     # External gateway (*.gustend.net)
-    ├── envoyproxy-internal.yaml  # Envoy proxy config
-    ├── envoyproxy-external.yaml  # Envoy proxy config
-    └── internal-wildcard-certificate.yaml  # TLS cert
-```
+Purpose:
 
-### 4.3 Secrets Management Layer
+- Convert app inventory into concrete Argo Application resources and keep them reconciled.
 
-**Purpose:** Secure credential storage and injection
+Internal structure:
 
-**Architecture:**
-```
-Azure Key Vault (gustend-k8s-cluster)
-        │
-        ▼
-ClusterSecretStore (azure-secret-store)
-        │
-        ▼
-ExternalSecret (per-app)
-        │
-        ▼
-Kubernetes Secret (injected into pods)
-```
+- Chart and values: cluster/root-app/Chart.yaml, cluster/root-app/values.yaml
+- Templating: cluster/root-app/templates/app-set.yaml and repo-app-set.yaml
 
-**Key Files:**
-```
-cluster/apps/azkv-secret-store/
-└── keyvault-secret-store.yaml    # ClusterSecretStore definition
+Implementation pattern:
 
-cluster/apps/external-secrets/
-├── Chart.yaml                    # ESO Helm chart
-└── values.yaml                   # ESO configuration
-```
+- For each app entry in values, render one Argo Application with:
+  - automated.prune and automated.selfHeal
+  - retry with exponential backoff
+  - CreateNamespace, ServerSideApply, ApplyOutOfSyncOnly sync options
 
-### 4.4 Storage Layer
+### 4.3 Platform services layer
 
-**Purpose:** Persistent storage provisioning
+Includes:
 
-**Components:**
-1. **Synology CSI Driver** (iSCSI)
-   - Location: `bootstrap/synology-csi-talos/`
-   - StorageClass: `synology-iscsi`
-   - Use case: App configuration, databases, single-pod access
+- Envoy Gateway
+- cert-manager
+- external-secrets
+- azkv-secret-store
+- MetalLB
+- cloudflared
+- metrics-server
 
-2. **NFS CSI Driver**
-   - Location: `cluster/apps/csi-driver-nfs/`
-   - StorageClass: Custom per-app (e.g., `jellyfin-nfs-library-media`)
-   - Use case: Shared media libraries, multi-pod access
+Responsibilities:
 
-### 4.5 Certificate Management
+- Ingress, cert issuance, secret synchronization, cluster networking, platform telemetry.
 
-**Purpose:** Automated TLS certificate provisioning for internal ingress only
+### 4.4 Workload layer
 
-**Architecture:**
-```
-Internal DNS / Cloudflare DNS validation (for internal cert issuance)
-      │
-      ▼
-cert-manager (DNS01 challenge)
-      │
-      ▼
-Internal certificate resources
-      │
-      ▼
-Envoy internal gateway TLS listeners
-```
+Includes representative app groups:
 
-**External Ingress TLS:**
-- External TLS certificates are handled by Cloudflare at the edge before traffic enters the cloudflared tunnel
-- External certificate lifecycle is not managed by this cluster
-
-**Key Files:**
-```
-cluster/apps/cert-manager/
-├── Chart.yaml                    # cert-manager Helm chart
-└── values.yaml
-
-cluster/apps/cert-manager-cloudflare/
-├── certificate.yaml              # Internal certificate definitions
-├── cluster-issuer.yaml           # Issuer used for internal certificate automation
-└── secrets.yaml                  # Credentials for internal certificate automation
-```
-
----
+- Media and automation: jellyfin, sonarr, radarr, lidarr, prowlarr, nzbget, deluge, tunarr, n8n
+- Utility and UX: homepage, uptime-kuma, kutt
+- Data services/operators: mongodb operator, postgres operator
+- Specialty workloads: foundry, ddb-proxy, printers, custom web properties
 
 ## 5. Architectural Layers and Dependencies
 
-### Layer Diagram
+Layer map and dependency direction:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 5: APPLICATIONS                               │
-│  jellyfin, radarr, sonarr, n8n, ghost, homepage, foundry, etc.              │
-│  Dependencies: Gateway routes, Storage PVCs, Secrets                         │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 4: SERVICES                                   │
-│  postgres-operator, mongodb-operator                                         │
-│  Dependencies: Storage, Secrets                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 3: PLATFORM                                   │
-│  envoy-gateway, external-secrets, cert-manager                               │
-│  Dependencies: MetalLB, CRDs                                                 │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 2: INFRASTRUCTURE                             │
-│  metallb, csi-driver-nfs, csi-driver-smb, metrics-server                    │
-│  Dependencies: Kubernetes API                                                │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 1: BOOTSTRAP                                  │
-│  synology-csi, external-snapshotter-crd, external-snapshotter-controller    │
-│  Applied manually before ArgoCD                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          LAYER 0: CLUSTER                                    │
-│  Talos Linux, Kubernetes v1.33.4                                            │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+1. Bootstrap manifests -> enable storage and snapshot primitives.
+2. Argo root app -> declares all child application desired state.
+3. Platform services -> provide gateway, secrets, certs, and networking capabilities.
+4. Application manifests -> depend on platform CRDs/controllers and storage classes.
+5. Runtime traffic and data flows -> HTTPRoute -> Service -> Pod and Secret/PVC injection.
 
-### Sync Wave Ordering
+Enforcement mechanisms:
 
-ArgoCD uses sync waves to enforce deployment order:
+- Sync waves in app entries (for example envoy-gateway syncWave: 1).
+- Namespace-scoped manifest separation by app folder.
+- Common labeling conventions (primarily app.kubernetes.io/name).
 
-| Wave | Components | Purpose |
-|------|------------|---------|
-| **0** | metallb, cert-manager, csi-drivers | Core infrastructure |
-| **1** | envoy-gateway, external-secrets | Platform services |
-| **2+** | All applications | User workloads |
+Known violation risks:
 
----
+- Shared-resource ownership drift can happen when root-app and parent app both render/manage same resources; documented in docs/implementation-plan/argo-out-of-sync-remediation.md.
 
 ## 6. Data Architecture
 
-### Storage Patterns
+This repository uses infrastructure data architecture rather than a single domain model codebase.
 
-**1. iSCSI Storage (synology-iscsi)**
-```yaml
-# Single-pod application data
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: app-config
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: synology-iscsi
-  resources:
-    requests:
-      storage: 5Gi
-```
+### 6.1 Persistent data patterns
 
-**2. NFS Storage (shared media)**
-```yaml
-# Multi-pod shared access
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: jellyfin-nfs-library-media
-provisioner: nfs.csi.k8s.io
-parameters:
-  server: library.gustend.local
-  share: /volume1/Media
-mountOptions:
-  - nolock
+- Stateful workloads attach PVCs to pods, often with Recreate strategy.
+- Two dominant storage patterns:
+  - synology-iscsi for app-local ReadWriteOnce volumes.
+  - NFS classes for shared ReadWriteMany media volumes.
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-media
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: jellyfin-nfs-library-media
-  resources:
-    requests:
-      storage: 100Gi
-```
+Example evidence:
 
-### Database Patterns
+- cluster/apps/jellyfin/pvc.yaml
+- cluster/apps/jellyfin/storage-class.yaml
+- cluster/apps/foundry/deployment.yaml
 
-**PostgreSQL (via postgres-operator):**
-- Operator-managed clusters
-- Automatic failover and backups
-- Used by: n8n, ghost, kutt
+### 6.2 Secret data patterns
 
-**MongoDB (via mongodb-operator):**
-- Operator-managed deployments
-- Used by: specialized applications
+- Azure Key Vault is source of truth.
+- ExternalSecret resources map vault keys into Kubernetes Secrets.
+- Pods consume secrets through env.valueFrom.secretKeyRef.
 
----
+Example chain:
 
-## 7. Cross-Cutting Concerns
+- cluster/apps/azkv-secret-store/keyvault-secret-store.yaml
+- cluster/apps/foundry/external-secret.yaml
+- cluster/apps/foundry/deployment.yaml
 
-### 7.1 Authentication & Authorization
+### 6.3 Configuration and transformation
 
-**Current Implementation:**
-- No cluster-wide authentication layer (individual app auth)
-- ArgoCD: Built-in authentication
-- Individual apps: App-specific auth (basic auth, OAuth, etc.)
+- Most configuration is direct declarative YAML without app-side transformation layer.
+- Some configuration conversion is handled by operators/controllers (External Secrets).
 
-**Network Security:**
-- Internal gateway: VPN/LAN access only, exposed through MetalLB-assigned internal addresses
-- External gateway: Internet access only through Cloudflare tunnel (cloudflared) with origin certificates
+## 7. Cross-Cutting Concerns Implementation
 
-### 7.2 Error Handling & Resilience
+### Authentication and authorization
 
-**ArgoCD Retry Policy:**
-```yaml
-retry:
-  limit: 10
-  backoff:
-    duration: 1m
-    maxDuration: 16m
-    factor: 2
-```
+- Cluster-level authN/authZ relies on Kubernetes RBAC and service accounts where needed.
+- External secret access uses service principal credentials referenced by ClusterSecretStore.
+- App-level authentication is mostly delegated to each workload configuration and secret-provided env vars.
 
-**Self-Healing:**
-```yaml
-syncPolicy:
-  automated:
-    prune: true      # Remove orphaned resources
-    selfHeal: true   # Auto-sync on drift
-```
+### Error handling and resilience
 
-### 7.3 Logging & Monitoring
+- Argo retry policies provide reconciliation resilience (retry limit 10 with backoff).
+- cloudflared includes liveness probe on /ready.
+- Most workloads prefer simple restart semantics over advanced circuit breakers.
 
-**Current Implementation:**
-- `metrics-server`: Cluster metrics for HPA
-- `uptime-kuma`: External uptime monitoring
-- `tautulli`: Plex-specific monitoring
+### Logging and monitoring
 
-**Future Considerations:**
-- Prometheus stack (commented in values.yaml)
-- Grafana dashboards
+- metrics-server is present for core metrics.
+- cloudflared exposes metrics endpoint at 0.0.0.0:2000.
+- No centralized logging stack is defined in current active app list.
 
-### 7.4 Configuration Management
+### Validation
 
-**Patterns:**
-1. **ConfigMaps**: Non-sensitive configuration
-2. **ExternalSecrets**: Sensitive configuration from Azure Key Vault
-3. **Helm values.yaml**: Chart-specific configuration
-4. **Environment variables**: Runtime configuration
+- Validation is primarily API-server schema validation and controller reconciliation feedback.
+- Governance docs capture known drift classes and remediation playbooks.
 
-### 7.5 Secret Management
+### Configuration management
 
-**Azure Key Vault Integration:**
-```yaml
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: app-secret
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: azure-secret-store
-    kind: ClusterSecretStore
-  target:
-    name: app-secret
-    creationPolicy: Owner
-    deletionPolicy: Retain
-  data:
-    - secretKey: api-key
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        key: app-api-key
-        metadataPolicy: None
-```
-
----
+- Git-managed manifests are authoritative desired state.
+- Secrets: SOPS-encrypted Terraform inputs and Azure Key Vault runtime synchronization.
+- Taskfile automates encrypt/decrypt and Terraform plan/apply workflows.
 
 ## 8. Service Communication Patterns
 
-### Internal Service Communication
+### In-cluster synchronous communication
 
-**Pattern:** Kubernetes DNS-based service discovery
-```
-Service A ──► service-b.namespace.svc.cluster.local:port
-```
+- HTTP and TCP communication via Service abstraction.
+- Primary L7 path: HTTPRoute -> Gateway -> Service -> Pod.
 
-### External Access Patterns
+### External ingress communication
 
-**1. Cloudflare Tunnel (Public, External Access Only)**
-```
-Internet ──► Cloudflare ──► cloudflared ──► Envoy External ──► Service
-```
+- Public domains terminate at Cloudflare edge, forwarded via cloudflared tunnel to Envoy external gateway.
 
-**2. Direct Internal (VPN/LAN, Internal Access Only)**
-```
-VPN Client ──► MetalLB IP ──► Envoy Internal ──► Service
-```
+### Internal ingress communication
 
-**3. Legacy Proxy Pattern**
-For services running outside the cluster:
-```yaml
-# EndpointSlice pointing to external IP
-apiVersion: discovery.k8s.io/v1
-kind: EndpointSlice
-metadata:
-  name: plex-external
-  labels:
-    kubernetes.io/service-name: plex-external
-addressType: IPv4
-endpoints:
-  - addresses:
-      - "10.1.10.194"
-ports:
-  - name: http
-    port: 32400
-```
+- LAN/VPN clients access Envoy internal gateway, typically via hostnames *.internal.gustend.net.
 
-### API Patterns
+### Legacy service bridging
 
-**HTTPRoute-based routing:**
-- Path-based routing: `path: PathPrefix /api`
-- Host-based routing: `hostnames: [app.gustend.net]`
-- Backend weighting for canary deployments
+- EndpointSlice plus Service plus HTTPRoute pattern routes traffic to external IP hosts.
+- Example: cluster/apps/plex-route/endpoints.yaml and cluster/apps/plex-route/httproute.yaml.
 
----
+### Versioning and discovery
 
-## 9. Technology-Specific Patterns
+- Service discovery is DNS-based through Kubernetes service names.
+- API versioning is mostly Kubernetes resource apiVersion/version pinning, not app API gateways.
 
-### 9.1 Kubernetes Patterns
+## 9. Technology-Specific Architectural Patterns
 
-**Deployment Strategy:**
-```yaml
-# Stateful apps (media servers)
-spec:
-  strategy:
-    type: Recreate
+### Kubernetes and YAML patterns
 
-# Stateless apps (web servers)
-spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-```
+- One folder per app under cluster/apps.
+- Consistent file naming conventions for deployment/service/httproute/pvc/external-secret.
+- Frequent use of revisionHistoryLimit: 1 for Deployment resources.
 
-**Resource Management:**
-```yaml
-resources:
-  requests:
-    cpu: "100m"
-    memory: "256Mi"
-  limits:
-    cpu: "1000m"
-    memory: "2Gi"
-```
+### Helm patterns
 
-**Pod Security:**
-```yaml
-securityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
-  allowPrivilegeEscalation: false
-```
+- Platform/operator components and some apps are Helm chart based.
+- Wrapper chart pattern for dependency pinning (for example postgres-operator).
 
-### 9.2 Helm Chart Patterns
+### Terraform patterns
 
-**Wrapper Chart Pattern:**
-```yaml
-# Chart.yaml
-apiVersion: v2
-name: app-name
-version: 1.0.0
-dependencies:
-  - name: upstream-chart
-    version: "1.2.3"
-    repository: https://charts.example.com
+- Split workspaces for management and main environments:
+  - cluster/infra/mgmt
+  - cluster/infra/main
+- SOPS provider decrypts encrypted json for secrets.
+- TFE provider sets workspace environment variables centrally.
 
-# values.yaml - values passed under dependency key
-upstream-chart:
-  setting: value
-```
+### Talos patterns
 
-### 9.3 Gateway API Patterns
-
-**HTTPRoute with Homepage Integration:**
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: app-name
-  namespace: <app-namespace>
-  labels:
-    app.kubernetes.io/name: app-name
-  annotations:
-    gethomepage.dev/description: "App Description"
-    gethomepage.dev/enabled: "true"
-    gethomepage.dev/group: "Category"
-    gethomepage.dev/icon: "sh-app-name"
-    gethomepage.dev/name: "Display Name"
-    gethomepage.dev/pod-selector: "app.kubernetes.io/name=app-name"
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: internal
-      namespace: envoy-gateway
-  hostnames:
-    - app.internal.gustend.net
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - group: ""
-          kind: Service
-          name: app-name
-          port: 8080
-          weight: 1
-```
-
----
+- Talos-generated immutable configs in talos/_out.
+- Bootstrap commands documented as explicit CLI sequence in talos/Readme.md.
 
 ## 10. Implementation Patterns
 
-### 10.1 Standard Application Structure
+### Interface design patterns
 
-**Raw Manifest App (Recommended for most apps):**
-```
-cluster/apps/app-name/
-├── deployment.yaml       # Required: Application workload
-├── service.yaml          # Required: Service exposure
-├── httproute.yaml        # Required: Gateway routing
-├── pvc.yaml              # Optional: Persistent storage
-├── storage-class.yaml    # Optional: Custom NFS storage
-├── pv.yaml               # Optional: Manual PV (NFS only)
-├── external-secret.yaml  # Optional: Secrets from Azure KV
-└── config-map.yaml       # Optional: Non-sensitive config
-```
+- Infrastructure interfaces are declarative resources (CRDs and core kinds) rather than code interfaces.
+- Separation by kind acts as interface boundaries:
+  - Secret source interface: ExternalSecret and ClusterSecretStore.
+  - Traffic interface: HTTPRoute and Gateway.
+  - Storage interface: StorageClass/PV/PVC.
 
-**Helm Chart App (For complex upstream charts):**
-```
-cluster/apps/app-name/
-├── Chart.yaml            # Required: Helm chart definition
-├── values.yaml           # Required: Configuration values
-└── templates/            # Optional: Additional resources
-    └── httproute.yaml
-```
+### Service implementation patterns
 
-### 10.2 Service Naming Conventions
+- Standard pattern for most apps:
+  - Deployment with one container
+  - Resource requests/limits
+  - Service ClusterIP
+  - HTTPRoute for ingress
 
-| Resource | Naming Pattern | Example |
-|----------|----------------|---------|
-| Deployment | `{app-name}` | `jellyfin` |
-| Service | `{app-name}` | `jellyfin` |
-| HTTPRoute | `{app-name}` | `jellyfin` |
-| PVC (config) | `{app-name}` or `{app-name}-config` | `jellyfin-config` |
-| PVC (data) | `{app-name}-{type}` | `jellyfin-media` |
-| StorageClass | `{app-name}-nfs-{source}` | `jellyfin-nfs-library-media` |
-| Namespace | `{app-name}` or `{category}` | `media`, `n8n` |
+### Repository and data access analogs
 
-### 10.3 Label Standards
+- Instead of repositories in code, data access is operator-mediated:
+  - External Secrets Operator for secret retrieval.
+  - CSI drivers for persistent storage backing.
 
-```yaml
-metadata:
-  labels:
-    app.kubernetes.io/name: app-name
-    app.kubernetes.io/instance: app-name
-    app.kubernetes.io/component: server  # optional
-    app.kubernetes.io/part-of: app-name  # optional
-```
+### API/controller implementation pattern
 
----
+- Argo Application template acts as declarative controller configuration with standardized sync policy.
+
+### Domain model implementation analog
+
+- Domain model is the manifest graph itself: namespaced app resources plus shared platform resources.
 
 ## 11. Testing Architecture
 
-### Current Testing Approach
+Current testing architecture is operations-centric rather than unit-test-centric.
 
-**Manual Verification:**
-1. ArgoCD sync status monitoring
-2. kubectl health checks
-3. uptime-kuma external monitoring
+Observed strategy:
 
-**Recommended Testing Workflow:**
-```bash
-# 1. Validate manifests locally
-kubectl --dry-run=client -f deployment.yaml
+- Declarative validation through Kubernetes apply/reconcile outcomes.
+- Drift detection through Argo status (Synced/OutOfSync and Health states).
+- Targeted remediation plans in docs/implementation-plan.
 
-# 2. Apply to staging namespace (if available)
-kubectl apply -f . -n staging
+Gaps:
 
-# 3. Monitor ArgoCD sync
-argocd app get app-name
-
-# 4. Verify endpoints
-curl -I https://app.internal.gustend.net
-```
-
-### Validation Patterns
-
-**ArgoCD Health Checks:**
-- Deployment: Ready replicas match desired
-- Service: Endpoints populated
-- PVC: Bound status
-- HTTPRoute: Accepted by gateway
-
----
+- No repository-wide automated unit/integration test suites were detected for application manifests.
+- No policy-as-code or manifest lint pipeline is documented in the inspected files.
 
 ## 12. Deployment Architecture
 
-### Cluster Topology
+### 12.1 Topology
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         TALOS KUBERNETES CLUSTER                             │
-├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  Control Plane Node (10.1.9.138)                                            │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  etcd │ kube-apiserver │ kube-controller-manager │ kube-scheduler   │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-│                                                                              │
-│  Worker Nodes                                                                │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐             │
-│  │  Worker 1       │  │  Worker 2       │  │  Worker N       │             │
-│  │  • kubelet      │  │  • kubelet      │  │  • kubelet      │             │
-│  │  • kube-proxy   │  │  • kube-proxy   │  │  • kube-proxy   │             │
-│  │  • CSI node     │  │  • CSI node     │  │  • CSI node     │             │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘             │
-│                                                                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+- Talos-based Kubernetes cluster.
+- Envoy internal/external gateways for north-south traffic.
+- Cloudflare tunnel for internet exposure.
+- Synology NAS for persistent storage.
+- Azure Key Vault for secret backing.
 
-### Deployment Workflow
+### 12.2 Deployment sequence
 
-```
-1. Developer commits to main branch
-          │
-          ▼
-2. GitHub triggers ArgoCD webhook (optional)
-          │
-          ▼
-3. ArgoCD detects out-of-sync state
-          │
-          ▼
-4. Sync waves execute in order (0 → 1 → N)
-          │
-          ▼
-5. Resources created/updated
-          │
-          ▼
-6. Health checks pass
-          │
-          ▼
-7. Continuous reconciliation (every 3 minutes)
-```
+1. Bootstrap Talos cluster and kubeconfig.
+2. Apply bootstrap snapshotter/CSI assets.
+3. Deploy Argo CD and root app.
+4. Argo continuously deploys platform and workload apps.
+5. Terraform workspaces manage Azure key vault and workspace env wiring.
 
-### Environment Configuration
+### 12.3 Environment adaptations
 
-**Production (only environment):**
-- Cluster: Talos v1.10.7, Kubernetes v1.33.4
-- Gateway domains: `*.gustend.net`, `*.internal.gustend.net`
-- Storage: Synology NAS (library.gustend.local)
-- Secrets: Azure Key Vault (gustend-k8s-cluster)
-
----
+- Internal and external hostname domains are separated.
+- Internal TLS certificate management is in-cluster via cert-manager and wildcard certificate.
+- External TLS is effectively handled at Cloudflare edge before tunnel ingress.
 
 ## 13. Extension and Evolution Patterns
 
-### Adding a New Application
+### Feature addition patterns
 
-**Step-by-Step Process:**
+For a new app under this architecture:
 
-1. **Create app directory:**
-   ```bash
-   mkdir cluster/apps/new-app
-   ```
+1. Create app folder under cluster/apps/<name>.
+2. Add Deployment with labels, resources, and revisionHistoryLimit.
+3. Add Service (usually ClusterIP).
+4. Add PVC/PV/StorageClass if persistent or shared storage is needed.
+5. Add HTTPRoute (internal by default unless explicitly external).
+6. Add ExternalSecret resources for all sensitive config.
+7. Register app in cluster/root-app/values.yaml.
 
-2. **Create deployment.yaml:**
-   ```yaml
-   apiVersion: apps/v1
-   kind: Deployment
-   metadata:
-     name: new-app
-     labels:
-       app.kubernetes.io/name: new-app
-   spec:
-     replicas: 1
-     revisionHistoryLimit: 1
-     selector:
-       matchLabels:
-         app.kubernetes.io/name: new-app
-     template:
-       metadata:
-         labels:
-           app.kubernetes.io/name: new-app
-       spec:
-         containers:
-           - name: new-app
-             image: registry/new-app:tag
-             ports:
-               - containerPort: 8080
-             resources:
-               requests:
-                 cpu: "100m"
-                 memory: "256Mi"
-               limits:
-                 cpu: "500m"
-                 memory: "512Mi"
-   ```
+### Safe modification patterns
 
-3. **Create service.yaml:**
-   ```yaml
-   apiVersion: v1
-   kind: Service
-   metadata:
-     name: new-app
-     labels:
-       app.kubernetes.io/name: new-app
-   spec:
-     type: ClusterIP
-     ports:
-       - port: 8080
-         targetPort: 8080
-         protocol: TCP
-         name: http
-     selector:
-       app.kubernetes.io/name: new-app
-   ```
+- Preserve existing labels/selectors when modifying deployments/services.
+- Keep explicit ExternalSecret default fields to avoid Argo drift.
+- Avoid introducing duplicate ownership of shared resources across multiple Argo apps.
 
-4. **Create httproute.yaml:**
-   ```yaml
-   apiVersion: gateway.networking.k8s.io/v1
-   kind: HTTPRoute
-   metadata:
-     name: new-app
-     namespace: <app-namespace>
-     labels:
-       app.kubernetes.io/name: new-app
-     annotations:
-       gethomepage.dev/description: "New App description"
-       gethomepage.dev/enabled: "true"
-       gethomepage.dev/group: "Applications"
-       gethomepage.dev/icon: "sh-new-app"
-       gethomepage.dev/name: "New App"
-       gethomepage.dev/pod-selector: app.kubernetes.io/name=new-app
-   spec:
-     parentRefs:
-       - group: gateway.networking.k8s.io
-         kind: Gateway
-         name: internal
-         namespace: envoy-gateway
-     hostnames:
-       - new-app.internal.gustend.net
-     rules:
-       - matches:
-           - path:
-               type: PathPrefix
-               value: /
-         backendRefs:
-           - group: ""
-             kind: Service
-             name: new-app
-             port: 8080
-             weight: 1
-   ```
+### Integration patterns
 
-5. **Register in root-app/values.yaml:**
-
-   > **Note:** Set `namespace` to the dedicated namespace for this app (e.g., `new-app`), or an existing shared namespace (e.g., `media`). Namespaces are managed by ArgoCD — never use `default`.
-
-   ```yaml
-   apps:
-     # ... existing apps ...
-     - name: new-app
-       namespace: new-app
-       path: cluster/apps/new-app
-   ```
-
-6. **Commit and push:**
-   ```bash
-   git add cluster/apps/new-app cluster/root-app/values.yaml
-   git commit -m "Add new-app"
-   git push
-   ```
-
-### Adding External Secrets
-
-```yaml
-# cluster/apps/new-app/external-secret.yaml
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: new-app-secret
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: azure-secret-store
-    kind: ClusterSecretStore
-  target:
-    name: new-app-secret
-    creationPolicy: Owner
-    deletionPolicy: Retain
-  data:
-    - secretKey: api-key
-      remoteRef:
-        conversionStrategy: Default
-        decodingStrategy: None
-        key: new-app-api-key
-        metadataPolicy: None
-```
-
-### Adding Persistent Storage
-
-**iSCSI (single-pod):**
-```yaml
-# cluster/apps/new-app/pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: new-app-data
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: synology-iscsi
-  resources:
-    requests:
-      storage: 10Gi
-```
-
-**NFS (shared access):**
-```yaml
-# cluster/apps/new-app/storage-class.yaml
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: new-app-nfs-media
-provisioner: nfs.csi.k8s.io
-parameters:
-  server: library.gustend.local
-  share: /volume1/Media
-mountOptions:
-  - nolock
-
----
-# cluster/apps/new-app/pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: new-app-media
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: new-app-nfs-media
-  resources:
-    requests:
-      storage: 100Gi
-
----
-# cluster/apps/new-app/pv.yaml
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: new-app-media
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: library.gustend.local
-    path: /volume1/Media
-  storageClassName: new-app-nfs-media
-```
-
----
+- Legacy endpoint integration: EndpointSlice + Service + HTTPRoute.
+- External service credentials: map from Azure Key Vault via ExternalSecret.
+- Operator-based integrations are preferred over ad-hoc scripts after bootstrap.
 
 ## 14. Architectural Pattern Examples
 
-### Example 1: Media Server (Jellyfin)
+### Example A: GitOps application generation template
 
-**File Structure:**
-```
-cluster/apps/jellyfin/
-├── deployment.yaml
-├── service.yaml
-├── httproute.yaml
-├── pvc.yaml         (iSCSI config PVC and NFS media PVC)
-├── storage-class.yaml (NFS StorageClass)
-└── pv.yaml          (NFS PersistentVolume)
-```
+Source: cluster/root-app/templates/app-set.yaml
 
-**Key Patterns:**
-- Recreate deployment strategy (media transcoding)
-- Dual storage: iSCSI for config, NFS for media
-- External gateway (public access)
-
-### Example 2: Automation Platform (n8n)
-
-**File Structure:**
-```
-cluster/apps/n8n/
-├── deployment.yaml
-├── service.yaml
-├── httproute.yaml
-├── pvc.yaml
-└── namespace.yaml
+```yaml
+{{- range $index, $app := .Values.apps }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $app.name }}
+spec:
+  source:
+    path: {{ $app.path }}
+    repoURL: {{ $.Values.gitops.repo }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+{{- end }}
 ```
 
-**Key Patterns:**
-- Own namespace for isolation
-- PostgreSQL database connection
-- Internal gateway only
+Pattern shown:
 
-### Example 3: Helm-based Infrastructure (Envoy Gateway)
+- Inventory-driven app generation with standardized sync behavior.
 
-**File Structure:**
+### Example B: Secret sourcing chain
+
+Sources:
+
+- cluster/apps/foundry/external-secret.yaml
+- cluster/apps/foundry/deployment.yaml
+
+```yaml
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: foundry-admin-key
+spec:
+  secretStoreRef:
+    name: azure-secret-store
+    kind: ClusterSecretStore
 ```
-cluster/apps/envoy-gateway/
-├── Chart.yaml
-├── values.yaml
-└── templates/
-    ├── gateway-class.yaml
-    ├── gateway-internal.yaml
-    ├── gateway-external.yaml
-    └── ...
+
+```yaml
+env:
+  - name: FOUNDRY_ADMIN_KEY
+    valueFrom:
+      secretKeyRef:
+        name: foundry-admin-key
+        key: foundry-admin-key
 ```
 
-**Key Patterns:**
-- Upstream Helm chart as dependency
-- Custom templates for gateway resources
-- Sync wave 1 (depends on cert-manager)
+Pattern shown:
 
----
+- Separation of secret source from workload deployment.
+
+### Example C: Legacy external host routing
+
+Sources:
+
+- cluster/apps/plex-route/endpoints.yaml
+- cluster/apps/plex-route/manual-route.yaml
+- cluster/apps/plex-route/httproute.yaml
+
+```yaml
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+endpoints:
+  - addresses: ["10.1.10.194"]
+ports:
+  - port: 32400
+```
+
+Pattern shown:
+
+- Non-cluster backend integration while preserving Gateway routing model.
 
 ## 15. Architectural Decision Records
 
-### ADR-001: GitOps with ArgoCD
+### ADR-001: GitOps app-of-apps as primary control pattern
 
-**Context:** Need automated, auditable deployments with drift detection.
+- Context: Many heterogeneous applications and platform services require repeatable deployment and drift correction.
+- Decision: Use Argo CD with root-app generated child applications from values inventory.
+- Consequences:
+  - Positive: centralized app registry and consistent sync policy.
+  - Negative: potential ownership overlap if resource scopes are not carefully bounded.
 
-**Decision:** Use ArgoCD with app-of-apps pattern.
+### ADR-002: Dual ingress model (internal and external)
 
-**Consequences:**
-- ✅ All changes tracked in Git
-- ✅ Automatic reconciliation
-- ✅ Self-healing capabilities
-- ⚠️ Learning curve for ArgoCD
-- ⚠️ Need to manage sync waves carefully
+- Context: Need separate exposure semantics for LAN/VPN services vs internet-facing services.
+- Decision: Use two Gateways (internal/external) with route-specific hostnames.
+- Consequences:
+  - Positive: clear traffic policy boundaries.
+  - Negative: requires careful route and DNS discipline.
 
-### ADR-002: Talos Linux for Nodes
+### ADR-003: Azure Key Vault as secret source with External Secrets
 
-**Context:** Need secure, minimal OS for Kubernetes nodes.
+- Context: Avoid hardcoded Kubernetes secret values in Git.
+- Decision: Pull secrets at runtime via ExternalSecret + ClusterSecretStore.
+- Consequences:
+  - Positive: improved secret hygiene and centralized credential lifecycle.
+  - Negative: reconciliation drift risk if defaulted fields are omitted in manifests.
 
-**Decision:** Use Talos Linux instead of traditional distributions.
+### ADR-004: Terraform split into mgmt and main workspaces
 
-**Consequences:**
-- ✅ Immutable, secure by design
-- ✅ API-driven configuration
-- ✅ No SSH, reduced attack surface
-- ⚠️ Debugging requires different approach
-- ⚠️ Some CSI drivers need adaptation
-
-### ADR-003: Gateway API over Ingress
-
-**Context:** Need modern, expressive routing capabilities.
-
-**Decision:** Use Gateway API with Envoy Gateway instead of Ingress.
-
-**Consequences:**
-- ✅ More expressive routing rules
-- ✅ Better separation of concerns
-- ✅ Multi-tenancy support
-- ⚠️ Newer API, less ecosystem support
-- ⚠️ Two gateways to manage
-
-### ADR-004: External Secrets with Azure Key Vault
-
-**Context:** Need secure secret management integrated with cloud.
-
-**Decision:** Use External Secrets Operator with Azure Key Vault backend.
-
-**Consequences:**
-- ✅ Secrets never stored in Git
-- ✅ Automatic rotation support
-- ✅ Audit trail in Azure
-- ⚠️ Azure dependency
-- ⚠️ Additional infrastructure to manage
-
-### ADR-005: Proxmox for Virtualization Layer
-
-**Context:** Physical hardware must be virtualized to host Kubernetes nodes with flexible resource allocation, easy VM lifecycle management, and snapshot/backup capabilities.
-
-**Decision:** Use Proxmox VE as the bare-metal hypervisor to host Talos Linux VMs that form the Kubernetes cluster.
-
-**Consequences:**
-- ✅ Free, open-source hypervisor with enterprise features
-- ✅ Native support for VM snapshots and backups
-- ✅ Web UI and API for VM lifecycle management
-- ✅ Supports live migration between nodes
-- ✅ Integrates with Terraform via the Proxmox provider (planned)
-- ⚠️ Proxmox Terraform automation not yet implemented (tracked in Readme TODO)
-- ⚠️ Manual VM provisioning required until Terraform integration is complete
-
-### ADR-006: Terraform for External Resource Management
-
-**Context:** Resources outside the Kubernetes cluster (cloud services, DNS, hypervisor) need to be provisioned and managed in a repeatable, auditable, and declarative way — consistent with the GitOps philosophy applied to in-cluster resources.
-
-**Decision:** Use Terraform with Terraform Cloud as the backend to manage all external infrastructure. Secrets are encrypted at rest using SOPS with an Azure Key Vault-backed RSA key.
-
-**Scope:**
-- **Active:** Azure (Key Vault, service principals, resource groups)
-- **Planned:** Proxmox (VM provisioning for Kubernetes nodes)
-- **Planned:** Cloudflare (DNS records, tunnel configuration)
-- **Planned:** GitHub Actions / automation (repository secrets, workflow variables, runner configuration)
-
-**Workspace Structure:**
-- `cluster/infra/mgmt/` — Management workspace: provisions the SOPS encryption key and synchronizes secrets to Terraform Cloud workspace variables
-- `cluster/infra/main/` — Main workspace: provisions application-facing Azure resources (Key Vault, secrets)
-
-**Consequences:**
-- ✅ External resources managed as code alongside cluster configuration
-- ✅ State stored remotely in Terraform Cloud for collaboration and auditability
-- ✅ SOPS encryption ensures secrets are never stored in plaintext in Git
-- ✅ `Taskfile.yaml` provides consistent `plan`/`apply`/`encrypt`/`decrypt` developer workflows
-- ⚠️ Proxmox and Cloudflare providers not yet implemented
-- ⚠️ Initial bootstrap requires manual SOPS key setup before Terraform can run
-
-
-
----
+- Context: Need separate lifecycle concerns for foundational management credentials and main workload-related cloud resources.
+- Decision: Keep two Terraform roots/workspaces and wire env vars via TFE provider.
+- Consequences:
+  - Positive: clearer blast-radius boundaries.
+  - Negative: operational overhead of coordinating two workspaces.
 
 ## 16. Architecture Governance
 
-### Automated Checks
+Current governance mechanisms:
 
-**Renovate Bot:**
-- Monitors image versions
-- Creates PRs for updates
-- Configured in `renovate.json`
+- Structural conventions in app folders and manifest naming.
+- Copilot instructions defining app onboarding and resource expectations.
+- Argo health/sync status as primary governance signal.
+- Remediation runbooks in docs/implementation-plan.
 
-**ArgoCD Sync Policies:**
-```yaml
-syncPolicy:
-  automated:
-    prune: true      # Removes untracked resources
-    selfHeal: true   # Corrects drift
-```
+Recommended incremental governance improvements:
 
-### Naming Conventions
-
-| Resource | Convention |
-|----------|------------|
-| App directories | lowercase, hyphenated |
-| Kubernetes names | lowercase, hyphenated |
-| Labels | `app.kubernetes.io/*` standards |
-| Hostnames | `{app}.internal.gustend.net` or `{app}.gustend.net` |
-
-### Required Labels
-
-All deployments must include:
-```yaml
-metadata:
-  labels:
-    app.kubernetes.io/name: {app-name}
-```
-
-### Resource Requirements
-
-All deployments must specify:
-```yaml
-resources:
-  requests:
-    cpu: "..."
-    memory: "..."
-  limits:
-    cpu: "..."
-    memory: "..."
-```
-
----
+- Add CI manifest validation (kubeconform or equivalent).
+- Add policy checks (for example required labels, resource limits, and revisionHistoryLimit).
+- Add periodic dead-manifest detection for non-registered app folders.
 
 ## 17. Blueprint for New Development
 
-### Development Workflow
+### Development workflow by feature type
 
-1. **Plan:** Identify requirements, storage needs, secret requirements
-2. **Create:** Build manifests following patterns in this document
-3. **Register:** Add app to `root-app/values.yaml`
-4. **Deploy:** Commit and push; ArgoCD handles deployment
-5. **Verify:** Check ArgoCD sync status and app health
-6. **Monitor:** Use uptime-kuma or app-specific monitoring
+New app:
 
-### Implementation Checklist
+1. Create cluster/apps/<app-name> with core manifests.
+2. Add namespace-specific resources and optional storage/secrets.
+3. Add route for internal or external exposure.
+4. Register app in cluster/root-app/values.yaml.
+5. Confirm Argo app appears and reaches Synced and Healthy.
 
-- [ ] Create app directory under `cluster/apps/`
-- [ ] Create `deployment.yaml` with resource limits and labels
-- [ ] Create `service.yaml` with appropriate selectors
-- [ ] Create `httproute.yaml` with homepage annotations
-- [ ] Add storage resources if needed (PVC, StorageClass)
-- [ ] Add ExternalSecret if secrets needed
-- [ ] Add entry to `cluster/root-app/values.yaml`
-- [ ] Set appropriate namespace (existing or request new)
-- [ ] Set sync wave if dependency ordering needed
-- [ ] Commit with descriptive message
-- [ ] Verify ArgoCD sync success
-- [ ] Test endpoint accessibility
+App update:
 
-### Common Pitfalls
+1. Update manifests in place.
+2. Validate selector/label compatibility before changing services or deployments.
+3. Watch Argo reconciliation and workload rollout.
 
-| Pitfall | Prevention |
-|---------|------------|
-| Missing resource limits | Template includes limits |
-| Wrong label selectors | Copy from template, update consistently |
-| Storage class not found | Use `synology-iscsi` or define NFS class |
-| Gateway not accepting route | Check `parentRefs` namespace |
-| Secrets not syncing | Verify ClusterSecretStore and Azure KV key |
-| Deployment stuck | Check events, pod logs, image pull status |
+Platform extension:
 
-### File Templates
+1. Evaluate whether change belongs in bootstrap, platform app, or workload app.
+2. Prefer adding platform components as Argo-managed app entries where feasible.
+3. Document migration/remediation plan in docs/implementation-plan when behavior can impact many apps.
 
-Templates for all resource types are documented in `.github/copilot-instructions.md` and should be used as the starting point for new applications.
+### Implementation templates
 
----
+Minimum app resource template set:
 
-## Appendix: Quick Reference
+- deployment.yaml
+- service.yaml
+- httproute.yaml
+- pvc.yaml or external-secret.yaml as required by app
 
-### Key URLs
+Default operational expectations:
 
-| Service | URL |
-|---------|-----|
-| ArgoCD | `https://argocd.internal.gustend.net` |
-| Homepage | `https://homepage.internal.gustend.net` |
-| (Apps) | `https://{app}.internal.gustend.net` |
+- Deployment has resources.requests/limits and revisionHistoryLimit: 1.
+- Service selector aligns with deployment labels.
+- HTTPRoute parentRefs and hostnames match exposure intent.
+- ExternalSecret manifests include explicit defaulted fields to prevent drift.
 
-### Key Commands
+### Common pitfalls
 
-```bash
-# SOPS encrypt/decrypt
-task sops-encrypt-all
-task sops-decrypt-all
+- Duplicate resource ownership between root-app and child app scopes.
+- Mismatched label selectors between Service and Deployment.
+- Missing ExternalSecret default fields causing persistent OutOfSync.
+- Exposing routes externally without explicit intent and host verification.
 
-# Terraform
-task tf-plan-main
-task tf-apply-main
+### Maintenance recommendation
 
-# Talos
-talosctl --talosconfig talos/_out/talosconfig health
-talosctl kubeconfig
+- Regenerate this blueprint whenever one of these changes materially:
+  - root-app templating model
+  - ingress model (Gateway or cloudflared)
+  - secret management flow
+  - Terraform environment/workspace structure
 
-# kubectl
-kubectl get applications -n argocd
-kubectl get httproutes -A
-kubectl get pvc -A
-```
-
-### Important Files
-
-| Purpose | Location |
-|---------|----------|
-| App registry | `cluster/root-app/values.yaml` |
-| Cloud & cluster setup notes | `Readme.md` |
-| Talos bootstrap & config generation | `talos/Readme.md` |
-| Talos generated config | `talos/_out/controlplane.yaml` |
-| Terraform secrets | `cluster/infra/*/env/secrets.enc.json` |
-| Copilot patterns | `.github/copilot-instructions.md` |
-
----
-
-*This blueprint should be updated whenever significant architectural changes are made to the cluster.*
+- Suggested cadence: quarterly, or after major platform migrations.

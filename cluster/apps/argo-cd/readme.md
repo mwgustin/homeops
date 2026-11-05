@@ -43,3 +43,10 @@ Create app
 argocd app create --upsert apps --dest-namespace argocd --dest-server https://kubernetes.default.svc --repo https://github.com/mwgustin/homeops.git  --path cluster/root-app
 
 ```
+
+Once `root-app` is Synced, remove the bootstrap `apps` app. Both render `cluster/root-app`,
+so keeping both leaves every Application flagged `SharedResourceWarning` and `apps` OutOfSync.
+`--cascade=orphan` leaves all managed resources in place.
+```bash
+kubectl -n argocd delete app apps --cascade=orphan
+```
