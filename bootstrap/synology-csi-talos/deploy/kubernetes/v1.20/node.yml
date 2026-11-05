@@ -42,6 +42,19 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: synology-csi-nsenter
+  namespace: synology-csi
+data:
+  # Talos >= 1.13 keeps extension services (iscsid) out of the PID namespace visible
+  # to pods, so the stock pgrep+nsenter wrapper fails. chroot into the host instead.
+  nsenter.sh: |
+    #!/bin/sh
+    exec chroot /host "$(basename "$0")" "$@"
+
+---
 kind: DaemonSet
 apiVersion: apps/v1
 metadata:
@@ -114,6 +127,9 @@ spec:
               mountPath: /host
             - name: device-dir
               mountPath: /dev
+            - name: nsenter-wrapper
+              mountPath: /csibin/nsenter.sh
+              subPath: nsenter.sh
       volumes:
         - name: kubelet-dir
           hostPath:
@@ -138,3 +154,7 @@ spec:
           hostPath:
             path: /dev
             type: Directory
+        - name: nsenter-wrapper
+          configMap:
+            name: synology-csi-nsenter
+            defaultMode: 0755
