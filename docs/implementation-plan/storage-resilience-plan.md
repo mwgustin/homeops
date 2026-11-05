@@ -85,7 +85,8 @@ jellyfin-config, kutt-db-data, uptime-kuma, then the *arr configs.
 - Resolved 2026-11-05: root `apps` OutOfSync was caused by the bootstrap `apps`
   Application and the self-managed `root-app` both rendering `cluster/root-app`.
   Fixed by deleting `apps` with `--cascade=orphan`.
-- `metrics-server` is Degraded: nodes' kubelet serving certs have no IP SANs
-  (needs `--kubelet-insecure-tls` or kubelet-serving-cert-approver with Talos
-  `serverTLSBootstrap`). Not yet fixed.
+- `metrics-server` was Degraded: kubelet serving certs have no IP SANs. Fixed
+  with `--kubelet-insecure-tls`. Proper fix (optional): enable
+  `rotate-server-certificates` in the Talos kubelet config so the existing
+  kubelet-serving-cert-approver issues real certs, then drop the flag.
 - Decide backup tooling for Phase 1.
